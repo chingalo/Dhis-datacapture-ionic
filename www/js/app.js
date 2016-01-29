@@ -121,7 +121,6 @@ angular.module('dataCapture', [
                 var userData = JSON.parse(response.responseText);
                 $localStorage.loginUser = {'username' : $username,'password':$password};
                 $localStorage.loginUserData = userData;
-                $scope.loginUserData = $localStorage.loginUserData;
                 $localStorage.baseUrl = $scope.data.baseUrl;
 
                 //redirect to landing page for success login
