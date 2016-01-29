@@ -1,20 +1,65 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<widget id="com.ionicframework.mysidemenu484545" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-  <name>mySideMenu</name>
+<?xml version="1.0" encoding="UTF-8"?>
+<widget id="com.ionicframework.iroad726992" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
+  <name>Dhis 2 DataCapture</name>
   <description>
-        An Ionic Framework and Cordova project.
-    </description>
-  <author email="you@example.com" href="http://example.com.com/">
-      Your Name Here
-    </author>
+    An Ionic Framework and Cordova project for Mobile app for Custom Data entry forms and Reports.
+  </description>
+  <author email="profschingalo@gmail.com" href="https://demo-josephsite.rhcloud.com/">
+    Joseph Chingalo
+  </author>
   <content src="index.html"/>
-  <access origin="*"/>
-  <preference name="webviewbounce" value="false"/>
+  <preference name="permissions" value="none" />
+  <preference name="orientation" value="default" />
+  <preference name="target-device" value="universal" />
+  <preference name="fullscreen" value="false" />
+  <preference name="webviewbounce" value="true" />
+  <preference name="prerendered-icon" value="true" />
+  <preference name="stay-in-webview" value="false" />
+  <preference name="ios-statusbarstyle" value="black-opaque" />
+  <preference name="detect-data-types" value="true" />
+  <preference name="exit-on-suspend" value="false" />
+  <preference name="show-splash-screen-spinner" value="true" />
+  <preference name="auto-hide-splash-screen" value="true" />
+  <preference name="disable-cursor" value="false" />
+  <preference name="android-installLocation" value="auto" />
   <preference name="UIWebViewBounce" value="false"/>
-  <preference name="DisallowOverscroll" value="true"/>
-  <preference name="android-minSdkVersion" value="16"/>
+  <preference name="android-minSdkVersion" value="15"/>
   <preference name="BackupWebStorage" value="none"/>
+
   <feature name="StatusBar">
     <param name="ios-package" value="CDVStatusBar" onload="true"/>
   </feature>
+
+  <gap:plugin name="org.apache.cordova.battery-status" source = "pgb"/>
+  <gap:plugin name="org.apache.cordova.device" source = "pgb"/>
+  <gap:plugin name="org.apache.cordova.device-motion" source = "pgb"/>
+  <gap:plugin name="org.apache.cordova.device-orientation" source = "pgb"/>
+  <gap:plugin name="org.apache.cordova.geolocation" source = "pgb"/>
+  <gap:plugin name="org.apache.cordova.inappbrowser" source = "pgb"/>
+  <gap:plugin name="org.apache.cordova.media" source = "pgb"/>
+  <gap:plugin name="org.apache.cordova.network-information" source = "pgb" />
+
+  <gap:plugin name="cordova-plugin-whitelist" source="npm" version="~1" />
+  <plugin name="cordova-plugin-whitelist" version="~1" />
+  <plugin name="cordova-plugin-whitelist" spec="~1" />
+
+  <access origin="http://*" />
+  <feature name="http://api.phonegap.com/1.0/network"/>
+  <allow-intent href="http://*/*" />
+  <allow-intent href="https://*/*" />
+  <allow-intent href="tel:*" />
+  <allow-intent href="sms:*" />
+  <allow-intent href="mailto:*" />
+  <allow-intent href="geo:*" />
+  <platform name="android">
+    <allow-intent href="market:*" />
+  </platform>
+  <platform name="ios">
+    <allow-intent href="itms:*" />
+    <allow-intent href="itms-apps:*" />
+  </platform>
+  <platform name="winphone" />
+
+  <icon src="ic_launcher.png" width="170" height="170" />
+
 </widget>
