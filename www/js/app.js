@@ -33,7 +33,7 @@ angular.module('dataCapture', [
 
     //function for toaster messages
     function progressMessage(message){
-      ionicToast.show(message, 'bottom', false, 2000);
+      ionicToast.show(message, 'bottom', false, 1500);
     }
     if(! $localStorage.baseUrl){
       $localStorage.baseUrl = url;
@@ -42,17 +42,106 @@ angular.module('dataCapture', [
     $scope.data.baseUrl = $localStorage.baseUrl;
 
     $scope.login = function(){
-      //http://localhost:8080/dhis/api/dataSets/nqKkegk1y8U.json?fields=id,anme
-      progressMessage('login btn');
-      $scope.data.loading = true;
-      $state.go('app.dataEntry');
+
+      if($scope.data.baseUrl){
+
+        if($scope.data.username && $scope.data.password){
+
+          authenticateUser($scope.data.username,$scope.data.password);
+
+        }else{
+
+          var message = 'Please Enter both username and password.';
+          progressMessage(message);
+        }
+      }else{
+
+        var message = 'Please Enter server URL.';
+        progressMessage(message);
+      }
+
     };
 
     $scope.logOut = function(){
 
+      //TODO some logic flow during log out process
       var message = "log out";
       progressMessage(message);
       $state.go('login');
+    };
+
+    //function handle all authentications to DHIS2 server
+    function authenticateUser($username, $password){
+
+      $scope.data.loading =true;
+
+      var base = $scope.data.baseUrl;
+      Ext.Ajax.request({
+        url : base + '/dhis-web-commons-security/login.action?failed=false',
+        callbackKey : 'callback',
+        method : 'POST',
+        params : {
+          j_username : $username,
+          j_password : $password
+        },
+        withCredentials : true,
+        useDefaultXhrHeader : false,
+        success: function () {
+          //call checking if user is available
+          Ext.Ajax.request({
+            url: base + '/api/me.json',
+            callbackKey : 'callback',
+            method : 'GET',
+            params : {
+              j_username : $username,
+              j_password : $password
+            },
+            withCredentials : true,
+            useDefaultXhrHeader : false,
+            success : function(response){
+
+              $scope.data.username = null;
+              $scope.data.password = null;
+              try{
+                var userData = JSON.parse(response.responseText);
+                $localStorage.loginUser = {'username' : $username,'password':$password};
+                $localStorage.loginUserData = userData;
+                $scope.loginUserData = $localStorage.loginUserData;
+                $localStorage.baseUrl = $scope.data.baseUrl;
+
+                //redirect to landing page for success login
+                $state.go('app.dataEntry');
+
+              }catch(e){
+                var message = 'Fail to login, please check your username or password';
+                progressMessage(message);
+                $scope.data.password = null;
+              }
+
+              $scope.data.loading = false;
+              $scope.$apply();
+            },
+            failure : function(){
+
+              $scope.data.password = null;
+              var message = 'Fail to login, please Check your network';
+              progressMessage(message);
+              $scope.data.loading = false;
+              $scope.$apply();
+            }
+          });
+
+        },
+        failure : function() {
+
+          $scope.data.password = null;
+          //fail to connect to the server
+          var message = 'Fail to connect to the server, please check server URL';
+          progressMessage(message);
+          $scope.data.loading = false;
+          $scope.$apply();
+        }
+      });
     }
   })
 
