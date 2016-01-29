@@ -19,13 +19,19 @@
     <ion-content>
       <ion-list>
         <ion-item menu-close href="#/app/data-entry">
-          Data Entry
+          <i class="icon ion-edit"> &nbsp;</i>Data Entry
         </ion-item>
         <ion-item menu-close href="#/app/reports">
-          Reports
+          <i class="icon ion-document-text"> &nbsp;</i>Reports
         </ion-item>
         <ion-item menu-close href="#/app/profile">
-            Profile
+          <i class="icon ion-person"> &nbsp;</i>Profile
+        </ion-item>
+        <ion-item menu-close href="#/app/settings">
+          <i class="icon ion-ios-gear-outline"> &nbsp;</i>settings
+        </ion-item>
+        <ion-item menu-close ng-click="logOut()">
+          <i class="icon ion-log-out"> &nbsp;</i>Log out
         </ion-item>
       </ion-list>
     </ion-content>

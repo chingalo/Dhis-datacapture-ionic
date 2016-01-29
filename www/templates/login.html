@@ -1,17 +1,20 @@
 <ion-nav-view>
   <ion-view >
     <ion-content>
-
       <div class="row">
         <div class="col col-12" style="margin-top:10%;text-align: center;margin-bottom:5%;">
-          <h4>Dhis2 DataCapture</h4>
-          <!--<img ng-src="img/logo.png" >-->
+          <h4>Dhis2 Data Capture</h4>
+          <!--<img ng-src="img/ic_dhis_logo.png" >-->
         </div>
       </div>
 
       <div class="row">
         <div class="col col-12">
           <form ng-submit="login()">
+            <label class="item item-input">
+              <i class="icon ion-earth placeholder-icon"></i>
+              <input type="text" placeholder="Enter Server URL" ng-model="data.baseUrl">
+            </label>
             <label class="item item-input">
               <i class="icon ion-person placeholder-icon"></i>
               <input type="text" placeholder="Username" ng-model="data.username">
@@ -24,13 +27,6 @@
               Login
             </button>
           </form>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col col-100">
-          <button class="button button-full button-positive" ng-click="setConfiguration()">
-            Setting
-          </button>
         </div>
       </div>
       <div class="row" ng-if = "data.loading" style="text-align: center;font-size: 14px;">

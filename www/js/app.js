@@ -8,7 +8,6 @@ angular.module('dataCapture', [
   'ionic',
   'ionic-toast',
   'ngStorage',
-  'dataCapture.controllers'
 ])
 
   .run(function($ionicPlatform) {
@@ -27,7 +26,7 @@ angular.module('dataCapture', [
     });
   })
 
-  .controller('mainController',function($scope,$ionicModal,ionicToast,$localStorage){
+  .controller('mainController',function($scope,$state,$ionicModal,ionicToast,$localStorage){
 
     $scope.data = {};
     var url = 'http://';
@@ -40,30 +39,21 @@ angular.module('dataCapture', [
       $localStorage.baseUrl = url;
     }
 
+    $scope.data.baseUrl = $localStorage.baseUrl;
+
     $scope.login = function(){
-
+      //http://localhost:8080/dhis/api/dataSets/nqKkegk1y8U.json?fields=id,anme
       progressMessage('login btn');
-    };
-    $ionicModal.fromTemplateUrl('templates/setConfiguration.html', {
-      scope: $scope
-    }).then(function(modal) {
-      $scope.modal = modal;
-      $scope.data.baseUrl = url;
-    });
-
-    $scope.closeSetting = function() {
-      $scope.modal.hide();
+      $scope.data.loading = true;
+      $state.go('app.dataEntry');
     };
 
-    $scope.setConfiguration = function() {
-      $scope.modal.show();
-    };
+    $scope.logOut = function(){
 
-    $scope.saveSetting = function(){
-
-      $localStorage.baseUrl = $scope.data.baseUrl;
-      $scope.closeSetting();
-    };
+      var message = "log out";
+      progressMessage(message);
+      $state.go('login');
+    }
   })
 
   .config(function($stateProvider, $urlRouterProvider) {
@@ -104,6 +94,15 @@ angular.module('dataCapture', [
         views: {
           'menuContent': {
             templateUrl: 'templates/profile.html'
+          }
+        }
+      })
+
+      .state('app.settings', {
+        url: '/settings',
+        views: {
+          'menuContent': {
+            templateUrl: 'templates/settings.html'
           }
         }
       });
