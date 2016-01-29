@@ -80,11 +80,12 @@ angular.module('dataCapture', [
 
       //TODO some logic flow during log out process
 
-      $localStorage.loginUser = {};
+      $localStorage.loginUser = null;
       $state.go('login');
     };
 
     //function handle all authentications to DHIS2 server
+    //TODO logic for pull all metadata necessary to support offline support
     function authenticateUser($username, $password){
 
       $scope.data.loading =true;
