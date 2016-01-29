@@ -36,7 +36,21 @@ angular.module('dataCapture', [
       ionicToast.show(message, 'bottom', false, 1500);
     }
     if(! $localStorage.baseUrl){
+
       $localStorage.baseUrl = url;
+    }
+    else{
+
+      //authenticate using local storage data of login user
+      if($localStorage.loginUser){
+
+        $scope.data.baseUrl = $localStorage.baseUrl;
+        var username = $localStorage.loginUser.username;
+        var password = $localStorage.loginUser.password;
+        var message = 'Please waiting..';
+        progressMessage(message);
+        authenticateUser(username,password);
+      }
     }
 
     $scope.data.baseUrl = $localStorage.baseUrl;
@@ -65,8 +79,8 @@ angular.module('dataCapture', [
     $scope.logOut = function(){
 
       //TODO some logic flow during log out process
-      var message = "log out";
-      progressMessage(message);
+
+      $localStorage.loginUser = {};
       $state.go('login');
     };
 
