@@ -1,5 +1,44 @@
-<ion-view view-title="Profile">
-  <ion-content>
-    <h1>Profile</h1>
-  </ion-content>
-</ion-view>
+<ion-nav-view>
+  <ion-view >
+    <ion-content>
+
+      <div class="row">
+        <div class="col col-12" style="margin-top:10%;text-align: center;margin-bottom:5%;">
+          <h4>iRoad 2.0 Mobile application</h4>
+          <img ng-src="img/logo.png" >
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col col-12">
+          <form ng-submit="login()">
+            <label class="item item-input">
+              <i class="icon ion-person placeholder-icon"></i>
+              <input type="text" placeholder="Username" ng-model="data.username">
+            </label>
+            <label class="item item-input">
+              <i class="icon ion-locked placeholder-icon"></i>
+              <input type="password" placeholder="Password" ng-model="data.password">
+            </label>
+            <button type="submit" class="button button-full button-positive">
+              Login
+            </button>
+          </form>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col col-100">
+          <button class="button button-full button-positive" ng-click="setConfiguration()">
+            Setting
+          </button>
+        </div>
+      </div>
+      <div class="row" ng-if = "data.loading" style="text-align: center;font-size: 14px;">
+        <div class="col col-100">
+          <ion-spinner icon="ios"></ion-spinner>
+        </div>
+      </div>
+
+    </ion-content>
+  </ion-view>
+</ion-nav-view>

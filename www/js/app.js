@@ -4,7 +4,12 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
-angular.module('dataCapture', ['ionic', 'dataCapture.controllers'])
+angular.module('dataCapture', [
+  'ionic',
+  'ionic-toast',
+  'ngStorage',
+  'dataCapture.controllers'
+])
 
   .run(function($ionicPlatform) {
     $ionicPlatform.ready(function() {
@@ -22,8 +27,53 @@ angular.module('dataCapture', ['ionic', 'dataCapture.controllers'])
     });
   })
 
+  .controller('mainController',function($scope,$ionicModal,ionicToast,$localStorage){
+
+    $scope.data = {};
+    var url = 'http://';
+
+    //function for toaster messages
+    function progressMessage(message){
+      ionicToast.show(message, 'bottom', false, 2000);
+    }
+    if(! $localStorage.baseUrl){
+      $localStorage.baseUrl = url;
+    }
+
+    $scope.login = function(){
+
+      progressMessage('login btn');
+    };
+    $ionicModal.fromTemplateUrl('templates/setConfiguration.html', {
+      scope: $scope
+    }).then(function(modal) {
+      $scope.modal = modal;
+      $scope.data.baseUrl = url;
+    });
+
+    $scope.closeSetting = function() {
+      $scope.modal.hide();
+    };
+
+    $scope.setConfiguration = function() {
+      $scope.modal.show();
+    };
+
+    $scope.saveSetting = function(){
+
+      $localStorage.baseUrl = $scope.data.baseUrl;
+      $scope.closeSetting();
+    };
+  })
+
   .config(function($stateProvider, $urlRouterProvider) {
     $stateProvider
+
+      .state('login',{
+        url : '/login',
+        templateUrl : 'templates/login.html',
+        controller : 'mainController'
+      })
 
       .state('app', {
         url: '/app',
@@ -58,5 +108,5 @@ angular.module('dataCapture', ['ionic', 'dataCapture.controllers'])
         }
       });
     // if none of the above states are matched, use this as the fallback
-    $urlRouterProvider.otherwise('/app/data-entry');
+    $urlRouterProvider.otherwise('/login');
   });
