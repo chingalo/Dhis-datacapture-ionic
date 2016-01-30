@@ -7,15 +7,26 @@ angular.module('dataCapture')
     $scope.data = {};
     $scope.data.user = $localStorage.loginUserData;
 
+    //function for toaster messages
+    function progressMessage(message){
+      ionicToast.show(message, 'bottom', false, 2500);
+    }
+
     //checking selected orgUnit
     $scope.$watch('data.orgUnitId', function() {
 
+      $scope.data.dataSetId = null;
+      $scope.data.dataSets = null;
+      $scope.data.loading = true;
       dataSetsServices.getAllDataSets().then(function(dataSets){
 
         $scope.data.dataSets = dataSetsServices.getDataSetsByOrgUnitId($scope.data.orgUnitId,dataSets);
+        $scope.data.loading = false;
       },function(){
 
-        //no data set available
+        var message = 'Data entry form has not been found';
+        progressMessage(message);
+        $scope.data.loading = false;
       });
     });
 

@@ -5,11 +5,11 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
 angular.module('dataCapture', [
-  'ionic',
-  'ionic-toast',
-  'ngStorage',
-  'indexedDB'
-])
+    'ionic',
+    'ionic-toast',
+    'ngStorage',
+    'indexedDB'
+  ])
 
   .run(function($ionicPlatform) {
     $ionicPlatform.ready(function() {
@@ -34,7 +34,7 @@ angular.module('dataCapture', [
 
     //function for toaster messages
     function progressMessage(message){
-      ionicToast.show(message, 'bottom', false, 1500);
+      ionicToast.show(message, 'bottom', false, 2500);
     }
     if(! $localStorage.baseUrl){
 
@@ -45,10 +45,13 @@ angular.module('dataCapture', [
       //authenticate using local storage data of login user
       if($localStorage.loginUser){
 
-        $scope.data.baseUrl = $localStorage.baseUrl;
         var username = $localStorage.loginUser.username;
         var password = $localStorage.loginUser.password;
-        var message = 'Please waiting..';
+        $scope.data.baseUrl = $localStorage.baseUrl;
+        $scope.data.username = username;
+        $scope.data.password = password;
+
+        var message = 'Please waiting, we try to authenticate you to server';
         progressMessage(message);
         authenticateUser(username,password);
       }
@@ -104,7 +107,6 @@ angular.module('dataCapture', [
         useDefaultXhrHeader : false,
         success: function () {
 
-          loadDataSets();
           //call checking if user is available
           Ext.Ajax.request({
             url: base + '/api/me.json',
@@ -118,7 +120,6 @@ angular.module('dataCapture', [
             useDefaultXhrHeader : false,
             success : function(response){
 
-              $scope.data.username = null;
               $scope.data.password = null;
               try{
                 var userData = JSON.parse(response.responseText);
@@ -126,6 +127,8 @@ angular.module('dataCapture', [
                 $localStorage.loginUserData = userData;
                 $localStorage.baseUrl = $scope.data.baseUrl;
 
+                loadDataSets();
+                $scope.data.loading = false;
                 //redirect to landing page for success login
                 $state.go('app.dataEntry');
 
@@ -133,9 +136,9 @@ angular.module('dataCapture', [
                 var message = 'Fail to login, please check your username or password';
                 progressMessage(message);
                 $scope.data.password = null;
+                $scope.data.loading = false;
               }
 
-              $scope.data.loading = false;
               $scope.$apply();
             },
             failure : function(){
@@ -166,26 +169,32 @@ angular.module('dataCapture', [
       /*
        *function to fetching all forms
        */
+      var message = 'Please wait while, we try to Synchronize metadata.';
+      progressMessage(message);
+      $scope.data.loading = true;
+      $scope.$apply();
       dataSetsServices.getAllDataSetsFromServer().then(function(dataSets){
 
         dataSets.forEach(function(dataSet){
           dataSetsServices.getIndividualDataSetFromServer(dataSet.id).then(function(data){
 
             $indexedDB.openStore('dataSets',function(dataSetData){
-              dataSetData.upsert(data).then(function(e){
+              dataSetData.upsert(data).then(function(){
                 //success
+
               },function(){
                 //error
               });
             })
           },function(){
 
-            console.log('fails to load data set : ' + dataSet.id);
           });
-        })
+        });
+        $scope.data.loading = false;
+
       },function(){
 
-        console.log('fails to load all data sets');
+        $scope.data.loading = false;
       });
     }
 
