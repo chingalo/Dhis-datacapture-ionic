@@ -8,6 +8,7 @@ angular.module('dataCapture', [
   'ionic',
   'ionic-toast',
   'ngStorage',
+  'indexedDB'
 ])
 
   .run(function($ionicPlatform) {
@@ -159,7 +160,18 @@ angular.module('dataCapture', [
     }
   })
 
-  .config(function($stateProvider, $urlRouterProvider) {
+  .config(function($stateProvider, $urlRouterProvider,$indexedDBProvider) {
+
+    $indexedDBProvider
+      .connection('Dhis2_Data_Cappture')
+      .upgradeDatabase(1, function(event, db, tx){
+
+        var dataSets = db.createObjectStore('dataSets',{keyPath : 'id'});
+        dataSets.createIndex('id_index','id',{unique : false});
+        dataSets.createIndex('name_index','name',{unique : false});
+
+      });
+
     $stateProvider
 
       .state('login',{
@@ -178,7 +190,8 @@ angular.module('dataCapture', [
         url: '/data-entry',
         views: {
           'menuContent': {
-            templateUrl: 'templates/dataEntry.html'
+            templateUrl: 'templates/dataEntry.html',
+            controller:'dataEntryController'
           }
         }
       })
@@ -196,7 +209,8 @@ angular.module('dataCapture', [
         url: '/profile',
         views: {
           'menuContent': {
-            templateUrl: 'templates/profile.html'
+            templateUrl: 'templates/profile.html',
+            controller : 'userProfileController'
           }
         }
       })

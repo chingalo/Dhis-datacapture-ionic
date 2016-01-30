@@ -1,7 +1,7 @@
 /**
  * Created by joseph on 1/29/16.
  */
-angular.module('')
+angular.module('dataCapture')
   .controller('userProfileController',function($scope,$localStorage){
 
     $scope.data = {};

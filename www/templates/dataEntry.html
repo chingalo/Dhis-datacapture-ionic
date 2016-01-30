@@ -2,7 +2,47 @@
   <ion-content>
     <div class="row">
       <div class="col col-100">
-        Data Entry coming soon!!
+        <div class="card">
+          <div class="item item-text-wrap">
+
+            <div>
+              <b>Organisation Unit</b>
+              <div class="item item-input item-select" >
+                <div class="input-label" >
+                </div>
+                <select ng-model="data.orgUnitId">
+                  <option value="">Choose Org Unit</option>
+                  <option ng-repeat="orgunit in data.user.organisationUnits | orderBy:'orgunit.name'" value = "{{ orgunit.id }}">{{ orgunit.name }}</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <b>Data Entry Form</b>
+              <div class="item item-input item-select" >
+                <div class="input-label" >
+                </div>
+                <select ng-model="data.dataSetId">
+                  <option value="">Choose Form</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <b>Period</b>
+              <div class="item item-input item-select" >
+                <div class="input-label" >
+                </div>
+                <select ng-model="data.period">
+                  <option value="">Select Period</option>
+                  <option ng-if="data.dataSetId" ng-repeat="period in data.periodOption" value = "{{ period.year }}">{{ period.year }}</option>
+                </select>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        forms : {{ data.datasets.length}}
+
       </div>
     </div>
   </ion-content>
