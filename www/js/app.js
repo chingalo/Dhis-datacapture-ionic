@@ -27,7 +27,7 @@ angular.module('dataCapture', [
     });
   })
 
-  .controller('mainController',function($scope,$state,$ionicModal,ionicToast,$localStorage){
+  .controller('mainController',function($scope,$state,$ionicModal,ionicToast,$localStorage,dataSetsServices,$indexedDB){
 
     $scope.data = {};
     var url = 'http://';
@@ -103,6 +103,8 @@ angular.module('dataCapture', [
         withCredentials : true,
         useDefaultXhrHeader : false,
         success: function () {
+
+          loadDataSets();
           //call checking if user is available
           Ext.Ajax.request({
             url: base + '/api/me.json',
@@ -158,6 +160,35 @@ angular.module('dataCapture', [
         }
       });
     }
+
+    function loadDataSets(){
+
+      /*
+       *function to fetching all forms
+       */
+      dataSetsServices.getAllDataSetsFromServer().then(function(dataSets){
+
+        dataSets.forEach(function(dataSet){
+          dataSetsServices.getIndividualDataSetFromServer(dataSet.id).then(function(data){
+
+            $indexedDB.openStore('dataSets',function(dataSetData){
+              dataSetData.upsert(data).then(function(e){
+                //success
+              },function(){
+                //error
+              });
+            })
+          },function(){
+
+            console.log('fails to load data set : ' + dataSet.id);
+          });
+        })
+      },function(){
+
+        console.log('fails to load all data sets');
+      });
+    }
+
   })
 
   .config(function($stateProvider, $urlRouterProvider,$indexedDBProvider) {

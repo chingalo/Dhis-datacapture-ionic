@@ -23,6 +23,7 @@
                 </div>
                 <select ng-model="data.dataSetId">
                   <option value="">Choose Form</option>
+                  <option ng-repeat="dataSet in data.dataSets" value="dataSet.id">{{ dataSet.name }}</option>
                 </select>
               </div>
             </div>
@@ -40,8 +41,6 @@
 
           </div>
         </div>
-
-        forms : {{ data.datasets.length}}
 
       </div>
     </div>

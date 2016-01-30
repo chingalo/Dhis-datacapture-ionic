@@ -5,7 +5,6 @@ angular.module('dataCapture')
   .factory('dataSetsServices',function($http,$q,$localStorage,$indexedDB){
 
     var baseUrl = $localStorage.baseUrl;
-    console.log(baseUrl);
 
     var dataSetsServices = {
 
@@ -25,7 +24,7 @@ angular.module('dataCapture')
       getIndividualDataSetFromServer : function(dataSetId){
 
         var defer = $q.defer();
-        $http.get(baseUrl + '/api/dataSets/'+dataSetId+'.json')
+        $http.get(baseUrl + '/api/dataSets/'+dataSetId+'.json?fields=name,id,organisationUnits,periodType,periodType,formType,dataEntryForm')
           .success(function(results){
 
             defer.resolve(results);
@@ -35,13 +34,36 @@ angular.module('dataCapture')
           });
         return defer.promise;
       },
-      getAllData:function(callback){
+      getAllDataSets:function(){
 
-    },
-      getDataSetById:function(){
+        var defer = $q.defer();
+        $indexedDB.openStore('dataSets',function(dataSetData){
+          dataSetData.getAll().then(function(data){
+            defer.resolve(data);
+          },function(){
+            defer.reject('error');
+          });
+        });
 
+        return defer.promise;
+      },
+      getDataSetsByOrgUnitId : function(orgUnitId,dataSets){
+
+        var orgUnitDataSets = [];
+        dataSets.forEach(function(dataSet){
+          var orgUnits = dataSet.organisationUnits;
+          orgUnits.forEach(function(orgUnit){
+            if(orgUnit.id === orgUnitId){
+              orgUnitDataSets.push({
+                id : dataSet.id,
+                name : dataSet.name
+              })
+            }
+          })
+        });
+
+        return orgUnitDataSets;
       }
-
     };
 
     return dataSetsServices;
