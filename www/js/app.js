@@ -169,7 +169,7 @@ angular.module('dataCapture', [
       /*
        *function to fetching all forms
        */
-      var message = 'Please wait while, we try to Synchronize metadata.';
+      var message = 'Please wait while we try to synchronize with server.';
       progressMessage(message);
       $scope.data.loading = true;
       $scope.$apply();

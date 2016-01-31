@@ -23,7 +23,7 @@
                 </div>
                 <select ng-model="data.dataSetId">
                   <option value="">Choose Form</option>
-                  <option ng-repeat="dataSet in data.dataSets" value="dataSet.id">{{ dataSet.name }}</option>
+                  <option ng-repeat="dataSet in data.dataSets" value="{{ dataSet.id }}">{{ dataSet.name }}</option>
                 </select>
               </div>
             </div>
@@ -39,6 +39,14 @@
               </div>
             </div>
 
+          </div>
+        </div>
+
+        <div class="card" ng-if="data.formSelectVisibility" ng-click="generateDataEntryForm()">
+          <div class="item item-text-wrap">
+            <h2>{{ data.selectedData.dataSet.name}}</h2>
+            <p>Organisation Unit : {{data.selectedData.orgUnit.name}}</p>
+            <p>Period : {{ data.selectedData.period }}</p>
           </div>
         </div>
 

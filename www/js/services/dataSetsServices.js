@@ -54,15 +54,26 @@ angular.module('dataCapture')
           var orgUnits = dataSet.organisationUnits;
           orgUnits.forEach(function(orgUnit){
             if(orgUnit.id === orgUnitId){
-              orgUnitDataSets.push({
-                id : dataSet.id,
-                name : dataSet.name
-              })
+              orgUnitDataSets.push(dataSet);
             }
           })
         });
 
         return orgUnitDataSets;
+      },getDataSetById:function(dataSetId,dataSets){
+
+        var defer = $q.defer();
+        if(dataSetId && dataSets){
+
+          dataSets.forEach(function(dataSet){
+            if(dataSet.id == dataSetId){
+              defer.resolve(dataSet);
+            }
+          })
+        }else{
+          defer.reject('error');
+        }
+        return defer.promise;
       }
     };
 
