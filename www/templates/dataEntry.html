@@ -12,7 +12,7 @@
                 </div>
                 <select ng-model="data.orgUnitId">
                   <option value="">Choose Org Unit</option>
-                  <option ng-repeat="orgunit in data.user.organisationUnits | orderBy:'orgunit.name'" value = "{{ orgunit.id }}">{{ orgunit.name }}</option>
+                  <option ng-repeat="orgunit in data.user.organisationUnits " value = "{{ orgunit.id }}">{{ orgunit.name }}</option>
                 </select>
               </div>
             </div>

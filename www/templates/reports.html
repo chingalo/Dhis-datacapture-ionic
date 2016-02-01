@@ -2,7 +2,35 @@
   <ion-content>
     <div class="row">
       <div class="col col-100">
-        reports coming soon!!
+        <div class="card">
+          <div class="item item-text-wrap">
+
+            <div>
+              <b>Organisation Unit</b>
+              <div class="item item-input item-select" >
+                <div class="input-label" >
+                </div>
+                <select ng-model="data.orgUnitId">
+                  <option value="">Choose Org Unit</option>
+                  <option ng-repeat="orgunit in data.user.organisationUnits " value = "{{ orgunit.id }}">{{ orgunit.name }}</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <b>Period</b>
+              <div class="item item-input item-select" >
+                <div class="input-label" >
+                </div>
+                <select ng-model="data.period">
+                  <option value="">Select Period</option>
+                  <option ng-if="data.orgUnitId" ng-repeat="period in data.periodOption" value = "{{ period.year }}">{{ period.year }}</option>
+                </select>
+              </div>
+            </div>
+
+          </div>
+        </div>
       </div>
     </div>
   </ion-content>

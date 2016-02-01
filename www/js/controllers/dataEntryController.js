@@ -2,7 +2,7 @@
  * Created by joseph on 1/29/16.
  */
 angular.module('dataCapture')
-  .controller('dataEntryController',function($scope,$localStorage,dataSetsServices){
+  .controller('dataEntryController',function($scope,ionicToast,$localStorage,dataSetsServices){
 
     $scope.data = {};
     $scope.data.user = $localStorage.loginUserData;
@@ -23,6 +23,9 @@ angular.module('dataCapture')
 
       $scope.data.dataSetId = null;
       $scope.data.dataSets = null;
+      $scope.data.formSelectVisibility = false;
+      $scope.data.period = null;
+
       $scope.data.loading = true;
       dataSetsServices.getAllDataSets().then(function(dataSets){
 
@@ -40,6 +43,9 @@ angular.module('dataCapture')
     $scope.$watch('data.dataSetId', function() {
 
       $scope.data.loading = true;
+      $scope.data.formSelectVisibility = false;
+      $scope.data.selectedData = null;
+      $scope.data.period = null;
       dataSetsServices.getDataSetById($scope.data.dataSetId,$scope.data.dataSets).then(function(data){
 
         $scope.data.selectedDataSet = data;
@@ -86,7 +92,7 @@ angular.module('dataCapture')
       var year = 2016;
       var period = [];
 
-      for(var i = 0; i < 20; i ++){
+      for(var i = 0; i < 10; i ++){
         period.push({ year : year --});
       }
       $scope.data.periodOption = period;
