@@ -2,7 +2,7 @@
  * Created by joseph on 1/29/16.
  */
 angular.module('dataCapture')
-  .controller('dataEntryController',function($scope,$state,ionicToast,$localStorage,dataSetsServices){
+  .controller('dataEntryController',function($scope,$state,$ionicModal,ionicToast,$localStorage,dataSetsServices){
 
     $scope.data = {};
     $scope.data.user = $localStorage.loginUserData;
@@ -60,22 +60,7 @@ angular.module('dataCapture')
     //checking changes on period inputs
     $scope.$watch('data.period', function() {
 
-      if($scope.data.selectedDataSet){
 
-        var dataElements = $scope.data.selectedDataSet.dataElements;
-        $scope.data.selectedData = {
-          orgUnit : getSelectedOrgUnit($scope.data.orgUnitId),
-          dataSet : $scope.data.selectedDataSet,
-          period : $scope.data.period,
-          numberOfFields : dataElements.length
-        };
-      }
-
-      if($scope.data.period){
-
-        $scope.data.formSelectVisibility = true;
-        $localStorage.dataEntryData = $scope.data.selectedData;
-      }
 
     });
 
@@ -86,6 +71,39 @@ angular.module('dataCapture')
     $scope.generateCustomDataEntryForm = function(){
       console.log('custom');
       $state.go('app.dataEntryForm');
+    };
+
+    $ionicModal.fromTemplateUrl('templates/modal.html', {
+      scope: $scope
+    }).then(function(modal) {
+      $scope.modal = modal;
+    });
+
+    $scope.close = function() {
+      $scope.modal.hide();
+    };
+
+    $scope.periodSelect = function(){
+
+      $scope.close();
+      if($scope.data.selectedDataSet){
+
+        var dataElements = $scope.data.selectedDataSet.dataElements;
+        $scope.data.selectedData = {
+          orgUnit : getSelectedOrgUnit($scope.data.orgUnitId),
+          dataSet : $scope.data.selectedDataSet,
+          period : $scope.data.period,
+          numberOfFields : dataElements.length
+        };
+        $scope.data.formSelectVisibility = true;
+        $localStorage.dataEntryData = $scope.data.selectedData;
+      }
+    };
+
+    $scope.openModal = function(modalType){
+
+      $scope.data.modalType = modalType;
+      $scope.modal.show();
     };
 
     function getSelectedOrgUnit(orgUnitId){

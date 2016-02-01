@@ -8,7 +8,8 @@ angular.module('dataCapture', [
     'ionic',
     'ionic-toast',
     'ngStorage',
-    'indexedDB'
+    'indexedDB',
+    'ngSanitize'
   ])
 
   .run(function($ionicPlatform) {
