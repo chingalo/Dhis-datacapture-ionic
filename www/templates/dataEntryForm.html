@@ -1,0 +1,15 @@
+<ion-view view-title="">
+  <ion-content>
+    <div class="row">
+      <div class="col col-100">
+        <div class="card">
+          <div class="item item-text-wrap">
+            <h2>{{  data.selectedDataEntryForm.dataSet.name }}</h2>
+            <div class="col col-100" ng-bind-html="data.selectedDataEntryForm.dataSet.dataEntryForm.htmlCode "></div>
+            {{ }}
+          </div>
+        </div>
+
+    </div>
+  </ion-content>
+</ion-view>

@@ -95,6 +95,7 @@ angular.module('dataCapture', [
       $scope.data.loading =true;
 
       var base = $scope.data.baseUrl;
+      $localStorage.baseUrl = base;
       Ext.Ajax.request({
         url : base + '/dhis-web-commons-security/login.action?failed=false',
         callbackKey : 'callback',
@@ -125,7 +126,6 @@ angular.module('dataCapture', [
                 var userData = JSON.parse(response.responseText);
                 $localStorage.loginUser = {'username' : $username,'password':$password};
                 $localStorage.loginUserData = userData;
-                $localStorage.baseUrl = $scope.data.baseUrl;
 
                 loadDataSets();
                 $scope.data.loading = false;
@@ -235,6 +235,15 @@ angular.module('dataCapture', [
           }
         }
       })
+      .state('app.dataEntryForm', {
+        url: '/data-entry-form',
+        views: {
+          'menuContent': {
+            templateUrl: 'templates/dataEntryForm.html',
+            controller:'dataEntryController'
+          }
+        }
+      })
 
       .state('app.reports', {
         url: '/reports',
@@ -260,7 +269,8 @@ angular.module('dataCapture', [
         url: '/settings',
         views: {
           'menuContent': {
-            templateUrl: 'templates/settings.html'
+            templateUrl: 'templates/settings.html',
+            controller : 'settingController'
           }
         }
       });

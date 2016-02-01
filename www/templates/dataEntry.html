@@ -42,11 +42,20 @@
           </div>
         </div>
 
-        <div class="card" ng-if="data.formSelectVisibility" ng-click="generateDataEntryForm()">
+        <div class="card" ng-if="data.formSelectVisibility" >
           <div class="item item-text-wrap">
             <h2>{{ data.selectedData.dataSet.name}}</h2>
             <p>Organisation Unit : {{data.selectedData.orgUnit.name}}</p>
             <p>Period : {{ data.selectedData.period }}</p>
+            <p>Number Of Fields : {{ data.selectedData.numberOfFields}}</p>
+            <div class="row">
+              <div class="col col-50">
+                <button class="button button-full button-positive" ng-click="generateDefaultDataEntryForm()">Default</button>
+              </div>
+              <div class="col col-50">
+                <button class="button button-full button-positive" ng-click="generateCustomDataEntryForm()">Custom</button>
+              </div>
+            </div>
           </div>
         </div>
 

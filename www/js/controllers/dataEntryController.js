@@ -2,15 +2,17 @@
  * Created by joseph on 1/29/16.
  */
 angular.module('dataCapture')
-  .controller('dataEntryController',function($scope,ionicToast,$localStorage,dataSetsServices){
+  .controller('dataEntryController',function($scope,$state,ionicToast,$localStorage,dataSetsServices){
 
     $scope.data = {};
     $scope.data.user = $localStorage.loginUserData;
     $scope.data.selectedData = {};
     $scope.data.formSelectVisibility = false;
+
     if($localStorage.dataEntryData){
 
       $scope.data.selectedData = $localStorage.dataEntryData;
+      $scope.data.selectedDataEntryForm = $scope.data.selectedData;
     }
 
     //function for toaster messages
@@ -58,11 +60,17 @@ angular.module('dataCapture')
     //checking changes on period inputs
     $scope.$watch('data.period', function() {
 
-      $scope.data.selectedData = {
-        orgUnit : getSelectedOrgUnit($scope.data.orgUnitId),
-        dataSet : $scope.data.selectedDataSet,
-        period : $scope.data.period
-      };
+      if($scope.data.selectedDataSet){
+
+        var dataElements = $scope.data.selectedDataSet.dataElements;
+        $scope.data.selectedData = {
+          orgUnit : getSelectedOrgUnit($scope.data.orgUnitId),
+          dataSet : $scope.data.selectedDataSet,
+          period : $scope.data.period,
+          numberOfFields : dataElements.length
+        };
+      }
+
       if($scope.data.period){
 
         $scope.data.formSelectVisibility = true;
@@ -70,9 +78,14 @@ angular.module('dataCapture')
       }
 
     });
-    $scope.generateDataEntryForm = function(){
 
-      console.log($localStorage.dataEntryData.period);
+    $scope.generateDefaultDataEntryForm = function(){
+      console.log('Default');
+      $state.go('app.dataEntryForm');
+    };
+    $scope.generateCustomDataEntryForm = function(){
+      console.log('custom');
+      $state.go('app.dataEntryForm');
     };
 
     function getSelectedOrgUnit(orgUnitId){
