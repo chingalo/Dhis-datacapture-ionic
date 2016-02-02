@@ -6,18 +6,24 @@
           <div class="item item-text-wrap">
             <h2>{{  data.selectedDataEntryForm.dataSet.name }}</h2>
 
-            <div class="row" ng-if = "data.selectedDataEntryForm.formType = 'DEFAULT' ">
-              <div class="col col-100"></div>
+            <div class="row" ng-if = "data.selectedDataEntryForm.formType == 'DEFAULT' ">
+              <div class="col col-100">
+                {{data.selectedDataEntryForm.dataSet.dataElements |json}}
+              </div>
             </div>
 
 
-            <div class="row" ng-if = "data.selectedDataEntryForm.formType = 'SECTION' ">
-              <div class="col col-100"></div>
+            <div class="row" ng-if = "data.selectedDataEntryForm.formType == 'SECTION' ">
+              <div class="col col-100">
+                {{ data.selectedDataEntryForm.dataSet.sections |json}}
+              </div>
             </div>
 
 
-            <div class="row" ng-if = "data.selectedDataEntryForm.formType = 'CUSTOM' ">
-              <div class="col col-100"></div>
+            <div class="row" ng-if = "data.selectedDataEntryForm.formType == 'CUSTOM' ">
+              <div class="col col-100">
+                Still on progress ....
+              </div>
             </div>
 
 

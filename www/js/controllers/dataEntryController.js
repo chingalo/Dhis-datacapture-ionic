@@ -13,7 +13,11 @@ angular.module('dataCapture')
     if($localStorage.dataEntryData){
 
       $scope.data.selectedData = $localStorage.dataEntryData;
-      $scope.data.selectedDataEntryForm = $scope.data.selectedData;
+      $scope.data.selectedDataEntryForm = $localStorage.dataEntryData;
+    }else{
+
+      $scope.data.selectedDataEntryForm = {};
+      $scope.data.selectedData = {};
     }
 
     //function for toaster messages
@@ -62,8 +66,7 @@ angular.module('dataCapture')
 
     $scope.generateDefaultDataEntryForm = function(){
 
-      $scope.data.selectedDataEntryForm.formType = 'DEFAULT';
-      $localStorage.dataEntryData = $scope.data.selectedDataEntryForm;
+      $localStorage.dataEntryData.formType = 'DEFAULT';
       $state.go('app.dataEntryForm');
     };
     $scope.generateCustomDataEntryForm = function(){
@@ -71,12 +74,10 @@ angular.module('dataCapture')
       var checkResults = checkingAndSetDataEntryForm('CUSTOM');
       if(checkResults){
 
-        $scope.data.selectedDataEntryForm.formType = 'CUSTOM';
-        $localStorage.dataEntryData = $scope.data.selectedDataEntryForm;
+        $localStorage.dataEntryData.formType = 'CUSTOM';
         $state.go('app.dataEntryForm');
       }else{
-
-        var message = 'Data Entry form has no CUSTOM form';
+        var message = 'Custom data entry form for ' +  $localStorage.dataEntryData.dataSet.name + ' form has not been defined';
         progressMessage(message);
       }
     };
@@ -85,12 +86,10 @@ angular.module('dataCapture')
       var checkResults = checkingAndSetDataEntryForm('SECTION');
       if(checkResults){
 
-        $scope.data.selectedDataEntryForm.formType = 'SECTION';
-        $localStorage.dataEntryData = $scope.data.selectedDataEntryForm;
+        $localStorage.dataEntryData.formType = 'SECTION';
         $state.go('app.dataEntryForm');
       }else{
-
-        var message = 'Data Entry form has no section';
+        var message = 'There are no form section for ' + $localStorage.dataEntryData.dataSet.name + ' that has been set';
         progressMessage(message);
       }
     };
@@ -116,7 +115,6 @@ angular.module('dataCapture')
           dataSet : $scope.data.selectedDataSet,
           period : $scope.data.period,
           numberOfFields : dataElements.length,
-          numberOfSections : $scope.data.selectedDataSet.sections.length,
           formType : ''
         };
         $scope.data.formSelectVisibility = true;
@@ -145,13 +143,16 @@ angular.module('dataCapture')
     function checkingAndSetDataEntryForm(type){
 
       var dataSet = $localStorage.dataEntryData.dataSet;
-      var numberOfSections = $localStorage.dataEntryData.numberOfFields;
+      var numberOfSections = dataSet.sections.length;
       var results = false;
       if(type == 'SECTION'){
+
         if(numberOfSections > 0){
           results = true;
         }
       }else{
+
+        $localStorage.dataEntryData.numberOfSections = 0;
         if(dataSet.formType == type){
           results = true;
         }

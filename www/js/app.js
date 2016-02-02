@@ -78,6 +78,7 @@ angular.module('dataCapture', [
       //TODO some logic flow during log out process
 
       $localStorage.loginUser = null;
+      $localStorage.dataEntryData = null;
       $state.go('login');
     };
 
