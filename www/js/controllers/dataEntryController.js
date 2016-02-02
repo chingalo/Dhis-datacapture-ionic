@@ -23,7 +23,6 @@ angular.module('dataCapture')
         var selectedSections = $localStorage.dataEntryData.dataSet.sections;
         var counter = 0;
         selectedSections.forEach(function(selectedSection){
-          var data = [];
           counter ++;
           sectionsServices.getAllDataEntryFormSection().then(function(sections){
             sections.forEach(function(section){
@@ -89,6 +88,12 @@ angular.module('dataCapture')
 
         $scope.data.loading = false;
       })
+    });
+
+    //checking for data value changes
+    $scope.$watch('data.dataValues',function(){
+
+      console.log('changed value : ' + JSON.stringify($scope.data.dataValues));
     });
 
     $scope.generateDefaultDataEntryForm = function(){
