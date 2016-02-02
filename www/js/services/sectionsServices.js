@@ -33,8 +33,8 @@ angular.module('dataCapture')
         return defer.promise;
       },getAllDataEntryFormSection : function(){
         var defer = $q.defer();
-        $indexedDB.openStore('sections',function(dataSetData){
-          dataSetData.getAll().then(function(data){
+        $indexedDB.openStore('sections',function(sectionsData){
+          sectionsData.getAll().then(function(data){
             defer.resolve(data);
           },function(){
             defer.reject('error');

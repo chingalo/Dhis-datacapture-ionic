@@ -10,13 +10,15 @@ angular.module('dataCapture')
     $scope.data.formSelectVisibility = false;
     $scope.data.dataValues ={};
     $scope.data.sectionsForm =[];
+    $scope.data.loading = false;
 
 
     if($localStorage.dataEntryData){
 
+      $scope.data.loading = true;
       $scope.data.selectedData = $localStorage.dataEntryData;
       $scope.data.selectedDataEntryForm = $localStorage.dataEntryData;
-
+      $scope.data.loading = false;
       if( $localStorage.dataEntryData.formType == 'SECTION'){
 
         $scope.data.loading = true;
@@ -37,11 +39,10 @@ angular.module('dataCapture')
             //error
           })
         });
-
-
       }
     }else{
 
+      $scope.data.loading = false;
       $scope.data.selectedDataEntryForm = {};
       $scope.data.selectedData = {};
     }
@@ -82,31 +83,54 @@ angular.module('dataCapture')
       dataSetsServices.getDataSetById($scope.data.dataSetId,$scope.data.dataSets)
         .then(function(data){
 
-        $scope.data.selectedDataSet = data;
-        $scope.data.loading = false;
-      },function(){
+          $scope.data.selectedDataSet = data;
+          $scope.data.loading = false;
+        },function(){
 
-        $scope.data.loading = false;
-      })
+          $scope.data.loading = false;
+        })
     });
 
-    //checking for data value changes
-    $scope.$watch('data.dataValues',function(){
+    $scope.changeDataEntryForm = function(){
 
-      console.log('changed value : ' + JSON.stringify($scope.data.dataValues));
-    });
+      var ou = $localStorage.dataEntryData.orgUnit.id;
+      var co = $localStorage.dataEntryData.dataSet.categoryCombo.id;
+      var pe = $localStorage.dataEntryData.period;
+
+      for(var key in $scope.data.dataValues){
+        var data = {
+          "id":key + '-' +co+ '-' +pe+ '-' +ou,
+          "dataValue":{
+            "de": key,
+            "co": ou,
+            "pe": pe,
+            "value": $scope.data.dataValues[key]
+          },
+          "isSaved":false
+        };
+
+        dataSetsServices.saveDataSetDataValue(data);
+      }
+    };
 
     $scope.generateDefaultDataEntryForm = function(){
 
+      var message = "Please wait...";
+      ionicToast.show(message, 'bottom', false, 2500);
       $localStorage.dataEntryData.formType = 'DEFAULT';
+      $scope.data.loading = false;
       $state.go('app.dataEntryForm');
     };
     $scope.generateCustomDataEntryForm = function(){
 
+      $scope.data.loading = true;
       var checkResults = checkingAndSetDataEntryForm('CUSTOM');
       if(checkResults){
 
+        var message = "Please wait...";
+        ionicToast.show(message, 'bottom', false, 2500);
         $localStorage.dataEntryData.formType = 'CUSTOM';
+        $scope.data.loading = false;
         $state.go('app.dataEntryForm');
       }else{
         var message = 'Custom data entry form for ' +  $localStorage.dataEntryData.dataSet.name + ' form has not been defined';
@@ -115,10 +139,14 @@ angular.module('dataCapture')
     };
     $scope.generateSectionDataEntryForm = function(){
 
+      $scope.data.loading = true;
+      var message = "Please wait...";
+      ionicToast.show(message, 'bottom', false, 2500);
       var checkResults = checkingAndSetDataEntryForm('SECTION');
       if(checkResults){
 
         $localStorage.dataEntryData.formType = 'SECTION';
+        $scope.data.loading = false;
         $state.go('app.dataEntryForm');
       }else{
         var message = 'There are no form section for ' + $localStorage.dataEntryData.dataSet.name + ' that has been set';
@@ -246,11 +274,11 @@ angular.module('dataCapture')
     };
     $scope.hasDataSets = function(dataElement){
 
-     if(dataElement.optionSet != undefined){
-       return true;
-     }else{
-       return false;
-     }
+      if(dataElement.optionSet != undefined){
+        return true;
+      }else{
+        return false;
+      }
     };
     $scope.getOptionSets = function(dataElement){
       if(dataElement.optionSet){

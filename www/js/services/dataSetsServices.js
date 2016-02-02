@@ -74,6 +74,9 @@ angular.module('dataCapture')
           defer.reject('error');
         }
         return defer.promise;
+      },saveDataSetDataValue:function(data){
+
+        console.log(JSON.stringify(data));
       }
     };
 

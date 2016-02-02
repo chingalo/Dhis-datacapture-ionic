@@ -122,8 +122,13 @@ angular.module('dataCapture', [
                 $localStorage.loginUser = {'username' : $username,'password':$password};
                 $localStorage.loginUserData = userData;
 
-                loadDataSets();
+                addAssignedOrgUnit($localStorage.loginUserData.organisationUnits);
+
+
                 $scope.data.loading = false;
+                var message = 'Please wait while we try to synchronize with server.';
+                ionicToast.show(message, 'bottom', false, 4000);
+                loadDataSets();
                 //redirect to landing page for success login
                 $state.go('app.dataEntry');
 
@@ -184,8 +189,6 @@ angular.module('dataCapture', [
      *function to fetching all forms
      */
     function loadDataSets(){
-      var message = 'Please wait while we try to synchronize with server.';
-      progressMessage(message);
 
       //load all data entry sections forms
       loadDataEntrySections();
@@ -212,12 +215,35 @@ angular.module('dataCapture', [
         $scope.data.loading = false;
       });
     }
+
+    function addAssignedOrgUnit(orgunits){
+      deleteAssignedOrgUnit();
+      orgunits.forEach(function(orgunit){
+        $indexedDB.openStore('orgUnits',function(orgUnitsData){
+          orgUnitsData.upsert(orgunit).then(function(){
+            //success
+          },function(){
+            //error
+          });
+        })
+      });
+    }
+    function deleteAssignedOrgUnit(){
+      $indexedDB.openStore('orgUnits',function(orgUnits){
+        orgUnits.clear().then(function(){
+          //success
+        },function(){
+          //error
+        })
+      })
+    }
+
   })
 
   .config(function($stateProvider, $urlRouterProvider,$indexedDBProvider) {
 
     $indexedDBProvider
-      .connection('Dhis2_Data_Capture')
+      .connection('Dhis2_Data_Capture_v1')
       .upgradeDatabase(1, function(event, db, tx){
 
         var dataSets = db.createObjectStore('dataSets',{keyPath : 'id'});
@@ -229,6 +255,9 @@ angular.module('dataCapture', [
         dataSets.createIndex('name_index','name',{unique : false});
 
         var dataSets = db.createObjectStore('orgUnits',{keyPath : 'id'});
+        dataSets.createIndex('id_index','id',{unique : false});
+
+        var dataSets = db.createObjectStore('dataValues',{keyPath : 'id'});
         dataSets.createIndex('id_index','id',{unique : false});
 
       });
@@ -297,4 +326,5 @@ angular.module('dataCapture', [
       });
     // if none of the above states are matched, use this as the fallback
     $urlRouterProvider.otherwise('/login');
-  });
+  })
+  ;
