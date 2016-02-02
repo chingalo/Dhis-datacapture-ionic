@@ -5,7 +5,22 @@
         <div class="card">
           <div class="item item-text-wrap">
             <h2>{{  data.selectedDataEntryForm.dataSet.name }}</h2>
-            <div class="col col-100" ng-bind-html="data.selectedDataEntryForm.dataSet.dataEntryForm.htmlCode "></div>
+
+            <div class="row" ng-if = "data.selectedDataEntryForm.formType = 'DEFAULT' ">
+              <div class="col col-100"></div>
+            </div>
+
+
+            <div class="row" ng-if = "data.selectedDataEntryForm.formType = 'SECTION' ">
+              <div class="col col-100"></div>
+            </div>
+
+
+            <div class="row" ng-if = "data.selectedDataEntryForm.formType = 'CUSTOM' ">
+              <div class="col col-100"></div>
+            </div>
+
+
           </div>
         </div>
       </div>

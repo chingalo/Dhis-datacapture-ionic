@@ -17,7 +17,7 @@ angular.module('dataCapture')
 
     //function for toaster messages
     function progressMessage(message){
-      ionicToast.show(message, 'bottom', false, 2500);
+      ionicToast.show(message, 'top', false, 2500);
     }
 
     //checking changes on selected orgUnit
@@ -48,7 +48,8 @@ angular.module('dataCapture')
       $scope.data.formSelectVisibility = false;
       $scope.data.selectedData = null;
       $scope.data.period = null;
-      dataSetsServices.getDataSetById($scope.data.dataSetId,$scope.data.dataSets).then(function(data){
+      dataSetsServices.getDataSetById($scope.data.dataSetId,$scope.data.dataSets)
+        .then(function(data){
 
         $scope.data.selectedDataSet = data;
         $scope.data.loading = false;
@@ -57,20 +58,40 @@ angular.module('dataCapture')
         $scope.data.loading = false;
       })
     });
-    //checking changes on period inputs
-    $scope.$watch('data.period', function() {
-
-
-
-    });
 
     $scope.generateDefaultDataEntryForm = function(){
-      console.log('Default');
+
+      $scope.data.selectedDataEntryForm.formType = 'DEFAULT';
+      $localStorage.dataEntryData = $scope.data.selectedDataEntryForm;
       $state.go('app.dataEntryForm');
     };
     $scope.generateCustomDataEntryForm = function(){
-      console.log('custom');
-      $state.go('app.dataEntryForm');
+
+      var checkResults = checkingAndSetDataEntryForm('CUSTOM');
+      if(checkResults){
+
+        $scope.data.selectedDataEntryForm.formType = 'CUSTOM';
+        $localStorage.dataEntryData = $scope.data.selectedDataEntryForm;
+        $state.go('app.dataEntryForm');
+      }else{
+
+        var message = 'Data Entry form has no CUSTOM form';
+        progressMessage(message);
+      }
+    };
+    $scope.generateSectionDataEntryForm = function(){
+
+      var checkResults = checkingAndSetDataEntryForm('SECTION');
+      if(checkResults){
+
+        $scope.data.selectedDataEntryForm.formType = 'SECTION';
+        $localStorage.dataEntryData = $scope.data.selectedDataEntryForm;
+        $state.go('app.dataEntryForm');
+      }else{
+
+        var message = 'Data Entry form has no section';
+        progressMessage(message);
+      }
     };
 
     $ionicModal.fromTemplateUrl('templates/modal.html', {
@@ -93,7 +114,9 @@ angular.module('dataCapture')
           orgUnit : getSelectedOrgUnit($scope.data.orgUnitId),
           dataSet : $scope.data.selectedDataSet,
           period : $scope.data.period,
-          numberOfFields : dataElements.length
+          numberOfFields : dataElements.length,
+          numberOfSections : $scope.data.selectedDataSet.sections.length,
+          formType : ''
         };
         $scope.data.formSelectVisibility = true;
         $localStorage.dataEntryData = $scope.data.selectedData;
@@ -116,6 +139,23 @@ angular.module('dataCapture')
         }
       });
       return selectedOrgUnit;
+    }
+
+    function checkingAndSetDataEntryForm(type){
+
+      var dataSet = $localStorage.dataEntryData.dataSet;
+      var numberOfSections = $localStorage.dataEntryData.numberOfFields;
+      var results = false;
+      if(type == 'SECTION'){
+        if(numberOfSections > 0){
+          results = true;
+        }
+      }else{
+        if(dataSet.formType == type){
+          results = true;
+        }
+      }
+      return results;
     }
 
     periodOption();

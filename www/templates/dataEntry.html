@@ -50,17 +50,22 @@
             <p>Organisation Unit : {{data.selectedData.orgUnit.name}}</p>
             <p>Period : {{ data.selectedData.period }}</p>
             <p>Number Of Fields : {{ data.selectedData.numberOfFields}}</p>
-            <div class="row">
-              <div class="col col-50">
-                <button class="button button-full button-positive" ng-click="generateDefaultDataEntryForm()">Default</button>
-              </div>
-              <div class="col col-50">
-                <button class="button button-full button-positive" ng-click="generateCustomDataEntryForm()">Custom</button>
-              </div>
-            </div>
+
           </div>
         </div>
 
+      </div>
+    </div>
+
+    <div class="row" ng-if="data.formSelectVisibility">
+      <div class="col col-33">
+        <button class="button button-full button-positive" ng-click="generateDefaultDataEntryForm()">Default</button>
+      </div>
+      <div class="col col-33">
+        <button class="button button-full button-positive" ng-click="generateSectionDataEntryForm()">Section</button>
+      </div>
+      <div class="col col-33">
+        <button class="button button-full button-positive" ng-click="generateCustomDataEntryForm()">Custom</button>
       </div>
     </div>
 
