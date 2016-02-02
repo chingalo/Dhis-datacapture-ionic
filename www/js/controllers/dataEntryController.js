@@ -9,12 +9,38 @@ angular.module('dataCapture')
     $scope.data.selectedData = {};
     $scope.data.formSelectVisibility = false;
     $scope.data.dataValues ={};
+    $scope.data.sectionsForm =[];
 
 
     if($localStorage.dataEntryData){
 
       $scope.data.selectedData = $localStorage.dataEntryData;
       $scope.data.selectedDataEntryForm = $localStorage.dataEntryData;
+
+      if( $localStorage.dataEntryData.formType == 'SECTION'){
+
+        $scope.data.loading = true;
+        var selectedSections = $localStorage.dataEntryData.dataSet.sections;
+        var counter = 0;
+        selectedSections.forEach(function(selectedSection){
+          var data = [];
+          counter ++;
+          sectionsServices.getAllDataEntryFormSection().then(function(sections){
+            sections.forEach(function(section){
+              if(selectedSection.id == section.id){
+                $scope.data.sectionsForm.push(section);
+                if(counter == selectedSections.length){
+                  $scope.data.loading = false;
+                }
+              }
+            })
+          },function(){
+            //error
+          })
+        });
+
+
+      }
     }else{
 
       $scope.data.selectedDataEntryForm = {};

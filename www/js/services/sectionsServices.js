@@ -31,6 +31,17 @@ angular.module('dataCapture')
             defer.reject('error');
           });
         return defer.promise;
+      },getAllDataEntryFormSection : function(){
+        var defer = $q.defer();
+        $indexedDB.openStore('sections',function(dataSetData){
+          dataSetData.getAll().then(function(data){
+            defer.resolve(data);
+          },function(){
+            defer.reject('error');
+          });
+        });
+
+        return defer.promise;
       }
     };
 

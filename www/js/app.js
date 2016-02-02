@@ -79,6 +79,7 @@ angular.module('dataCapture', [
 
       $localStorage.loginUser = null;
       $localStorage.dataEntryData = null;
+      $localStorage.loginUserData = null;
       $state.go('login');
     };
 
