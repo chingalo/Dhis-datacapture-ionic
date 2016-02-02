@@ -2,12 +2,13 @@
  * Created by joseph on 1/29/16.
  */
 angular.module('dataCapture')
-  .controller('dataEntryController',function($scope,$state,$ionicModal,ionicToast,$localStorage,dataSetsServices){
+  .controller('dataEntryController',function($scope,$indexedDB,$state,$ionicModal,ionicToast,$localStorage,dataSetsServices,sectionsServices){
 
     $scope.data = {};
     $scope.data.user = $localStorage.loginUserData;
     $scope.data.selectedData = {};
     $scope.data.formSelectVisibility = false;
+
 
     if($localStorage.dataEntryData){
 

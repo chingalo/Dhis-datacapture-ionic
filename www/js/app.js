@@ -28,7 +28,7 @@ angular.module('dataCapture', [
     });
   })
 
-  .controller('mainController',function($scope,$state,$ionicModal,ionicToast,$localStorage,dataSetsServices,$indexedDB){
+  .controller('mainController',function($scope,$state,$ionicModal,ionicToast,$localStorage,dataSetsServices,sectionsServices,$indexedDB){
 
     $scope.data = {};
     var url = 'http://';
@@ -61,28 +61,20 @@ angular.module('dataCapture', [
     $scope.data.baseUrl = $localStorage.baseUrl;
 
     $scope.login = function(){
-
       if($scope.data.baseUrl){
-
         if($scope.data.username && $scope.data.password){
-
           authenticateUser($scope.data.username,$scope.data.password);
-
         }else{
-
           var message = 'Please Enter both username and password.';
           progressMessage(message);
         }
       }else{
-
         var message = 'Please Enter server URL.';
         progressMessage(message);
       }
-
     };
 
     $scope.logOut = function(){
-
       //TODO some logic flow during log out process
 
       $localStorage.loginUser = null;
@@ -165,24 +157,44 @@ angular.module('dataCapture', [
       });
     }
 
-    function loadDataSets(){
+    function loadDataEntrySections(){
 
-      /*
-       *function to fetching all forms
-       */
+      sectionsServices.getAllSectionsFromServer()
+        .then(function(sections){
+          sections.forEach(function(section){
+            sectionsServices.getIndividualSectionFromServer(section.id)
+              .then(function(data){
+                $indexedDB.openStore('sections',function(dataSetData){
+                  dataSetData.upsert(data).then(function(){
+                    //success
+
+                  },function(){
+                    //error
+                  });
+                });
+              },function(){
+                //error
+              });
+          });
+        },function(){});
+    }
+    /*
+     *function to fetching all forms
+     */
+    function loadDataSets(){
       var message = 'Please wait while we try to synchronize with server.';
       progressMessage(message);
+
+      //load all data entry sections forms
+      loadDataEntrySections();
       $scope.data.loading = true;
       $scope.$apply();
       dataSetsServices.getAllDataSetsFromServer().then(function(dataSets){
-
         dataSets.forEach(function(dataSet){
           dataSetsServices.getIndividualDataSetFromServer(dataSet.id).then(function(data){
-
             $indexedDB.openStore('dataSets',function(dataSetData){
               dataSetData.upsert(data).then(function(){
                 //success
-
               },function(){
                 //error
               });
@@ -198,18 +210,24 @@ angular.module('dataCapture', [
         $scope.data.loading = false;
       });
     }
-
   })
 
   .config(function($stateProvider, $urlRouterProvider,$indexedDBProvider) {
 
     $indexedDBProvider
-      .connection('Dhis2_Data_Cappture')
+      .connection('Dhis2_Data_Capture')
       .upgradeDatabase(1, function(event, db, tx){
 
         var dataSets = db.createObjectStore('dataSets',{keyPath : 'id'});
         dataSets.createIndex('id_index','id',{unique : false});
         dataSets.createIndex('name_index','name',{unique : false});
+
+        var dataSets = db.createObjectStore('sections',{keyPath : 'id'});
+        dataSets.createIndex('id_index','id',{unique : false});
+        dataSets.createIndex('name_index','name',{unique : false});
+
+        var dataSets = db.createObjectStore('orgUnits',{keyPath : 'id'});
+        dataSets.createIndex('id_index','id',{unique : false});
 
       });
 

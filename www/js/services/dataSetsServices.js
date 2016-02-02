@@ -11,7 +11,7 @@ angular.module('dataCapture')
       getAllDataSetsFromServer :function(){
 
         var defer = $q.defer();
-        $http.get(baseUrl + '/api/dataSets.json?paging=false')
+        $http.get(baseUrl + '/api/dataSets.json?paging=false&fields=id')
           .success(function(results){
 
             defer.resolve(results.dataSets);
