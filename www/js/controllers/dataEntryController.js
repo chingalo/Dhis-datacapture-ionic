@@ -8,6 +8,7 @@ angular.module('dataCapture')
     $scope.data.user = $localStorage.loginUserData;
     $scope.data.selectedData = {};
     $scope.data.formSelectVisibility = false;
+    $scope.data.dataValues ={};
 
 
     if($localStorage.dataEntryData){
@@ -94,6 +95,11 @@ angular.module('dataCapture')
       }
     };
 
+    $scope.changePeriodInterval = function(type){
+
+      console.log(type);
+    };
+
     $ionicModal.fromTemplateUrl('templates/modal.html', {
       scope: $scope
     }).then(function(modal) {
@@ -170,5 +176,60 @@ angular.module('dataCapture')
       }
       $scope.data.periodOption = period;
     }
+
+    //flexibility for form
+    $scope.isInteger = function(key){
+      if(key == "NUMBER"){
+        return true;
+      }else{
+        return false;
+      }
+    };
+    $scope.isIntegerZeroOrPositive = function(key){
+      if(key == "INTEGER_ZERO_OR_POSITIVE"){
+        return true;
+      }else{
+        return false;
+      }
+    };
+    $scope.isDate = function(key){
+      if(key == "DATE"){
+        return true;
+      }else{
+        return false;
+      }
+    };
+    $scope.isString = function(key){
+      if(key == "TEXT"){
+        return true;
+      }else{
+        return false;
+      }
+    };
+    $scope.isBoolean = function(key){
+      if(key == "BOOLEAN"){
+        return true;
+      }else{
+        return false;
+      }
+    };
+    $scope.hasDataSets = function(dataElement){
+
+     if(dataElement.optionSet != undefined){
+       return true;
+     }else{
+       return false;
+     }
+    };
+    $scope.getOptionSets = function(dataElement){
+      if(dataElement.optionSet){
+        return dataElement.optionSet.options;
+      }else{
+        return false;
+      }
+
+    };
+
+
 
   });

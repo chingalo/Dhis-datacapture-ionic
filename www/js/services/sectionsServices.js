@@ -9,7 +9,7 @@ angular.module('dataCapture')
     var sectionsServices = {
       getAllSectionsFromServer : function(){
         var defer = $q.defer();
-        $http.get(baseUrl + '/api/sections.json?paging=false&fields=name,id')
+        $http.get(baseUrl + '/api/sections.json?paging=false&fields=id')
           .success(function(results){
 
             defer.resolve(results.sections);
@@ -22,7 +22,7 @@ angular.module('dataCapture')
       getIndividualSectionFromServer : function(sectionId){
 
         var defer = $q.defer();
-        $http.get(baseUrl + '/api/sections/'+sectionId+'.json?paging=false&fields=dataSet,id,name,indicators,dataElements[id,valueType,name,created,lastUpdated,]')
+        $http.get(baseUrl + '/api/sections/'+sectionId+'.json?paging=false&fields=dataSet,id,name,indicators,dataElements[id,valueType,name,created,lastUpdated,optionSet[name,options]]')
           .success(function(results){
 
             defer.resolve(results);

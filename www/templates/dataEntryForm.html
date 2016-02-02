@@ -6,10 +6,63 @@
           <div class="item item-text-wrap">
             <h2>{{  data.selectedDataEntryForm.dataSet.name }}</h2>
 
-            <div class="row" ng-if = "data.selectedDataEntryForm.formType == 'DEFAULT' ">
-              <div class="col col-100">
-                {{data.selectedDataEntryForm.dataSet.dataElements |json}}
+            <div ng-if = "data.selectedDataEntryForm.formType == 'DEFAULT' ">
+
+              <div ng-repeat="dataElement in data.selectedDataEntryForm.dataSet.dataElements">
+                <div class="row">
+                  <div class="col-5"></div>
+                  <div class="col col-90">
+                    <div ng-if="isInteger(dataElement.valueType)">
+                      <b>{{dataElement.name }}</b><br>
+                      <label class="item item-input">
+                        <input type="number" placeholder="{{ dataElement.name }}" ng-model="data.dataValues[dataElement.id]">
+                      </label>
+                    </div>
+
+                    <div ng-if="isIntegerZeroOrPositive(dataElement.valueType)">
+                      <b>{{dataElement.name }}</b><br>
+                      <label class="item item-input">
+                        <input type="number" min="0" placeholder="{{ dataElement.name }}" ng-model="data.dataValues[dataElement.id]">
+                      </label>
+                    </div>
+
+                    <div ng-if="isString(dataElement.valueType) && !hasDataSets(dataElement)">
+                      <b>{{dataElement.name }}</b><br>
+                      <label class="item item-input">
+                        <input type="text" placeholder="{{ dataElement.name }}" ng-model="data.dataValues[dataElement.id]">
+                      </label>
+                    </div>
+
+                    <div ng-if="hasDataSets(dataElement)">
+                      <b>{{dataElement.name }}</b><br>
+                      <div class="item item-input item-select" >
+                        <div class="input-label" >
+                        </div>
+                        <select ng-model="data.dataValues[dataElement.id]">
+                          <option value="">Choose option</option>
+                          <option ng-repeat="item in getOptionSets(dataElement)" > {{ item.name }}</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div ng-if="isBoolean(dataElement.valueType)">
+                      <b>{{dataElement.name }}</b><br>
+                      <div class="item item-input item-select" >
+                        <div class="input-label" >
+                        </div>
+                        <select ng-model="data.dataValues[dataElement.id]">
+                          <option value="">Choose option</option>
+                          <option value="true">Yes</option>
+                          <option value="false">No</option>
+                        </select>
+                      </div>
+                    </div>
+
+                  </div>
+                  <div class="col-5"></div>
+                </div>
               </div>
+
             </div>
 
 

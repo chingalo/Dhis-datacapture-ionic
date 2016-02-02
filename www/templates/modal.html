@@ -8,12 +8,21 @@
     </div>
   </ion-header-bar>
   <ion-content>
-
-    <div class="row" ng-if="data.modalType == 'Period'">
-      <div class="col col-100">
-        <ion-list>
-        <ion-radio ng-click="periodSelect()" ng-model="data.period" ng-repeat="period in data.periodOption" ng-value="'{{period.year}}'">{{period.year}}</ion-radio>
-        </ion-list>
+    <div ng-if="data.modalType == 'Period'">
+      <div class="row">
+        <div class="col col-50">
+          <button class="button button-full button-positive" ng-click="changePeriodInterval('previous')">Previous</button>
+        </div>
+        <div class="col col-50">
+          <button class="button button-full button-positive" ng-click="changePeriodInterval('next')">Next</button>
+        </div>
+      </div>
+      <div class="row" >
+        <div class="col col-100">
+          <ion-list>
+            <ion-radio ng-click="periodSelect()" ng-model="data.period" ng-repeat="period in data.periodOption" ng-value="'{{period.year}}'">{{period.year}}</ion-radio>
+          </ion-list>
+        </div>
       </div>
     </div>
 
