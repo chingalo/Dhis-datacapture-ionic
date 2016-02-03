@@ -4,11 +4,9 @@
 angular.module('dataCapture')
   .factory('dataSetsServices',function($http,$q,$localStorage,$indexedDB){
 
-    var baseUrl = $localStorage.baseUrl;
-
     var dataSetsServices = {
 
-      getAllDataSetsFromServer :function(){
+      getAllDataSetsFromServer :function(baseUrl){
 
         var defer = $q.defer();
         $http.get(baseUrl + '/api/dataSets.json?paging=false&fields=id')
@@ -21,10 +19,10 @@ angular.module('dataCapture')
           });
         return defer.promise;
       },
-      getIndividualDataSetFromServer : function(dataSetId){
+      getIndividualDataSetFromServer : function(dataSetId,baseUrl){
 
         var defer = $q.defer();
-        $http.get(baseUrl + '/api/dataSets/'+dataSetId+'.json?fields=sections[id,name],indicators,id,created,categoryCombo,name,formType,version,periodType,dataEntryForm,,dataElements[id,valueType,name,created,lastUpdated,optionSet[name,options]],organisationUnits[id,name]')
+        $http.get(baseUrl + '/api/dataSets/'+dataSetId+'.json?fields=id,created,categoryCombo,name,timelyDays,formType,version,periodType,openFuturePeriods,expiryDays,dataEntryForm,dataElements[id,name,displayName,created,valueType,lastUpdated,optionSet[name,options]],organisationUnits[id,name],sections[id,name],indicators')
           .success(function(results){
 
             defer.resolve(results);
@@ -75,8 +73,14 @@ angular.module('dataCapture')
         }
         return defer.promise;
       },saveDataSetDataValue:function(data){
-
-        console.log(JSON.stringify(data));
+        $indexedDB.openStore('dataValues',function(dataValuesData){
+          dataValuesData.upsert(data).then(function(){
+            //success
+            console.log('id : ' +data.id +' Inserted value : ' + data.dataValue.value);
+          },function(){
+            //error
+          });
+        })
       }
     };
 

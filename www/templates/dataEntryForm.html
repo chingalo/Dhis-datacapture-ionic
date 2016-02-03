@@ -14,28 +14,28 @@
                 <div class="col-5"></div>
                 <div class="col col-90">
                   <div ng-if="isInteger(dataElement.valueType)">
-                    <b>{{dataElement.name }}</b><br>
+                    <b>{{dataElement.displayName }}</b><br>
                     <label class="item item-input">
-                      <input ng-change='changeDataEntryForm()' type="number" placeholder="{{ dataElement.name }}" ng-model="data.dataValues[dataElement.id]">
+                      <input ng-change='changeDataEntryForm()' type="number" placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id]">
                     </label>
                   </div>
 
                   <div ng-if="isIntegerZeroOrPositive(dataElement.valueType)">
-                    <b>{{dataElement.name }}</b><br>
+                    <b>{{dataElement.displayName }}</b><br>
                     <label class="item item-input">
-                      <input ng-change='changeDataEntryForm()' type="number" min="0" placeholder="{{ dataElement.name }}" ng-model="data.dataValues[dataElement.id]">
+                      <input ng-change='changeDataEntryForm()' type="number" min="0" placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id]">
                     </label>
                   </div>
 
                   <div ng-if="isString(dataElement.valueType) && !hasDataSets(dataElement)">
-                    <b>{{dataElement.name }}</b><br>
+                    <b>{{dataElement.displayName }}</b><br>
                     <label class="item item-input">
-                      <input ng-change='changeDataEntryForm()' type="text" placeholder="{{ dataElement.name }}" ng-model="data.dataValues[dataElement.id]">
+                      <input ng-change='changeDataEntryForm()' type="text" placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id]">
                     </label>
                   </div>
 
                   <div ng-if="hasDataSets(dataElement)">
-                    <b>{{dataElement.name }}</b><br>
+                    <b>{{dataElement.displayName }}</b><br>
                     <div class="item item-input item-select" >
                       <div class="input-label" >
                       </div>
@@ -47,7 +47,7 @@
                   </div>
 
                   <div ng-if="isBoolean(dataElement.valueType)">
-                    <b>{{dataElement.name }}</b><br>
+                    <b>{{dataElement.displayName }}</b><br>
                     <div class="item item-input item-select" >
                       <div class="input-label" >
                       </div>
@@ -79,28 +79,28 @@
                     <div class="col col-5"></div>
                     <div class="col col-90">
                       <div ng-if="isInteger(dataElement.valueType)">
-                        <b>{{dataElement.name }}</b><br>
+                        <b>{{dataElement.displayName }}</b><br>
                         <label class="item item-input">
-                          <input ng-change='changeDataEntryForm()'  type="number" placeholder="{{ dataElement.name }}" ng-model="data.dataValues[dataElement.id]">
+                          <input ng-change='changeDataEntryForm()' type="number" placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id]">
                         </label>
                       </div>
 
                       <div ng-if="isIntegerZeroOrPositive(dataElement.valueType)">
-                        <b>{{dataElement.name }}</b><br>
+                        <b>{{dataElement.displayName }}</b><br>
                         <label class="item item-input">
-                          <input ng-change='changeDataEntryForm()' type="number" min="0" placeholder="{{ dataElement.name }}" ng-model="data.dataValues[dataElement.id]">
+                          <input ng-change='changeDataEntryForm()' type="number" min="0" placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id]">
                         </label>
                       </div>
 
                       <div ng-if="isString(dataElement.valueType) && !hasDataSets(dataElement)">
-                        <b>{{dataElement.name }}</b><br>
+                        <b>{{dataElement.displayName }}</b><br>
                         <label class="item item-input">
-                          <input ng-change='changeDataEntryForm()' type="text" placeholder="{{ dataElement.name }}" ng-model="data.dataValues[dataElement.id]">
+                          <input ng-change='changeDataEntryForm()' type="text" placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id]">
                         </label>
                       </div>
 
                       <div ng-if="hasDataSets(dataElement)">
-                        <b>{{dataElement.name }}</b><br>
+                        <b>{{dataElement.displayName }}</b><br>
                         <div class="item item-input item-select" >
                           <div class="input-label" >
                           </div>
@@ -112,7 +112,7 @@
                       </div>
 
                       <div ng-if="isBoolean(dataElement.valueType)">
-                        <b>{{dataElement.name }}</b><br>
+                        <b>{{dataElement.displayName }}</b><br>
                         <div class="item item-input item-select" >
                           <div class="input-label" >
                           </div>
@@ -123,6 +123,7 @@
                           </select>
                         </div>
                       </div>
+
                     </div>
                     <div class="col col-5"></div>
                   </div>

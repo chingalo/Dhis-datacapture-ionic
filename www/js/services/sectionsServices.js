@@ -4,10 +4,9 @@
 angular.module('dataCapture')
   .factory('sectionsServices',function($http,$q,$localStorage,$indexedDB){
 
-    var baseUrl = $localStorage.baseUrl;
 
     var sectionsServices = {
-      getAllSectionsFromServer : function(){
+      getAllSectionsFromServer : function(baseUrl){
         var defer = $q.defer();
         $http.get(baseUrl + '/api/sections.json?paging=false&fields=id')
           .success(function(results){
@@ -19,10 +18,10 @@ angular.module('dataCapture')
           });
         return defer.promise;
       },
-      getIndividualSectionFromServer : function(sectionId){
+      getIndividualSectionFromServer : function(sectionId,baseUrl){
 
         var defer = $q.defer();
-        $http.get(baseUrl + '/api/sections/'+sectionId+'.json?paging=false&fields=dataSet,id,name,indicators,dataElements[id,valueType,name,created,lastUpdated,optionSet[name,options]]')
+        $http.get(baseUrl + '/api/sections/'+sectionId+'.json?paging=false&fields=dataSet,id,name,indicators,dataElements[id,name,displayName,created,valueType,lastUpdated,optionSet[name,options]]')
           .success(function(results){
 
             defer.resolve(results);

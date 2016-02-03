@@ -12,15 +12,12 @@ angular.module('dataCapture')
     $scope.data.sectionsForm =[];
     $scope.data.loading = false;
 
-
     if($localStorage.dataEntryData){
-
       $scope.data.loading = true;
       $scope.data.selectedData = $localStorage.dataEntryData;
       $scope.data.selectedDataEntryForm = $localStorage.dataEntryData;
       $scope.data.loading = false;
       if( $localStorage.dataEntryData.formType == 'SECTION'){
-
         $scope.data.loading = true;
         var selectedSections = $localStorage.dataEntryData.dataSet.sections;
         var counter = 0;
@@ -41,7 +38,6 @@ angular.module('dataCapture')
         });
       }
     }else{
-
       $scope.data.loading = false;
       $scope.data.selectedDataEntryForm = {};
       $scope.data.selectedData = {};
@@ -54,19 +50,15 @@ angular.module('dataCapture')
 
     //checking changes on selected orgUnit
     $scope.$watch('data.orgUnitId', function() {
-
       $scope.data.dataSetId = null;
       $scope.data.dataSets = null;
       $scope.data.formSelectVisibility = false;
       $scope.data.period = null;
-
       $scope.data.loading = true;
       dataSetsServices.getAllDataSets().then(function(dataSets){
-
         $scope.data.dataSets = dataSetsServices.getDataSetsByOrgUnitId($scope.data.orgUnitId,dataSets);
         $scope.data.loading = false;
       },function(){
-
         var message = 'Data entry form has not been found';
         progressMessage(message);
         $scope.data.loading = false;
@@ -92,26 +84,34 @@ angular.module('dataCapture')
     });
 
     $scope.changeDataEntryForm = function(){
+      for(var key in $scope.data.dataValues){
+        if($scope.data.dataValues[key]){
+          var data = prepareDataValues(key,$scope.data.dataValues[key]);
+          dataSetsServices.saveDataSetDataValue(data);
+        }
+      }
+    };
 
+
+    function prepareDataValues(key,value){
       var ou = $localStorage.dataEntryData.orgUnit.id;
       var co = $localStorage.dataEntryData.dataSet.categoryCombo.id;
       var pe = $localStorage.dataEntryData.period;
+      var data = {
+        "id":key + '-' +co+ '-' +pe+ '-' +ou,
+        "dataValue":{
+          "de": key,
+          "co": ou,
+          "pe": pe,
+          "value": value
+        },
+        "sync":false,
+        "storedBy" : $localStorage.loginUser.username,
+        "created": new Date()
 
-      for(var key in $scope.data.dataValues){
-        var data = {
-          "id":key + '-' +co+ '-' +pe+ '-' +ou,
-          "dataValue":{
-            "de": key,
-            "co": ou,
-            "pe": pe,
-            "value": $scope.data.dataValues[key]
-          },
-          "isSaved":false
-        };
-
-        dataSetsServices.saveDataSetDataValue(data);
-      }
-    };
+      };
+      return data;
+    }
 
     $scope.generateDefaultDataEntryForm = function(){
 
@@ -144,7 +144,6 @@ angular.module('dataCapture')
       ionicToast.show(message, 'bottom', false, 2500);
       var checkResults = checkingAndSetDataEntryForm('SECTION');
       if(checkResults){
-
         $localStorage.dataEntryData.formType = 'SECTION';
         $scope.data.loading = false;
         $state.go('app.dataEntryForm');
@@ -155,9 +154,24 @@ angular.module('dataCapture')
     };
 
     $scope.changePeriodInterval = function(type){
-
-      console.log(type);
+      var year = null;
+      if(type =='next'){
+        year = parseInt($scope.data.periodOption[0].year);
+        year +=9;
+      }else{
+        var periodOptionLength = $scope.data.periodOption.length;
+        periodOptionLength = parseInt(periodOptionLength);
+        year = $scope.data.periodOption[periodOptionLength-1].year;
+      }
+      console.log(year);
+      $scope.data.periodOption = getPeriodOption(year);
     };
+
+    /*
+
+     periodType = Yearly, Quarterly,Monthly
+
+     */
 
     $ionicModal.fromTemplateUrl('templates/modal.html', {
       scope: $scope
@@ -170,10 +184,8 @@ angular.module('dataCapture')
     };
 
     $scope.periodSelect = function(){
-
       $scope.close();
       if($scope.data.selectedDataSet){
-
         var dataElements = $scope.data.selectedDataSet.dataElements;
         $scope.data.selectedData = {
           orgUnit : getSelectedOrgUnit($scope.data.orgUnitId),
@@ -188,13 +200,11 @@ angular.module('dataCapture')
     };
 
     $scope.openModal = function(modalType){
-
       $scope.data.modalType = modalType;
       $scope.modal.show();
     };
 
     function getSelectedOrgUnit(orgUnitId){
-
       var orgUnits = $scope.data.user.organisationUnits;
       var selectedOrgUnit = null;
       orgUnits.forEach(function(orgUnit){
@@ -206,17 +216,14 @@ angular.module('dataCapture')
     }
 
     function checkingAndSetDataEntryForm(type){
-
       var dataSet = $localStorage.dataEntryData.dataSet;
       var numberOfSections = dataSet.sections.length;
       var results = false;
       if(type == 'SECTION'){
-
         if(numberOfSections > 0){
           results = true;
         }
       }else{
-
         $localStorage.dataEntryData.numberOfSections = 0;
         if(dataSet.formType == type){
           results = true;
@@ -228,13 +235,16 @@ angular.module('dataCapture')
     periodOption();
     function periodOption(){
       var year = 2016;
-      var period = [];
-
-      for(var i = 0; i < 10; i ++){
-        period.push({ year : year --});
-      }
-      $scope.data.periodOption = period;
+      $scope.data.periodOption = getPeriodOption(year);
     }
+
+   function getPeriodOption(year){
+     var period = [];
+     for(var i = 0; i < 10; i ++){
+       period.push({ year : year --});
+     }
+     return period;
+   }
 
     //flexibility for form
     $scope.isInteger = function(key){
