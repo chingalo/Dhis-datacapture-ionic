@@ -163,7 +163,6 @@ angular.module('dataCapture')
         periodOptionLength = parseInt(periodOptionLength);
         year = $scope.data.periodOption[periodOptionLength-1].year;
       }
-      console.log(year);
       $scope.data.periodOption = getPeriodOption(year);
     };
 
@@ -204,6 +203,20 @@ angular.module('dataCapture')
       $scope.modal.show();
     };
 
+    periodOption();
+    function periodOption(){
+      var year = 2016;
+      $scope.data.periodOption = getPeriodOption(year);
+    }
+
+    function getPeriodOption(year){
+      var period = [];
+      for(var i = 0; i < 10; i ++){
+        period.push({ year : year --});
+      }
+      return period;
+    }
+
     function getSelectedOrgUnit(orgUnitId){
       var orgUnits = $scope.data.user.organisationUnits;
       var selectedOrgUnit = null;
@@ -231,20 +244,6 @@ angular.module('dataCapture')
       }
       return results;
     }
-
-    periodOption();
-    function periodOption(){
-      var year = 2016;
-      $scope.data.periodOption = getPeriodOption(year);
-    }
-
-   function getPeriodOption(year){
-     var period = [];
-     for(var i = 0; i < 10; i ++){
-       period.push({ year : year --});
-     }
-     return period;
-   }
 
     //flexibility for form
     $scope.isInteger = function(key){

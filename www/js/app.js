@@ -29,7 +29,7 @@ angular.module('dataCapture', [
     });
   })
 
-  .controller('mainController', function ($scope, $state, $ionicModal, ionicToast, $localStorage, dataSetsServices, sectionsServices, $indexedDB) {
+  .controller('mainController', function ($scope, $state,$ionicHistory,$ionicModal, ionicToast, $localStorage, dataSetsServices, sectionsServices, $indexedDB) {
 
     $scope.data = {};
     var url = 'http://';
@@ -79,10 +79,16 @@ angular.module('dataCapture', [
     $scope.logOut = function () {
       //TODO some logic flow during log out process
 
-      $localStorage.loginUser = null;
-      $localStorage.dataEntryData = null;
-      $localStorage.loginUserData = null;
-      $state.go('login');
+      delete $localStorage.loginUser;
+      delete $localStorage.dataEntryData;
+      delete $localStorage.loginUserData;
+      delete $localStorage.selectedReport;
+      $ionicHistory.clearCache().then(function() {
+
+        $ionicHistory.clearHistory();
+        $ionicHistory.nextViewOptions({ disableBack: true, historyRoot: true });
+        $state.go('login');
+      });
     };
 
     //function handle all authentications to DHIS2 server
@@ -165,7 +171,6 @@ angular.module('dataCapture', [
     }
 
     function loadDataEntrySections(base) {
-
       sectionsServices.getAllSectionsFromServer(base)
         .then(function (sections) {
           sections.forEach(function (section) {
@@ -174,7 +179,6 @@ angular.module('dataCapture', [
                 $indexedDB.openStore('sections', function (dataSetData) {
                   dataSetData.upsert(data).then(function () {
                     //success
-
                   }, function () {
                     //error
                   });
@@ -191,7 +195,6 @@ angular.module('dataCapture', [
      *function to fetching all forms
      */
     function loadDataSets(base) {
-
       $localStorage.baseUrl = base;
       //load all data entry sections forms
       loadDataEntrySections(base);
@@ -208,13 +211,13 @@ angular.module('dataCapture', [
               });
             })
           }, function () {
-
+            //error
           });
         });
         $scope.data.loading = false;
 
       }, function () {
-
+          //error
         $scope.data.loading = false;
       });
     }
@@ -247,22 +250,26 @@ angular.module('dataCapture', [
   .config(function ($stateProvider, $urlRouterProvider, $indexedDBProvider) {
 
     $indexedDBProvider
-      .connection('Dhis2_Data_Capture_v1')
+      .connection('Dhis2_Data_Capture_v2')
       .upgradeDatabase(1, function (event, db, tx) {
 
         var dataSets = db.createObjectStore('dataSets', {keyPath: 'id'});
-        dataSets.createIndex('id_index', 'id', {unique: false});
+        dataSets.createIndex('id_index', 'id', {unique: true});
+        dataSets.createIndex('name_index', 'name', {unique: false});
+
+        var dataSets = db.createObjectStore('reports', {keyPath: 'id'});
+        dataSets.createIndex('id_index', 'id', {unique: true});
         dataSets.createIndex('name_index', 'name', {unique: false});
 
         var dataSets = db.createObjectStore('sections', {keyPath: 'id'});
-        dataSets.createIndex('id_index', 'id', {unique: false});
+        dataSets.createIndex('id_index', 'id', {unique: true});
         dataSets.createIndex('name_index', 'name', {unique: false});
 
         var dataSets = db.createObjectStore('orgUnits', {keyPath: 'id'});
-        dataSets.createIndex('id_index', 'id', {unique: false});
+        dataSets.createIndex('id_index', 'id', {unique: true});
 
         var dataSets = db.createObjectStore('dataValues', {keyPath: 'id'});
-        dataSets.createIndex('id_index', 'id', {unique: false});
+        dataSets.createIndex('id_index', 'id', {unique: true});
 
       });
 
@@ -304,6 +311,24 @@ angular.module('dataCapture', [
         views: {
           'menuContent': {
             templateUrl: 'templates/reports.html',
+            controller: 'reportController'
+          }
+        }
+      })
+      .state('app.reportsParametersReport', {
+        url: '/reports-parameters-report',
+        views: {
+          'menuContent': {
+            templateUrl: 'templates/reportsParametersReport.html',
+            controller: 'reportController'
+          }
+        }
+      })
+      .state('app.reportsNoParametersReport', {
+        url: '/reports-no-parameters-report',
+        views: {
+          'menuContent': {
+            templateUrl: 'templates/reportsNoParametersReport.html',
             controller: 'reportController'
           }
         }
