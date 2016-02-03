@@ -2,16 +2,45 @@
   <ion-content>
     <div class="row">
       <div class="col col-100">
-       <div class="card">
-         <div class="item item-text-wrap">
+        <div class="card">
+          <div class="item item-divider">
+            Synchronization setting
+          </div>
+          <div class="item item-text-wrap">
+            <div class="list">
+              <div class="item">
+                <h2>Synchronization Preference</h2>
+                <ion-radio name ="synchronizationPreference" ng-model="data.synchronization.preference" ng-value="'online'">Online Data</ion-radio>
+                <ion-radio name ="synchronizationPreference" ng-model="data.synchronization.preference" ng-value="'mobile'">Mobile data</ion-radio>
+                <ion-radio name ="synchronizationPreference" ng-model="data.synchronization.preference" ng-value="'options'">Give Options</ion-radio>
+              </div>
+              <div class="item">
+                <h2>Synchronization time</h2>
 
-           Synchronization
-         </div>
-       </div>
+                  <label class="item item-input">
+                    <i class="icon ion-clock placeholder-icon"></i>
+                    <input type="number" min="1" ng-model="data.synchronization.time.value">
+                  </label>
+                <ion-radio name ="synchronizationTime" ng-model="data.synchronization.time.type" ng-value="'seconds'">Second(s)</ion-radio>
+                <ion-radio name ="synchronizationTime" ng-model="data.synchronization.time.type" ng-value="'minutes'">Minute(S)</ion-radio>
+                <ion-radio name ="synchronizationTime" ng-model="data.synchronization.time.type" ng-value="'hours'">Hour(s)</ion-radio>
+              </div>
+            </div>
+          </div>
+        </div>
 
         <div class="card">
-          <div class="item item-text-wrap">
+          <div class="item item-divider">
             Default form setting
+          </div>
+          <div class="item item-text-wrap">
+            <div class="list">
+              <div class="item">
+                <h2>sorting order</h2>
+                <ion-radio name ="defaultFormSorting" ng-model="data.defaultForm.sorting" ng-value="'name'">By Name</ion-radio>
+                <ion-radio name ="defaultFormSorting" ng-model="data.defaultForm.sorting" ng-value="'dateCraeted'">By Date Created</ion-radio>
+              </div>
+            </div>
           </div>
         </div>
       </div>

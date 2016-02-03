@@ -32,7 +32,7 @@ angular.module('dataCapture', [
   .controller('mainController', function ($scope, $state,$ionicHistory,$ionicModal, ionicToast, $localStorage, dataSetsServices, sectionsServices, $indexedDB) {
 
     $scope.data = {};
-    var url = 'http://';
+    var url = 'http://41.217.202.50:8080/dhis';
 
     //function for toaster messages
     function progressMessage(message) {
