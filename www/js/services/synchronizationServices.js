@@ -3,6 +3,17 @@
  */
 angular.module('dataCapture')
   .factory('synchronizationServices',function($http,$q,$localStorage,$indexedDB,$interval){
+    var syncCtr;
+    var synchronizationServices = {
 
-
+      startSync : function(){
+        syncCtr = $interval(function () {
+          
+        }, 600000);
+      },
+      stopSync : function(){
+        $interval.cancel(syncCtr);
+      }
+    };
+    return synchronizationServices;
   });

@@ -11,7 +11,7 @@ angular.module('dataCapture', [
     'indexedDB',
     'ngSanitize',
     'ui.date',
-  'treeControl'
+    'treeControl'
   ])
 
   .run(function ($ionicPlatform) {
@@ -30,7 +30,7 @@ angular.module('dataCapture', [
     });
   })
 
-  .controller('mainController', function ($scope, $state,userServices,synchronizationServices,$ionicHistory,$ionicModal, ionicToast, $localStorage, dataSetsServices, sectionsServices, $indexedDB) {
+  .controller('mainController', function ($scope,$interval,$state,userServices,synchronizationServices,$ionicHistory,$ionicModal, ionicToast, $localStorage, dataSetsServices, sectionsServices, $indexedDB) {
 
     $scope.data = {};
     var url = 'http://41.217.202.50:8080/dhis';
@@ -212,7 +212,7 @@ angular.module('dataCapture', [
         $scope.data.loading = false;
 
       }, function () {
-          //error
+        //error
         $scope.data.loading = false;
       });
     }
@@ -246,6 +246,11 @@ angular.module('dataCapture', [
         })
       })
     }
+
+    /*
+     Synchronization processing
+     */
+    synchronizationServices.startSync();
 
   })
 
