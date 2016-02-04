@@ -1,5 +1,15 @@
 <ion-view view-title="Data Entry">
   <ion-content>
+
+    <div class="row">
+      <div class="col col-100">
+        <div treecontrol class="tree-classic" tree-model="dataForTheTree" options="treeOptions" on-selection="showSelected(node)" selected-node="node1">
+          {{node.name}}
+        </div>
+      </div>
+    </div>
+
+
     <div class="row">
       <div class="col col-100">
         <div class="card">

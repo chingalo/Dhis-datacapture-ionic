@@ -2,7 +2,7 @@
  * Created by joseph on 1/29/16.
  */
 angular.module('dataCapture')
-  .controller('dataEntryController',function($scope,$indexedDB,$state,$ionicModal,ionicToast,$localStorage,dataSetsServices,sectionsServices){
+  .controller('dataEntryController',function($scope,$indexedDB,$state,$ionicModal,ionicToast,$localStorage,userServices,dataSetsServices,sectionsServices){
 
     $scope.data = {};
     $scope.data.user = $localStorage.loginUserData;
@@ -11,6 +11,8 @@ angular.module('dataCapture')
     $scope.data.dataValues ={};
     $scope.data.sectionsForm =[];
     $scope.data.loading = false;
+    $scope.data.orgUnitId = null;
+    $scope.dataForTheTree =[];
 
     if($localStorage.dataEntryData){
       $scope.data.loading = true;
@@ -204,6 +206,39 @@ angular.module('dataCapture')
       $scope.data.modalType = modalType;
       $scope.modal.show();
     };
+
+    getAllAssignedOrgUnits();
+    function getAllAssignedOrgUnits(){
+      $scope.data.loading = true;
+      userServices.getAssignedOrgUnitFromIndexDb()
+        .then(function(data){
+          $scope.dataForTheTree = data;
+          $scope.data.loading = false;
+        },function(){
+          //error
+          $scope.data.loading = false;
+        })
+
+    }
+    $scope.showSelected = function(orgUunit){
+      console.log(orgUunit.name);
+    };
+    $scope.treeOptions = {
+      nodeChildren: "children",
+      dirSelectable: true,
+      allowDeselect : false,
+      injectClasses: {
+        ul: "a1",
+        li: "a2",
+        liSelected: "a7",
+        iExpanded: "a3",
+        iCollapsed: "a4",
+        iLeaf: "a5",
+        label: "a6",
+        labelSelected: "a8"
+      }
+    };
+
 
     periodOption();
     function periodOption(){
