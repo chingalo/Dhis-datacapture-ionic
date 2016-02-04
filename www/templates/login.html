@@ -29,6 +29,14 @@
           </form>
         </div>
       </div>
+
+      <div class="row">
+        <div class="col col-100">
+          <div treecontrol class="tree-classic" tree-model="dataForTheTree" options="treeOptions" on-selection="showSelected(node)" selected-node="node1">
+            {{node.name}}
+          </div>
+        </div>
+      </div>
       <div class="row" ng-if = "data.loading" style="text-align: center;font-size: 14px;">
         <div class="col col-100">
           <ion-spinner icon="ios"></ion-spinner>
