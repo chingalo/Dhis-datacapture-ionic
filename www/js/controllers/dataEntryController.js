@@ -133,9 +133,9 @@ angular.module('dataCapture')
         $scope.data.loading = false;
         $state.go('app.dataEntryForm');
       }else{
-        $scope.data.loading = false;
         var message = 'Custom data entry form for ' +  $localStorage.dataEntryData.dataSet.name + ' form has not been defined';
         progressMessage(message);
+        $scope.data.loading = false;
       }
     };
     $scope.generateSectionDataEntryForm = function(){
