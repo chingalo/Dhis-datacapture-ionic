@@ -194,7 +194,7 @@ angular.module('dataCapture')
       if($scope.data.selectedDataSet){
         var dataElements = $scope.data.selectedDataSet.dataElements;
         $scope.data.selectedData = {
-          orgUnit : getSelectedOrgUnit($scope.data.orgUnitId),
+          orgUnit : $scope.data.orgUnit.id,
           dataSet : $scope.data.selectedDataSet,
           period : $scope.data.period,
           numberOfFields : dataElements.length,
@@ -264,17 +264,6 @@ angular.module('dataCapture')
         period.push({ year : year --});
       }
       return period;
-    }
-
-    function getSelectedOrgUnit(orgUnitId){
-      var orgUnits = $scope.data.user.organisationUnits;
-      var selectedOrgUnit = null;
-      orgUnits.forEach(function(orgUnit){
-        if(orgUnit.id == orgUnitId){
-          selectedOrgUnit = orgUnit;
-        }
-      });
-      return selectedOrgUnit;
     }
 
     function checkingAndSetDataEntryForm(type){

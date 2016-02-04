@@ -30,7 +30,7 @@ angular.module('dataCapture', [
     });
   })
 
-  .controller('mainController', function ($scope, $state,userServices,$ionicHistory,$ionicModal, ionicToast, $localStorage, dataSetsServices, sectionsServices, $indexedDB) {
+  .controller('mainController', function ($scope, $state,userServices,synchronizationServices,$ionicHistory,$ionicModal, ionicToast, $localStorage, dataSetsServices, sectionsServices, $indexedDB) {
 
     $scope.data = {};
     var url = 'http://41.217.202.50:8080/dhis';
@@ -41,20 +41,16 @@ angular.module('dataCapture', [
     }
 
     if (!$localStorage.baseUrl) {
-
       $localStorage.baseUrl = url;
     }
     else {
-
       //authenticate using local storage data of login user
       if ($localStorage.loginUser) {
-
         var username = $localStorage.loginUser.username;
         var password = $localStorage.loginUser.password;
         $scope.data.baseUrl = $localStorage.baseUrl;
         $scope.data.username = username;
         $scope.data.password = password;
-
         var message = 'Please waiting, we try to authenticate you to server';
         progressMessage(message);
         authenticateUser(username, password);
