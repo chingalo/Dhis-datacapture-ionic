@@ -78,14 +78,15 @@ angular.module('dataCapture')
             if(report.id == reportId){
               $localStorage.selectedReport = report;
               if(report.reportParams.paramOrganisationUnit || report.reportParams.paramOrganisationUnit){
+                $scope.data.loading = false;
                 $state.go('app.reportsParametersReport');
               }else{
+                $scope.data.loading = false;
                 $state.go('app.reportsNoParametersReport');
               }
-              //
             }
           });
-          $scope.data.loading = false;
+
         },function(){
           //error
           $scope.data.loading = false;

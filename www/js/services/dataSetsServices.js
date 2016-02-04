@@ -22,7 +22,7 @@ angular.module('dataCapture')
       getIndividualDataSetFromServer : function(dataSetId,baseUrl){
 
         var defer = $q.defer();
-        $http.get(baseUrl + '/api/dataSets/'+dataSetId+'.json?fields=id,created,categoryCombo,name,timelyDays,formType,version,periodType,openFuturePeriods,expiryDays,dataEntryForm,dataElements[id,name,displayName,created,valueType,lastUpdated,optionSet[name,options]],organisationUnits[id,name],sections[id,name],indicators')
+        $http.get(baseUrl + '/api/dataSets/'+dataSetId+'.json?fields=id,created,name,timelyDays,formType,version,periodType,openFuturePeriods,expiryDays,dataEntryForm,dataElements[id,name,displayName,created,valueType,lastUpdated,optionSet[name,options]],organisationUnits[id,name],sections[id,name],indicators,categoryCombo[id,name,categoryOptionCombos]')
           .success(function(results){
 
             defer.resolve(results);
