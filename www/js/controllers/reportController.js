@@ -2,7 +2,7 @@
  * Created by joseph on 2/1/16.
  */
 angular.module('dataCapture')
-  .controller('reportController',function($scope,$state,ionicToast,$localStorage,reportServices,$ionicModal){
+  .controller('reportController',function($scope,$state,ionicToast,$localStorage,reportServices,userServices,$ionicModal){
     $scope.data = {};
     $scope.data.user = $localStorage.loginUserData;
     $scope.data.reports = null;
@@ -93,6 +93,46 @@ angular.module('dataCapture')
         });
     }
 
+    getAllAssignedOrgUnits();
+    function getAllAssignedOrgUnits(){
+      $scope.data.loading = true;
+      userServices.getAssignedOrgUnitFromIndexDb()
+        .then(function(data){
+          if(data.length > 0){
+            $scope.dataForTheTree = data;
+            $scope.data.loading = false;
+          }else {
+            getAllAssignedOrgUnits();
+          }
+
+        },function(){
+          //error
+
+          $scope.data.loading = false;
+        })
+
+    }
+    $scope.showSelected = function(orgUnit){
+      $scope.close();
+      $scope.data.orgUnit = orgUnit;
+      //changeOrgUnit(orgUnit.id);
+      $scope.data.orgUnitId = orgUnit.id;
+    };
+    $scope.treeOptions = {
+      nodeChildren: "children",
+      dirSelectable: true,
+      allowDeselect : false,
+      injectClasses: {
+        ul: "a1",
+        li: "a2",
+        liSelected: "a7",
+        iExpanded: "a3",
+        iCollapsed: "a4",
+        iLeaf: "a5",
+        label: "a6",
+        labelSelected: "a8"
+      }
+    };
 
     $scope.changePeriodInterval = function(type){
       var year = null;

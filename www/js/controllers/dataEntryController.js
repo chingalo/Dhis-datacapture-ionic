@@ -11,7 +11,6 @@ angular.module('dataCapture')
     $scope.data.dataValues ={};
     $scope.data.sectionsForm =[];
     $scope.data.loading = false;
-    $scope.data.orgUnitId = null;
     $scope.dataForTheTree =[];
 
     if($localStorage.dataEntryData){
@@ -51,6 +50,9 @@ angular.module('dataCapture')
     }
 
     //checking changes on selected orgUnit
+    /* function changeOrgUnit(orgUnitId){
+      console.log(orgUnitId);
+    }*/
     $scope.$watch('data.orgUnitId', function() {
       $scope.data.dataSetId = null;
       $scope.data.dataSets = null;
@@ -58,6 +60,7 @@ angular.module('dataCapture')
       $scope.data.period = null;
       $scope.data.loading = true;
       dataSetsServices.getAllDataSets().then(function(dataSets){
+
         $scope.data.dataSets = dataSetsServices.getDataSetsByOrgUnitId($scope.data.orgUnitId,dataSets);
         $scope.data.loading = false;
       },function(){
@@ -212,16 +215,25 @@ angular.module('dataCapture')
       $scope.data.loading = true;
       userServices.getAssignedOrgUnitFromIndexDb()
         .then(function(data){
-          $scope.dataForTheTree = data;
-          $scope.data.loading = false;
+          if(data.length > 0){
+            $scope.dataForTheTree = data;
+            $scope.data.loading = false;
+          }else {
+            getAllAssignedOrgUnits();
+          }
+
         },function(){
           //error
+
           $scope.data.loading = false;
         })
 
     }
-    $scope.showSelected = function(orgUunit){
-      console.log(orgUunit.name);
+    $scope.showSelected = function(orgUnit){
+      $scope.close();
+      $scope.data.orgUnit = orgUnit;
+      //changeOrgUnit(orgUnit.id);
+      $scope.data.orgUnitId = orgUnit.id;
     };
     $scope.treeOptions = {
       nodeChildren: "children",

@@ -29,6 +29,21 @@ angular.module('dataCapture')
         });
 
         return defer.promise;
+      },
+      updateAssignedOrgUnits : function(){
+        var base = $localStorage.baseUrl;
+        var orgUnits = $localStorage.loginUserData.organisationUnits;
+        orgUnits.forEach(function(orgUnit){
+          this.getAssignedOrgUnitChildrenFromServer(orgUnit.id,base).then(function(data){
+            $indexedDB.openStore('dataSets', function (dataSetData) {
+              dataSetData.upsert(data).then(function () {
+                //success
+              }, function () {
+                //error
+              });
+            });
+          })
+        });
       }
     };
 

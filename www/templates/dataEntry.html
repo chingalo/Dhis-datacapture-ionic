@@ -3,12 +3,9 @@
 
     <div class="row">
       <div class="col col-100">
-        <div treecontrol class="tree-classic" tree-model="dataForTheTree" options="treeOptions" on-selection="showSelected(node)" selected-node="node1">
-          {{node.name}}
-        </div>
+        <button class="button " ng-click="openModal('Organisation Unit')">Select Organisation Unit</button>
       </div>
     </div>
-
 
     <div class="row">
       <div class="col col-100">
@@ -17,13 +14,8 @@
 
             <div>
               <b>Organisation Unit</b>
-              <div class="item item-input item-select" >
-                <div class="input-label" >
-                </div>
-                <select ng-model="data.orgUnitId">
-                  <option value="">Choose Org Unit</option>
-                  <option ng-repeat="orgunit in data.user.organisationUnits " value = "{{ orgunit.id }}">{{ orgunit.name }}</option>
-                </select>
+              <div class="item">
+                {{ data.orgUnit.name }}
               </div>
             </div>
             <div style="padding-top: 1%;">
@@ -31,7 +23,10 @@
               <div class="item item-input item-select" >
                 <div class="input-label" >
                 </div>
-                <select ng-model="data.dataSetId">
+                <select disabled ng-if = "!data.orgUnitId && $scope.data.dataSets.length == 0" ng-model="data.dataSetId">
+                  <option value="">Choose Form</option>
+                </select>
+                  <select ng-if = "data.orgUnitId"   ng-model="data.dataSetId">
                   <option value="">Choose Form</option>
                   <option ng-repeat="dataSet in data.dataSets" value="{{ dataSet.id }}">{{ dataSet.name }}</option>
                 </select>

@@ -8,15 +8,16 @@
           </div>
           <div class="item item-text-wrap">
 
+            <div class="row">
+              <div class="col col-100">
+                <button class="button " ng-click="openModal('Organisation Unit')">Select Organisation Unit</button>
+              </div>
+            </div>
+
             <div>
               <b>Organisation Unit</b>
-              <div class="item item-input item-select" >
-                <div class="input-label" >
-                </div>
-                <select ng-model="data.orgUnitId">
-                  <option value="">Choose Org Unit</option>
-                  <option ng-repeat="orgunit in data.user.organisationUnits " value = "{{ orgunit.id }}">{{ orgunit.name }}</option>
-                </select>
+              <div class="item">
+                {{ data.orgUnit.name }}
               </div>
             </div>
 
