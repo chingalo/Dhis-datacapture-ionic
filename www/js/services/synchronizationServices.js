@@ -8,7 +8,7 @@ angular.module('dataCapture')
 
       startSync : function(){
         syncCtr = $interval(function () {
-          
+          console.log('call services');
         }, 600000);
       },
       stopSync : function(){
