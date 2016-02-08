@@ -3,16 +3,13 @@
  */
 angular.module('dataCapture')
   .factory('periodSelectionServices',function(){
-
     var monthlyYearData = [
       'January','February','March','April','May','June','July','August','September','October','November','December'
     ];
     var quarterlyYearData =[
       'January-March','April-June','July-September','October -December'
     ];
-
     var mainServices = {
-
       getPeriodSelections : function(year,dataSet){
         var periodSelection = [];
         var allowedFutureValue = this.getAllowedFuturePeriod(dataSet,year);
@@ -35,7 +32,6 @@ angular.module('dataCapture')
         var data = [];
         var currentYear = parseInt(new Date().getFullYear());
         var allowedFutureYear = currentYear + parseInt(allowedFutureValue/12);
-        console.log(allowedFutureYear);
         if(year <= allowedFutureYear){
           for(var i=11;i >=0; i --){
             var month = i + 1;
@@ -58,7 +54,6 @@ angular.module('dataCapture')
         var data = [];
         var currentYear = parseInt(new Date().getFullYear());
         var allowedFutureYear = currentYear + parseInt(allowedFutureValue/4);
-        console.log(allowedFutureYear);
         if(year <= allowedFutureYear){
           for(var i=3;i >= 0; i --){
             var quarter = i + 1;
@@ -73,7 +68,6 @@ angular.module('dataCapture')
         var data = [];
         var currentYear = parseInt(new Date().getFullYear());
         var allowedFutureYear = currentYear + parseInt(allowedFutureValue);
-        console.log(allowedFutureYear);
         if(year <= allowedFutureYear){
           for(var i=0;i < 12; i ++){
             data.push({
@@ -91,8 +85,7 @@ angular.module('dataCapture')
           result = dateSet.openFuturePeriods;
         }
         return result;
-      },
-      // getYearAllowed
+      }
 
     };
     return mainServices;

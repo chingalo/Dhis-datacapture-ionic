@@ -5,7 +5,41 @@ angular.module('dataCapture')
   .factory('userServices',function($http,$q,$localStorage,$indexedDB){
 
     var userServices = {
-
+      authenticateUser : function(username,password){
+        var base = $localStorage.baseUrl ;
+        if(base){
+          Ext.Ajax.request({
+            url: base + '/dhis-web-commons-security/login.action?failed=false',
+            callbackKey: 'callback',
+            method: 'POST',
+            params: {
+              j_username: username,
+              j_password: password
+            },
+            withCredentials: true,
+            useDefaultXhrHeader: false,
+            success: function () {
+              Ext.Ajax.request({
+                url: base + '/api/me.json',
+                callbackKey: 'callback',
+                method: 'GET',
+                params: {
+                  j_username: username,
+                  j_password: password
+                },
+                withCredentials: true,
+                useDefaultXhrHeader: false,
+                success: function (response) {
+                },
+                failure: function () {
+                }
+              });
+            },
+            failure: function () {
+            }
+          });
+        }
+      },
       getAssignedOrgUnitChildrenFromServer : function(orgUnitId,baseUrl){
         var defer = $q.defer();
         $http.get(baseUrl + '/api/organisationUnits/'+orgUnitId+'.json?paging=false&fields=id,name,children[id,name,children[id,name,children[id,name,children[id,name,children[id,name]]]]]')
@@ -15,7 +49,6 @@ angular.module('dataCapture')
           .error(function(){
             defer.reject();
           });
-
         return defer.promise;
       },
       getAssignedOrgUnitFromIndexDb : function(){

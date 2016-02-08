@@ -34,12 +34,10 @@ angular.module('dataCapture', [
 
     $scope.data = {};
     var url = 'http://41.217.202.50:8080/dhis';
-
     //function for toaster messages
     function progressMessage(message) {
       ionicToast.show(message, 'bottom', false, 2500);
     }
-
     if (!$localStorage.baseUrl) {
       $localStorage.baseUrl = url;
     }
@@ -51,14 +49,13 @@ angular.module('dataCapture', [
         $scope.data.baseUrl = $localStorage.baseUrl;
         $scope.data.username = username;
         $scope.data.password = password;
-        var message = 'Please waiting, we try to authenticate you to server';
+        var message = 'Please waiting...';
         progressMessage(message);
+        startSyncProcess($localStorage.loginUser);
         authenticateUser(username, password);
       }
     }
-
     $scope.data.baseUrl = $localStorage.baseUrl;
-
     $scope.login = function () {
       if ($scope.data.baseUrl) {
         if ($scope.data.username && $scope.data.password) {
@@ -75,94 +72,94 @@ angular.module('dataCapture', [
 
     $scope.logOut = function () {
       //TODO some logic flow during log out process
-
       delete $localStorage.loginUser;
       delete $localStorage.dataEntryData;
       delete $localStorage.loginUserData;
       delete $localStorage.selectedReport;
       $ionicHistory.clearCache().then(function() {
-
         $ionicHistory.clearHistory();
         $ionicHistory.nextViewOptions({ disableBack: true, historyRoot: true });
+        deleteAssignedOrgUnit();
+        synchronizationServices.stopSyncUserLoginData();
         $state.go('login');
       });
     };
 
     //function handle all authentications to DHIS2 server
     //TODO logic for pull all metadata necessary to support offline support
+    //@todo add on user services to authenticate user
     function authenticateUser($username, $password) {
-
       $scope.data.loading = true;
-
       var base = $scope.data.baseUrl;
       $localStorage.baseUrl = base;
-      Ext.Ajax.request({
-        url: base + '/dhis-web-commons-security/login.action?failed=false',
-        callbackKey: 'callback',
-        method: 'POST',
-        params: {
-          j_username: $username,
-          j_password: $password
-        },
-        withCredentials: true,
-        useDefaultXhrHeader: false,
-        success: function () {
-
-          //call checking if user is available
-          Ext.Ajax.request({
-            url: base + '/api/me.json',
-            callbackKey: 'callback',
-            method: 'GET',
-            params: {
-              j_username: $username,
-              j_password: $password
-            },
-            withCredentials: true,
-            useDefaultXhrHeader: false,
-            success: function (response) {
-
-              $scope.data.password = null;
-              try {
-                var userData = JSON.parse(response.responseText);
-                $localStorage.loginUser = {'username': $username, 'password': $password};
-                $localStorage.loginUserData = userData;
-
-                addAssignedOrgUnit($localStorage.loginUserData.organisationUnits,base);
-                $scope.data.loading = false;
-                loadDataSets(base);
-                //redirect to landing page for success login
-                $state.go('app.dataEntry');
-
-              } catch (e) {
-                var message = 'Fail to login, please check your username or password';
-                progressMessage(message);
+      if($localStorage.loginUser){
+        $scope.data.loading = false;
+        $state.go('app.dataEntry')
+      }else{
+        Ext.Ajax.request({
+          url: base + '/dhis-web-commons-security/login.action?failed=false',
+          callbackKey: 'callback',
+          method: 'POST',
+          params: {
+            j_username: $username,
+            j_password: $password
+          },
+          withCredentials: true,
+          useDefaultXhrHeader: false,
+          success: function () {
+            //call checking if user is available
+            Ext.Ajax.request({
+              url: base + '/api/me.json',
+              callbackKey: 'callback',
+              method: 'GET',
+              params: {
+                j_username: $username,
+                j_password: $password
+              },
+              withCredentials: true,
+              useDefaultXhrHeader: false,
+              success: function (response) {
                 $scope.data.password = null;
+                try {
+                  var userData = JSON.parse(response.responseText);
+                  $localStorage.loginUser = {'username': $username, 'password': $password};
+                  $localStorage.loginUserData = userData;
+                  addAssignedOrgUnit($localStorage.loginUserData.organisationUnits,base);
+                  $scope.data.loading = false;
+                  loadDataSets(base);
+                  startSyncProcess($localStorage.loginUser);
+                  //redirect to landing page for success login
+                  $state.go('app.dataEntry');
+                } catch (e) {
+                  var message = 'Fail to login, please check your username or password';
+                  progressMessage(message);
+                  $scope.data.password = null;
+                  $scope.data.loading = false;
+                  synchronizationServices.stopSyncUserLoginData();
+                }
+                $scope.$apply();
+              },
+              failure: function () {
+                $scope.data.password = null;
+                var message = 'Fail to login, please Check your network';
+                progressMessage(message);
                 $scope.data.loading = false;
+                synchronizationServices.stopSyncUserLoginData();
+                $scope.$apply();
               }
-
-              $scope.$apply();
-            },
-            failure: function () {
-
-              $scope.data.password = null;
-              var message = 'Fail to login, please Check your network';
-              progressMessage(message);
-              $scope.data.loading = false;
-              $scope.$apply();
-            }
-          });
-
-        },
-        failure: function () {
-
-          $scope.data.password = null;
-          //fail to connect to the server
-          var message = 'Fail to connect to the server, please check server URL';
-          progressMessage(message);
-          $scope.data.loading = false;
-          $scope.$apply();
-        }
-      });
+            });
+          },
+          failure: function () {
+            $scope.data.password = null;
+            //fail to connect to the server
+            var message = 'Fail to connect to the server, please check server URL';
+            progressMessage(message);
+            $scope.data.loading = false;
+            synchronizationServices.stopSyncUserLoginData();
+            $scope.$apply();
+          }
+        });
+      }
     }
 
     function loadDataEntrySections(base) {
@@ -185,7 +182,6 @@ angular.module('dataCapture', [
         }, function () {
         });
     }
-
     /*
      *function to fetching all forms
      */
@@ -202,7 +198,7 @@ angular.module('dataCapture', [
               dataSetData.upsert(data).then(function () {
                 //success
               }, function () {
-                //error
+                //error getting individual data set
               });
             })
           }, function () {
@@ -212,13 +208,12 @@ angular.module('dataCapture', [
         $scope.data.loading = false;
 
       }, function () {
-        //error
+        //error getting data sets from server
         $scope.data.loading = false;
       });
     }
 
     function addAssignedOrgUnit(orgUnits,baseUrl) {
-      deleteAssignedOrgUnit();
       var message = 'Please wait to sync facility';
       ionicToast.show(message, 'top', false, 2500);
       orgUnits.forEach(function (orgUnit) {
@@ -231,12 +226,10 @@ angular.module('dataCapture', [
             });
           })
         },function(){
-
         });
 
       });
     }
-
     function deleteAssignedOrgUnit() {
       $indexedDB.openStore('orgUnits', function (orgUnits) {
         orgUnits.clear().then(function () {
@@ -246,16 +239,18 @@ angular.module('dataCapture', [
         })
       })
     }
-
     /*
      Synchronization processing
      */
-    synchronizationServices.startSync();
+    function startSyncProcess(user){
+      synchronizationServices.startSync();
+      synchronizationServices.syncUserLoginData(user);
+    }
+
 
   })
 
   .config(function ($stateProvider, $urlRouterProvider, $indexedDBProvider) {
-
     $indexedDBProvider
       .connection('Dhis2_Data_Capture_v2')
       .upgradeDatabase(1, function (event, db, tx) {
@@ -281,7 +276,6 @@ angular.module('dataCapture', [
       });
 
     $stateProvider
-
       .state('login', {
         url: '/login',
         templateUrl: 'templates/login.html',

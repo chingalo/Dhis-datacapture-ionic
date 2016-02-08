@@ -39,7 +39,7 @@ angular.module('dataCapture')
           dataSetData.getAll().then(function(data){
             defer.resolve(data);
           },function(){
-            defer.reject('error');
+            defer.reject();
           });
         });
 
