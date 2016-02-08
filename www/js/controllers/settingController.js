@@ -11,13 +11,13 @@ angular.module('dataCapture')
       },
       defaultForm : {
         sorting : 'name'
-      }
+      },syncTime :60*1000
+
     };
     $scope.data = $localStorage.appSetting;
 
-    synchronizationServices.stopSync();
-
     $scope.$watch('data.defaultForm.sorting',function(){
+      $localStorage.appSetting = $scope.data.synchronization;
       console.log(JSON.stringify($scope.data));
 
     });
@@ -25,10 +25,35 @@ angular.module('dataCapture')
       console.log(JSON.stringify($scope.data));
     });
     $scope.$watch('data.synchronization.time.type',function(){
-      console.log(JSON.stringify($scope.data));
+      $localStorage.appSetting = $scope.data.synchronization;
+      changeSyncTime();
     });
     $scope.$watch('data.synchronization.time.value',function(){
-      console.log(JSON.stringify($scope.data));
+      $localStorage.appSetting = $scope.data.synchronization;
+      changeSyncTime();
     });
+    function changeSyncTime(){
+      var type = $scope.data.synchronization.time.type;
+      var value = $scope.data.synchronization.time.value;
+      $localStorage.appSetting = $scope.data.synchronization;
+      var newValue = 60*1000;
+      switch (type){
+        case 'seconds':
+          newValue = value * 1000;
+              break;
+        case 'minutes':
+          newValue = value * 60  * 1000;
+          break;
+        case 'hours':
+          newValue = value * 60 * 60 * 1000;
+          break;
+        default:
+          newValue = 60*1000;
+      }
+      $localStorage.appSetting.syncTime = newValue;
+      synchronizationServices.stopSync();
+      synchronizationServices.startSync(newValue);
+
+    }
 
   });

@@ -243,7 +243,11 @@ angular.module('dataCapture', [
      Synchronization processing
      */
     function startSyncProcess(user){
-      synchronizationServices.startSync();
+      var time = null;
+      if($localStorage.appSetting){
+        time = $localStorage.appSetting.syncTime;
+      }
+      synchronizationServices.startSync(time);
       synchronizationServices.syncUserLoginData(user);
     }
 

@@ -1,5 +1,5 @@
 # Dhis 2 Data Capture 
-A Dhis 2 Data Capture mobile app, developed using web technologies, An Ionic Framework and Cordova project
+A Dhis 2 Data Capture mobile app powered by HispTz, developed using web technologies, An Ionic Framework and Cordova project
 
 More info coming soon
 
