@@ -63,6 +63,7 @@ angular.module('dataCapture')
       $scope.data.formSelectVisibility = false;
       $scope.data.period = null;
       $scope.data.loading = true;
+      $scope.data.hasCategoryComboOptions = false;
       dataSetsServices.getAllDataSets().then(function(dataSets){
 
         $scope.data.dataSets = dataSetsServices.getDataSetsByOrgUnitId($scope.data.orgUnitId,dataSets);
@@ -81,6 +82,7 @@ angular.module('dataCapture')
       $scope.data.formSelectVisibility = false;
       $scope.data.selectedData = null;
       $scope.data.period = null;
+      $scope.data.hasCategoryComboOptions = false;
       dataSetsServices.getDataSetById($scope.data.dataSetId,$scope.data.dataSets)
         .then(function(data){
 
@@ -91,6 +93,12 @@ angular.module('dataCapture')
 
           $scope.data.loading = false;
         })
+    });
+
+    $scope.$watch('data.categoryOptionCombos', function(){
+      if($scope.data.categoryOptionCombos){
+        saveSelectedDataSetToLocalStorage($scope.data.categoryOptionCombos);
+      }
     });
 
     $scope.changeDataEntryForm = function(){
@@ -192,19 +200,29 @@ angular.module('dataCapture')
 
     $scope.periodSelect = function(){
       $scope.close();
-      if($scope.data.selectedDataSet){
-        var dataElements = $scope.data.selectedDataSet.dataElements;
-        $scope.data.selectedData = {
-          orgUnit : $scope.data.orgUnit.id,
-          dataSet : $scope.data.selectedDataSet,
-          period : $scope.data.period,
-          numberOfFields : dataElements.length,
-          formType : ''
-        };
-        $scope.data.formSelectVisibility = true;
-        $localStorage.dataEntryData = $scope.data.selectedData;
+      if($scope.data.selectedDataSet.categoryCombo.categoryOptionCombos[0].name != 'default'){
+        $scope.data.hasCategoryComboOptions = true;
+      }else{
+
+        var categoryOptionCombosId = $scope.data.selectedDataSet.categoryCombo.categoryOptionCombos[0].id;
+        if($scope.data.selectedDataSet){
+          saveSelectedDataSetToLocalStorage(categoryOptionCombosId);
+        }
       }
     };
+    function saveSelectedDataSetToLocalStorage(categoryOptionCombosId){
+      var dataElements = $scope.data.selectedDataSet.dataElements;
+      $scope.data.selectedData = {
+        orgUnit : $scope.data.orgUnit.id,
+        dataSet : $scope.data.selectedDataSet,
+        period : $scope.data.period,
+        numberOfFields : dataElements.length,
+        formType : '',
+        categoryOptionCombosId : categoryOptionCombosId
+      };
+      $scope.data.formSelectVisibility = true;
+      $localStorage.dataEntryData = $scope.data.selectedData;
+    }
 
     $scope.openModal = function(modalType){
       $scope.data.modalType = modalType;

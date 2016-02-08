@@ -51,7 +51,6 @@ angular.module('dataCapture')
                 //error
               });
             }
-
           });
           $scope.data.loading = false;
         },function(){

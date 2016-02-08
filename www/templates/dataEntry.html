@@ -1,35 +1,39 @@
 <ion-view view-title="Data Entry">
   <ion-content>
 
-    <div class="row">
+    <!--<div class="row">
       <div class="col col-100">
         <button class="button " ng-click="openModal('Organisation Unit')">Select Organisation Unit</button>
       </div>
-    </div>
+    </div>-->
 
     <div class="row">
       <div class="col col-100">
         <div class="card">
           <div class="item item-text-wrap">
 
-            <div ng-click="openModal('Organisation Unit')">
-              <b>Organisation Unit</b>
-              <div class="item">
-                {{ data.orgUnit.name }}
+            <div class="row" ng-click="openModal('Organisation Unit')">
+              <div class="col col-100">
+                <b>Organisation Unit</b>
+                <div class="item">
+                  {{ data.orgUnit.name }}
+                </div>
               </div>
             </div>
-            <div style="padding-top: 1%;">
-              <b>Data Entry Form</b>
-              <div class="item item-input item-select" >
-                <div class="input-label" >
-                </div>
-                <select disabled ng-if = "!data.orgUnitId && $scope.data.dataSets.length == 0" ng-model="data.dataSetId">
-                  <option value="">Choose Form</option>
-                </select>
+            <div style="padding-top: 1%;" class="row">
+              <div class="col col-100">
+                <b>Data Entry Form</b>
+                <div class="item item-input item-select" >
+                  <div class="input-label" >
+                  </div>
+                  <select disabled ng-if = "!data.orgUnitId && $scope.data.dataSets.length == 0" ng-model="data.dataSetId">
+                    <option value="">Choose Form</option>
+                  </select>
                   <select ng-if = "data.orgUnitId"   ng-model="data.dataSetId">
-                  <option value="">Choose Form</option>
-                  <option ng-repeat="dataSet in data.dataSets" value="{{ dataSet.id }}">{{ dataSet.name }}</option>
-                </select>
+                    <option value="">Choose Form</option>
+                    <option ng-repeat="dataSet in data.dataSets" value="{{ dataSet.id }}">{{ dataSet.name }}</option>
+                  </select>
+                </div>
               </div>
             </div>
             <div>
@@ -45,6 +49,19 @@
               </div>
             </div>
             </div>
+            <div ng-if = 'data.period' class="row">
+              <div class="col col-100" ng-if="data.selectedDataSet.categoryCombo.categoryOptionCombos[0].name != 'default'|| data.hasCategoryComboOptions == true">
+                <b>{{ data.selectedDataSet.categoryCombo.displayName }}</b>
+                <div class="item item-input item-select" >
+                  <div class="input-label" >
+                    <select  ng-model="data.categoryOptionCombos">
+                      <option value="">Choose option</option>
+                      <option ng-repeat="categoryOptionCombo in data.selectedDataSet.categoryCombo.categoryOptionCombos" value="{{ categoryOptionCombo.id }}">{{ categoryOptionCombo.name }}</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
 
           </div>
         </div>
@@ -55,7 +72,6 @@
             <p>Organisation Unit : {{ data.orgUnit.name }}</p>
             <p>Period : {{ data.selectedData.period }}</p>
             <p>Number Of Fields : {{ data.selectedData.numberOfFields }}</p>
-
           </div>
         </div>
 

@@ -12,7 +12,7 @@ angular.module('dataCapture')
     var mainServices = {
       getPeriodSelections : function(year,dataSet){
         var periodSelection = [];
-        var allowedFutureValue = this.getAllowedFuturePeriod(dataSet,year);
+        var allowedFutureValue = this.getAllowedFuturePeriod(dataSet);
         switch(dataSet.periodType){
           case 'Monthly':
             periodSelection = this.getMonthlyPeriodSectionOptions(year,allowedFutureValue);
@@ -79,7 +79,7 @@ angular.module('dataCapture')
         }
         return data;
       },
-      getAllowedFuturePeriod : function(dateSet,year){
+      getAllowedFuturePeriod : function(dateSet){
         var result = 0;
         if(dateSet.openFuturePeriods > 0){
           result = dateSet.openFuturePeriods;

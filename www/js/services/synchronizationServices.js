@@ -4,19 +4,18 @@
 angular.module('dataCapture')
   .factory('synchronizationServices',function($http,$q,$localStorage,userServices,$indexedDB,$interval){
     var syncCtr,userSyncCtr;
+    var syncTime = 60*1000;
     var synchronizationServices = {
 
-      startSync : function(){
+      startSync : function(time){
         syncCtr = $interval(function () {
-          this.syncProcess();
-        }, 600000);
+          syncProcess();
+        },syncTime);
       },
       stopSync : function(){
         $interval.cancel(syncCtr);
-      },
-      syncProcess: function(){
-        console.log('data sync');
-      },
+      }
+     ,
       syncUserLoginData : function(user){
         var time = 1000*60*60;
         userSyncCtr = $interval(function () {
@@ -27,5 +26,8 @@ angular.module('dataCapture')
         $interval.cancel(userSyncCtr);
       }
     };
+    function syncProcess(){
+      console.log('data sync');
+    }
     return synchronizationServices;
   });
