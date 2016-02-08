@@ -2,7 +2,10 @@
  * Created by joseph on 1/29/16.
  */
 angular.module('dataCapture')
-  .controller('dataEntryController',function($scope,$indexedDB,$state,$ionicModal,ionicToast,$localStorage,userServices,dataSetsServices,sectionsServices){
+  .controller('dataEntryController',function($scope,$indexedDB,
+                                             $state,$ionicModal,ionicToast,
+                                             $localStorage,userServices,dataSetsServices,
+                                             periodSelectionServices,sectionsServices){
 
     $scope.data = {};
     $scope.data.user = $localStorage.loginUserData;
@@ -12,6 +15,7 @@ angular.module('dataCapture')
     $scope.data.sectionsForm =[];
     $scope.data.loading = false;
     $scope.dataForTheTree =[];
+    $scope.data.periodOption = [];
 
     if($localStorage.dataEntryData){
       $scope.data.loading = true;
@@ -82,6 +86,7 @@ angular.module('dataCapture')
 
           $scope.data.selectedDataSet = data;
           $scope.data.loading = false;
+          periodOption(data);
         },function(){
 
           $scope.data.loading = false;
@@ -96,10 +101,9 @@ angular.module('dataCapture')
         }
       }
     };
-
-
+    //@todo modify based on  api on docs
     function prepareDataValues(key,value){
-      var ou = $localStorage.dataEntryData.orgUnit.id;
+      var ou = $localStorage.dataEntryData.orgUnit;
       var co = $localStorage.dataEntryData.dataSet.categoryCombo.id;
       var pe = $localStorage.dataEntryData.period;
       var data = {
@@ -118,6 +122,7 @@ angular.module('dataCapture')
       return data;
     }
 
+    //@todo trim off data elements for brn score values
     $scope.generateDefaultDataEntryForm = function(){
 
       var message = "Please wait...";
@@ -161,23 +166,15 @@ angular.module('dataCapture')
     };
 
     $scope.changePeriodInterval = function(type){
-      var year = null;
+      var yearInput = String($scope.data.periodOption[0].periodValue);
+      var year = yearInput.substring(0, 4);
       if(type =='next'){
-        year = parseInt($scope.data.periodOption[0].year);
-        year +=9;
+        year = parseInt(year) + 1;
       }else{
-        var periodOptionLength = $scope.data.periodOption.length;
-        periodOptionLength = parseInt(periodOptionLength);
-        year = $scope.data.periodOption[periodOptionLength-1].year;
+        year = parseInt(year) - 1;
       }
-      $scope.data.periodOption = getPeriodOption(year);
+      $scope.data.periodOption = periodSelectionServices.getPeriodSelections(year,$scope.data.selectedDataSet);
     };
-
-    /*
-
-     periodType = Yearly, Quarterly,Monthly
-
-     */
 
     $ionicModal.fromTemplateUrl('templates/modal.html', {
       scope: $scope
@@ -221,10 +218,8 @@ angular.module('dataCapture')
           }else {
             getAllAssignedOrgUnits();
           }
-
         },function(){
           //error
-
           $scope.data.loading = false;
         })
 
@@ -251,21 +246,10 @@ angular.module('dataCapture')
       }
     };
 
-
-    periodOption();
-    function periodOption(){
-      var year = 2016;
-      $scope.data.periodOption = getPeriodOption(year);
+    function periodOption(dataSet){
+      var year = new Date().getFullYear();
+      $scope.data.periodOption = periodSelectionServices.getPeriodSelections(year,dataSet);
     }
-
-    function getPeriodOption(year){
-      var period = [];
-      for(var i = 0; i < 10; i ++){
-        period.push({ year : year --});
-      }
-      return period;
-    }
-
     function checkingAndSetDataEntryForm(type){
       var dataSet = $localStorage.dataEntryData.dataSet;
       var numberOfSections = dataSet.sections.length;
@@ -282,7 +266,6 @@ angular.module('dataCapture')
       }
       return results;
     }
-
     //flexibility for form
     $scope.isInteger = function(key){
       if(key == "NUMBER"){
@@ -333,9 +316,5 @@ angular.module('dataCapture')
       }else{
         return false;
       }
-
     };
-
-
-
   });

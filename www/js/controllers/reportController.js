@@ -2,11 +2,15 @@
  * Created by joseph on 2/1/16.
  */
 angular.module('dataCapture')
-  .controller('reportController',function($scope,$state,ionicToast,$localStorage,reportServices,userServices,$ionicModal){
+  .controller('reportController',function($scope,$state,ionicToast,
+                                          $localStorage,reportServices,
+                                          periodSelectionServices,
+                                          userServices,$ionicModal){
     $scope.data = {};
     $scope.data.user = $localStorage.loginUserData;
     $scope.data.reports = null;
 
+    //@todo checking this logic
     if(! $localStorage.selectedReport){
       updateReports();
     }else{
@@ -30,7 +34,6 @@ angular.module('dataCapture')
 
     //checking changes on selected orgUnit
     $scope.$watch('data.orgUnitId', function() {
-
       $scope.data.period = null;
     });
 
@@ -64,13 +67,11 @@ angular.module('dataCapture')
         });
     }
 
-
     $scope.selectReport = function(reportId){
       delete $localStorage.selectedReport;
       getReportDetails(reportId);
     };
     function getReportDetails(reportId){
-
       $scope.data.loading = true;
       reportServices.getAllReportsFromIndexDb()
         .then(function(reports){
@@ -86,7 +87,6 @@ angular.module('dataCapture')
               }
             }
           });
-
         },function(){
           //error
           $scope.data.loading = false;
@@ -187,7 +187,11 @@ angular.module('dataCapture')
     function getPeriodOption(year){
       var period = [];
       for(var i = 0; i < 10; i ++){
-        period.push({ year : year --});
+        var yearDis = year --;
+        period.push({
+          displayValue : yearDis,
+          periodValue : yearDis
+        });
       }
       return period;
     }
