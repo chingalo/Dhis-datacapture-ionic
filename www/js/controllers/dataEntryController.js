@@ -121,7 +121,6 @@ angular.module('dataCapture')
       };
       return data;
     }
-
     //@todo trim off data elements for brn score values
     $scope.generateDefaultDataEntryForm = function(){
 
@@ -173,9 +172,14 @@ angular.module('dataCapture')
       }else{
         year = parseInt(year) - 1;
       }
-      $scope.data.periodOption = periodSelectionServices.getPeriodSelections(year,$scope.data.selectedDataSet);
+      var periodOptions = periodSelectionServices.getPeriodSelections(year,$scope.data.selectedDataSet);
+      if(periodOptions.length > 0){
+        $scope.data.periodOption = periodOptions;
+      }else{
+        var message = "There no period option further than this at moment";
+        ionicToast.show(message, 'top', false, 1500);
+      }
     };
-
     $ionicModal.fromTemplateUrl('templates/modal.html', {
       scope: $scope
     }).then(function(modal) {
