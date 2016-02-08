@@ -6,7 +6,7 @@ angular.module('dataCapture')
 
     $localStorage.appSetting = {
       synchronization : {
-        time : {type : 'seconds',value : 0},
+        time : {type : 'seconds',value : 60},
         preference : 'mobile'
       },
       defaultForm : {
