@@ -244,8 +244,8 @@ angular.module('dataCapture', [
      */
     function startSyncProcess(user){
       var time = null;
-      if($localStorage.appSetting){
-        time = $localStorage.appSetting.syncTime;
+      if($localStorage.syncTime){
+        time = $localStorage.syncTime;
       }
       synchronizationServices.startSync(time);
       synchronizationServices.syncUserLoginData(user);
@@ -256,7 +256,7 @@ angular.module('dataCapture', [
 
   .config(function ($stateProvider, $urlRouterProvider, $indexedDBProvider) {
     $indexedDBProvider
-      .connection('Dhis2_Data_Capture_v2')
+      .connection('hisptz-test')
       .upgradeDatabase(1, function (event, db, tx) {
 
         var dataSets = db.createObjectStore('dataSets', {keyPath: 'id'});

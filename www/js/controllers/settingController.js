@@ -11,8 +11,7 @@ angular.module('dataCapture')
       },
       defaultForm : {
         sorting : 'name'
-      },syncTime :60*1000
-
+      }
     };
     $scope.data = $localStorage.appSetting;
 
@@ -50,7 +49,7 @@ angular.module('dataCapture')
         default:
           newValue = 60*1000;
       }
-      $localStorage.appSetting.syncTime = newValue;
+      $localStorage.syncTime = newValue;
       synchronizationServices.stopSync();
       synchronizationServices.startSync(newValue);
 

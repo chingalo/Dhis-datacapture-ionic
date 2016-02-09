@@ -22,7 +22,7 @@ angular.module('dataCapture')
       getIndividualDataSetFromServer : function(dataSetId,baseUrl){
 
         var defer = $q.defer();
-        $http.get(baseUrl + '/api/dataSets/'+dataSetId+'.json?fields=id,created,name,timelyDays,formType,version,periodType,openFuturePeriods,expiryDays,dataEntryForm,dataElements[id,name,displayName,created,valueType,lastUpdated,optionSet[name,options]],organisationUnits[id,name],sections[id,name],indicators,categoryCombo[id,name,displayName,categoryOptionCombos[id,name]]')
+        $http.get(baseUrl + '/api/dataSets/'+dataSetId+'.json?fields=id,created,name,timelyDays,formType,version,periodType,openFuturePeriods,expiryDays,dataEntryForm,dataElements[id,name,displayName,created,valueType,lastUpdated,optionSet[name,options],categoryCombo[:all]],organisationUnits[id,name],sections[id,name],indicators,categoryCombo[id,name,displayName,categoryOptionCombos[id,name]]')
           .success(function(results){
 
             defer.resolve(results);
@@ -69,18 +69,60 @@ angular.module('dataCapture')
             }
           })
         }else{
-          defer.reject('error');
+          defer.reject();
         }
         return defer.promise;
       },saveDataSetDataValue:function(data){
         $indexedDB.openStore('dataValues',function(dataValuesData){
           dataValuesData.upsert(data).then(function(){
             //success
-            console.log('id : ' +data.id +' Inserted value : ' + data.dataValue.value);
+            console.log('update or add data values');
           },function(){
             //error
           });
         })
+      },
+      getSavedDataValuesFromIndexDbForSync : function(){
+        var defer = $q.defer();
+        $indexedDB.openStore('dataValues',function(dataValuesData){
+          dataValuesData.getAll().then(function(dataValues){
+            var data = [];
+            dataValues.forEach(function(dataValue){
+              if(! dataValue.sync){
+                data.push(dataValue)
+              }
+            });
+            //success
+            defer.resolve(data);
+          },function(){
+            //error get all data values from indexDB
+            defer.reject();
+          });
+        });
+        return defer.promise;
+      },
+      uploadDataValuesToTheServer : function(formattedDataValues,dataValues){
+        var base = $localStorage.baseUrl;
+        var i = -1;
+        formattedDataValues.forEach(function(data){
+          i ++;
+          console.log('form parameter : ' + JSON.stringify(data));
+          $http.post(base+'/api/dataValues?'+data,null)
+            .then(function(){
+              dataValues[i].sync = true;
+              $indexedDB.openStore('dataValues',function(dataValuesData){
+                dataValuesData.upsert(dataValues[i]).then(function(){
+                  //success
+                },function(){
+                  //error
+                });
+              });
+            },function(){
+              //error on uploading data set values
+            });
+        })
+
+
       }
     };
 

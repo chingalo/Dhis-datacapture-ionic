@@ -28,11 +28,30 @@ angular.module('dataCapture')
       }
     };
     function syncProcess(){
-      console.log('data sync');
       sendDataValues();
     }
     function sendDataValues(){
-      console.log('send data values');
+      dataSetsServices.getSavedDataValuesFromIndexDbForSync()
+        .then(function(dataValues){
+          var formattedDataValues = formatDataValues(dataValues);
+          dataSetsServices.uploadDataValuesToTheServer(formattedDataValues,dataValues);//.then(function(){},function(){});
+
+      },function(){
+          //fail to get data for sync
+        });
+    }
+    function formatDataValues(dataValues){
+      var data = [];
+      dataValues.forEach(function(dataValue){
+        var formParameter = "de="+dataValue.dataValue['de']+"&pe="+dataValue.dataValue['pe']+"&ou="
+          +dataValue.ou+"&co="+dataValue.co+"&value="+dataValue.dataValue['value'];
+
+        if(dataValue.cp != null){
+          formParameter = formParameter +"&cc="+dataValue.cc+"&cp="+dataValue.cp;
+        }
+        data.push(formParameter);
+      });
+      return data;
     }
     function syncAllDataProcess(){
       dataSetsServices.getAllDataSetsFromServer()

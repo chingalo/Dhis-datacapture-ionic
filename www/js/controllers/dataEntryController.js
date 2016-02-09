@@ -110,24 +110,40 @@ angular.module('dataCapture')
       }
     };
     //@todo modify based on  api on docs
+    //@todo co :: Category option combo identifier for data element other than defaults
     function prepareDataValues(key,value){
       var ou = $localStorage.dataEntryData.orgUnit;
-      var co = $localStorage.dataEntryData.dataSet.categoryCombo.id;
       var pe = $localStorage.dataEntryData.period;
+      var co = $localStorage.dataEntryData.co;
+      var dataSetId = $localStorage.dataEntryData.dataSet.id;
       var data = {
-        "id":key + '-' +co+ '-' +pe+ '-' +ou,
+        "id":key + '-' +dataSetId+ '-' +pe+ '-' +ou,
         "dataValue":{
           "de": key,
-          "co": co,
           "pe": pe,
           "value": value
         },
+        'co' : getCategoryOptionComboId(key),
+        'ou' : ou,
+        "cc":$localStorage.dataEntryData.dataSet.categoryCombo.id,
+        "cp":$localStorage.dataEntryData.categoryOptionCombosId,
         "sync":false,
         "storedBy" : $localStorage.loginUser.username,
         "created": new Date()
-
       };
       return data;
+    }
+    function getCategoryOptionComboId(dataElementId){
+
+      var dataElements = $localStorage.dataEntryData.dataElements;
+      var categoryOptionCombosId =null;
+      dataElements.forEach(function(dataElement){
+        if(dataElement.id == dataElementId){
+          var categoryCombo = dataElement.categoryCombo;
+          categoryOptionCombosId = categoryCombo.categoryOptionCombos[0].id
+        }
+      });
+      return categoryOptionCombosId;
     }
     //@todo trim off data elements for brn score values
     $scope.generateDefaultDataEntryForm = function(){
@@ -204,7 +220,7 @@ angular.module('dataCapture')
         $scope.data.hasCategoryComboOptions = true;
       }else{
 
-        var categoryOptionCombosId = $scope.data.selectedDataSet.categoryCombo.categoryOptionCombos[0].id;
+        var categoryOptionCombosId = null;
         if($scope.data.selectedDataSet){
           saveSelectedDataSetToLocalStorage(categoryOptionCombosId);
         }
@@ -222,6 +238,7 @@ angular.module('dataCapture')
       };
       $scope.data.formSelectVisibility = true;
       $localStorage.dataEntryData = $scope.data.selectedData;
+      $localStorage.dataEntryData.dataElements = dataElements;
     }
 
     $scope.openModal = function(modalType){
@@ -269,7 +286,7 @@ angular.module('dataCapture')
     };
 
     function periodOption(dataSet){
-      var year = new Date().getFullYear();
+      var year = parseInt(new Date().getFullYear()) -1;
       $scope.data.periodOption = periodSelectionServices.getPeriodSelections(year,dataSet);
     }
     function checkingAndSetDataEntryForm(type){
