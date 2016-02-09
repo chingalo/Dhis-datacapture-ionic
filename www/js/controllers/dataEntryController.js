@@ -118,7 +118,7 @@ angular.module('dataCapture')
         "id":key + '-' +co+ '-' +pe+ '-' +ou,
         "dataValue":{
           "de": key,
-          "co": ou,
+          "co": co,
           "pe": pe,
           "value": value
         },
