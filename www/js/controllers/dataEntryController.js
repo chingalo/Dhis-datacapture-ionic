@@ -258,6 +258,16 @@ angular.module('dataCapture')
       $localStorage.dataEntryData.dataElements = dataElements;
     }
 
+     $scope.getPeriodDisplayValue=function(period){
+      var periodDisplayValue = '';
+      $scope.data.periodOption.forEach(function(periodData){
+        if(periodData.periodValue == period){
+          periodDisplayValue = periodData.displayValue;
+        }
+      });
+      return periodDisplayValue;
+    }
+
     $scope.openModal = function(modalType){
       $scope.data.modalType = modalType;
       $scope.modal.show();
