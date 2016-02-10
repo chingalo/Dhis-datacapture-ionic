@@ -125,8 +125,6 @@ angular.module('dataCapture')
         }else{
           if(dataValue.value != value){
             canUpdate = true;
-            console.log('value : ' + value);
-            console.log('data values-value : ' + dataValue.value);
           }
         }
         if(canUpdate){
@@ -140,8 +138,6 @@ angular.module('dataCapture')
             "cc":$localStorage.dataEntryData.dataSet.categoryCombo.id,
             "cp":$localStorage.dataEntryData.categoryOptionCombosId,
             "sync":false
-            //"storedBy" : $localStorage.loginUser.username,
-            //"created": new Date()
           };
           dataSetsServices.saveDataSetDataValue(data);
         }
@@ -151,7 +147,6 @@ angular.module('dataCapture')
     }
     //@todo handling non default category option id for data element
     function getCategoryOptionComboId(dataElementId){
-
       var dataElements = $localStorage.dataEntryData.dataElements;
       var categoryOptionCombosId =null;
       dataElements.forEach(function(dataElement){
@@ -236,7 +231,6 @@ angular.module('dataCapture')
       if($scope.data.selectedDataSet.categoryCombo.categoryOptionCombos[0].name != 'default'){
         $scope.data.hasCategoryComboOptions = true;
       }else{
-
         var categoryOptionCombosId = null;
         if($scope.data.selectedDataSet){
           saveSelectedDataSetToLocalStorage(categoryOptionCombosId);

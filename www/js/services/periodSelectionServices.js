@@ -30,7 +30,7 @@ angular.module('dataCapture')
       },
       getMonthlyPeriodSectionOptions : function(year,allowedFutureValue){
         var data = [];
-        var currentYear = parseInt(new Date().getFullYear());
+        var currentYear = parseInt(new Date().getFullYear()) -1;
         var allowedFutureYear = currentYear + parseInt(allowedFutureValue/12);
         if(year <= allowedFutureYear){
           for(var i=11;i >=0; i --){
@@ -52,7 +52,7 @@ angular.module('dataCapture')
       },
       getQuarterlyPeriodSectionOptions : function(year,allowedFutureValue){
         var data = [];
-        var currentYear = parseInt(new Date().getFullYear());
+        var currentYear = parseInt(new Date().getFullYear()) -1;
         var allowedFutureYear = currentYear + parseInt(allowedFutureValue/4);
         if(year <= allowedFutureYear){
           for(var i=3;i >= 0; i --){
@@ -66,7 +66,7 @@ angular.module('dataCapture')
       },
       getYearlyPeriodSectionOptions : function(year,allowedFutureValue){
         var data = [];
-        var currentYear = parseInt(new Date().getFullYear());
+        var currentYear = parseInt(new Date().getFullYear()) -1;
         var allowedFutureYear = currentYear + parseInt(allowedFutureValue);
         if(year <= allowedFutureYear){
           for(var i=0;i < 12; i ++){
