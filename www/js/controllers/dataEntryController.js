@@ -104,8 +104,7 @@ angular.module('dataCapture')
     $scope.changeDataEntryForm = function(){
       for(var key in $scope.data.dataValues){
         if($scope.data.dataValues[key]){
-          var data = prepareDataValues(key,$scope.data.dataValues[key]);
-          dataSetsServices.saveDataSetDataValue(data);
+          prepareDataValues(key,$scope.data.dataValues[key]);
         }
       }
     };
@@ -114,25 +113,43 @@ angular.module('dataCapture')
     function prepareDataValues(key,value){
       var ou = $localStorage.dataEntryData.orgUnit;
       var pe = $localStorage.dataEntryData.period;
-      var co = $localStorage.dataEntryData.co;
       var dataSetId = $localStorage.dataEntryData.dataSet.id;
-      var data = {
-        "id":key + '-' +dataSetId+ '-' +pe+ '-' +ou,
-        "dataValue":{
-          "de": key,
-          "pe": pe,
-          "value": value
-        },
-        'co' : getCategoryOptionComboId(key),
-        'ou' : ou,
-        "cc":$localStorage.dataEntryData.dataSet.categoryCombo.id,
-        "cp":$localStorage.dataEntryData.categoryOptionCombosId,
-        "sync":false,
-        "storedBy" : $localStorage.loginUser.username,
-        "created": new Date()
-      };
-      return data;
+      var id = key + '-' +dataSetId+ '-' +pe+ '-' +ou;
+      var dataValue = null;
+      dataSetsServices.getDataValueById(id).then(function(returnedDataValue){
+        dataValue = returnedDataValue;
+        var data = null;
+        var canUpdate = false;
+        if(dataValue == null ){
+          canUpdate = true;
+        }else{
+          if(dataValue.value != value){
+            canUpdate = true;
+            console.log('value : ' + value);
+            console.log('data values-value : ' + dataValue.value);
+          }
+        }
+        if(canUpdate){
+          data = {
+            "id":id,
+            "de": key,
+            "pe": pe,
+            "value": value,
+            "co" : getCategoryOptionComboId(key),
+            "ou" : ou,
+            "cc":$localStorage.dataEntryData.dataSet.categoryCombo.id,
+            "cp":$localStorage.dataEntryData.categoryOptionCombosId,
+            "sync":false
+            //"storedBy" : $localStorage.loginUser.username,
+            //"created": new Date()
+          };
+          dataSetsServices.saveDataSetDataValue(data);
+        }
+      },function(){
+      });
+
     }
+    //@todo handling non default category option id for data element
     function getCategoryOptionComboId(dataElementId){
 
       var dataElements = $localStorage.dataEntryData.dataElements;

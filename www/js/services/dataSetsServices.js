@@ -7,11 +7,9 @@ angular.module('dataCapture')
     var dataSetsServices = {
 
       getAllDataSetsFromServer :function(baseUrl){
-
         var defer = $q.defer();
         $http.get(baseUrl + '/api/dataSets.json?paging=false&fields=id')
           .success(function(results){
-
             defer.resolve(results.dataSets);
           })
           .error(function(){
@@ -20,11 +18,9 @@ angular.module('dataCapture')
         return defer.promise;
       },
       getIndividualDataSetFromServer : function(dataSetId,baseUrl){
-
         var defer = $q.defer();
         $http.get(baseUrl + '/api/dataSets/'+dataSetId+'.json?fields=id,created,name,timelyDays,formType,version,periodType,openFuturePeriods,expiryDays,dataEntryForm,dataElements[id,name,displayName,created,valueType,lastUpdated,optionSet[name,options],categoryCombo[:all]],organisationUnits[id,name],sections[id,name],indicators,categoryCombo[id,name,displayName,categoryOptionCombos[id,name]]')
           .success(function(results){
-
             defer.resolve(results);
           })
           .error(function(){
@@ -33,7 +29,6 @@ angular.module('dataCapture')
         return defer.promise;
       },
       getAllDataSets:function(){
-
         var defer = $q.defer();
         $indexedDB.openStore('dataSets',function(dataSetData){
           dataSetData.getAll().then(function(data){
@@ -42,11 +37,9 @@ angular.module('dataCapture')
             defer.reject();
           });
         });
-
         return defer.promise;
       },
       getDataSetsByOrgUnitId : function(orgUnitId,dataSets){
-
         var orgUnitDataSets = [];
         dataSets.forEach(function(dataSet){
           var orgUnits = dataSet.organisationUnits;
@@ -56,13 +49,10 @@ angular.module('dataCapture')
             }
           })
         });
-
         return orgUnitDataSets;
       },getDataSetById:function(dataSetId,dataSets){
-
         var defer = $q.defer();
         if(dataSetId && dataSets){
-
           dataSets.forEach(function(dataSet){
             if(dataSet.id == dataSetId){
               defer.resolve(dataSet);
@@ -72,15 +62,34 @@ angular.module('dataCapture')
           defer.reject();
         }
         return defer.promise;
-      },saveDataSetDataValue:function(data){
+      },
+      saveDataSetDataValue:function(data){
         $indexedDB.openStore('dataValues',function(dataValuesData){
           dataValuesData.upsert(data).then(function(){
             //success
-            console.log('update or add data values');
+            console.log('update or add data values' + data.id);
           },function(){
             //error
           });
         })
+      },
+      getDataValueById : function(id){
+        var defer = $q.defer();
+        $indexedDB.openStore('dataValues',function(dataValuesData){
+            dataValuesData.getAll().then(function(dataValues){
+              var data = null;
+              dataValues.forEach(function(dataValue){
+                if(dataValue.id == id){
+                  data = dataValue;
+                }
+              });
+              defer.resolve(data);
+            },function(){
+              //error get all data values from indexDB
+              defer.reject();
+            });
+        });
+        return defer.promise;
       },
       getSavedDataValuesFromIndexDbForSync : function(){
         var defer = $q.defer();
@@ -106,7 +115,6 @@ angular.module('dataCapture')
         var i = -1;
         formattedDataValues.forEach(function(data){
           i ++;
-          console.log('form parameter : ' + JSON.stringify(data));
           $http.post(base+'/api/dataValues?'+data,null)
             .then(function(){
               dataValues[i].sync = true;
@@ -121,9 +129,9 @@ angular.module('dataCapture')
               //error on uploading data set values
             });
         })
-
-
       }
+
+
     };
 
     return dataSetsServices;
