@@ -7,7 +7,7 @@ angular.module('dataCapture')
       'January','February','March','April','May','June','July','August','September','October','November','December'
     ];
     var quarterlyYearData =[
-      'January-March','April-June','July-September','October -December'
+      'January-March','April-June','July-September','October-December'
     ];
     var mainServices = {
       getPeriodSelections : function(year,dataSet){

@@ -36,7 +36,7 @@ angular.module('dataCapture')
                   $scope.data.loading = false;
                 }
               }
-            })
+            });
           },function(){
             //error
           })
@@ -55,8 +55,8 @@ angular.module('dataCapture')
 
     //checking changes on selected orgUnit
     /* function changeOrgUnit(orgUnitId){
-      console.log(orgUnitId);
-    }*/
+     console.log(orgUnitId);
+     }*/
     $scope.$watch('data.orgUnitId', function() {
       $scope.data.dataSetId = null;
       $scope.data.dataSets = null;
@@ -159,24 +159,22 @@ angular.module('dataCapture')
     }
     //@todo trim off data elements for brn score values
     $scope.generateDefaultDataEntryForm = function(){
-
+      $scope.data.loading = true;
       var message = "Please wait...";
       ionicToast.show(message, 'bottom', false, 2500);
       $localStorage.dataEntryData.formType = 'DEFAULT';
       $scope.data.loading = false;
-      $state.go('app.dataEntryForm');
+      prepareDataElementsValuesFromIndexDb();
     };
     $scope.generateCustomDataEntryForm = function(){
-
       $scope.data.loading = true;
       var checkResults = checkingAndSetDataEntryForm('CUSTOM');
       if(checkResults){
-
         var message = "Please wait...";
         ionicToast.show(message, 'bottom', false, 2500);
         $localStorage.dataEntryData.formType = 'CUSTOM';
         $scope.data.loading = false;
-        $state.go('app.dataEntryForm');
+        prepareDataElementsValuesFromIndexDb();
       }else{
         var message = 'Custom data entry form for ' +  $localStorage.dataEntryData.dataSet.name + ' form has not been defined';
         progressMessage(message);
@@ -184,7 +182,6 @@ angular.module('dataCapture')
       }
     };
     $scope.generateSectionDataEntryForm = function(){
-
       $scope.data.loading = true;
       var message = "Please wait...";
       ionicToast.show(message, 'bottom', false, 2500);
@@ -192,12 +189,44 @@ angular.module('dataCapture')
       if(checkResults){
         $localStorage.dataEntryData.formType = 'SECTION';
         $scope.data.loading = false;
-        $state.go('app.dataEntryForm');
+        prepareDataElementsValuesFromIndexDb();
       }else{
         $scope.data.loading = false;
         var message = 'There are no form section for ' + $localStorage.dataEntryData.dataSet.name + ' that has been set';
         progressMessage(message);
       }
+    };
+    function prepareDataElementsValuesFromIndexDb(){
+      var dataElements = $localStorage.dataEntryData.dataSet.dataElements;
+      var ou = $localStorage.dataEntryData.orgUnit;
+      var pe = $localStorage.dataEntryData.period;
+      var dataSetId = $localStorage.dataEntryData.dataSet.id;
+      $scope.data.loading = true;
+      var counter = 0;
+      var dataElementsValuesFromIndexDb = [];
+      dataElements.forEach(function(dataElement){
+        counter ++;
+        var id = dataElement.id + '-' +dataSetId+ '-' +pe+ '-' +ou;
+        dataSetsServices.getDataValueById(id)
+          .then(function(returnedDataValue){
+            if(returnedDataValue != null){
+              if(id == returnedDataValue.id){
+                dataElementsValuesFromIndexDb[dataElement.id] = returnedDataValue.value;
+              }
+            }
+            $localStorage.dataEntryData.dataElementsValuesFromIndexDb=dataElementsValuesFromIndexDb;
+          },function(){});
+
+        if(dataElements.length == counter){
+          $scope.data.loading = false;
+          $state.go('app.dataEntryForm');
+        }
+      });
+    }
+    $scope.getDataValues = function(dataElementId){
+      var dataElementsValues = $localStorage.dataEntryData.dataElementsValuesFromIndexDb;
+      console.log(dataElementId + ' :: ' +$localStorage.dataEntryData.dataElementsValuesFromIndexDb[dataElementId]);
+
     };
 
     $scope.changePeriodInterval = function(type){
@@ -221,11 +250,9 @@ angular.module('dataCapture')
     }).then(function(modal) {
       $scope.modal = modal;
     });
-
     $scope.close = function() {
       $scope.modal.hide();
     };
-
     $scope.periodSelect = function(){
       $scope.close();
       if($scope.data.selectedDataSet.categoryCombo.categoryOptionCombos[0].name != 'default'){
@@ -252,7 +279,7 @@ angular.module('dataCapture')
       $localStorage.dataEntryData.dataElements = dataElements;
     }
 
-     $scope.getPeriodDisplayValue=function(period){
+    $scope.getPeriodDisplayValue=function(period){
       var periodDisplayValue = '';
       $scope.data.periodOption.forEach(function(periodData){
         if(periodData.periodValue == period){
@@ -284,6 +311,7 @@ angular.module('dataCapture')
         })
 
     }
+    //function for period selections
     $scope.showSelected = function(orgUnit){
       $scope.close();
       $scope.data.orgUnit = orgUnit;
@@ -305,7 +333,6 @@ angular.module('dataCapture')
         labelSelected: "a8"
       }
     };
-
     function periodOption(dataSet){
       var year = parseInt(new Date().getFullYear()) -1;
       $scope.data.periodOption = periodSelectionServices.getPeriodSelections(year,dataSet);
