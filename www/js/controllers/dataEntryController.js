@@ -22,6 +22,7 @@ angular.module('dataCapture')
       $scope.data.selectedData = $localStorage.dataEntryData;
       $scope.data.selectedDataEntryForm = $localStorage.dataEntryData;
       $scope.data.loading = false;
+      prepareDataElementsValuesFromIndexDb();
       if( $localStorage.dataEntryData.formType == 'SECTION'){
         $scope.data.loading = true;
         var selectedSections = $localStorage.dataEntryData.dataSet.sections;
@@ -164,7 +165,8 @@ angular.module('dataCapture')
       ionicToast.show(message, 'bottom', false, 2500);
       $localStorage.dataEntryData.formType = 'DEFAULT';
       $scope.data.loading = false;
-      prepareDataElementsValuesFromIndexDb();
+      $state.go('app.dataEntryForm');
+      //prepareDataElementsValuesFromIndexDb();
     };
     $scope.generateCustomDataEntryForm = function(){
       $scope.data.loading = true;
@@ -174,7 +176,8 @@ angular.module('dataCapture')
         ionicToast.show(message, 'bottom', false, 2500);
         $localStorage.dataEntryData.formType = 'CUSTOM';
         $scope.data.loading = false;
-        prepareDataElementsValuesFromIndexDb();
+        $state.go('app.dataEntryForm');
+        //prepareDataElementsValuesFromIndexDb();
       }else{
         var message = 'Custom data entry form for ' +  $localStorage.dataEntryData.dataSet.name + ' form has not been defined';
         progressMessage(message);
@@ -189,7 +192,8 @@ angular.module('dataCapture')
       if(checkResults){
         $localStorage.dataEntryData.formType = 'SECTION';
         $scope.data.loading = false;
-        prepareDataElementsValuesFromIndexDb();
+        $state.go('app.dataEntryForm');
+        //prepareDataElementsValuesFromIndexDb();
       }else{
         $scope.data.loading = false;
         var message = 'There are no form section for ' + $localStorage.dataEntryData.dataSet.name + ' that has been set';
@@ -203,31 +207,21 @@ angular.module('dataCapture')
       var dataSetId = $localStorage.dataEntryData.dataSet.id;
       $scope.data.loading = true;
       var counter = 0;
-      var dataElementsValuesFromIndexDb = [];
       dataElements.forEach(function(dataElement){
-        counter ++;
         var id = dataElement.id + '-' +dataSetId+ '-' +pe+ '-' +ou;
         dataSetsServices.getDataValueById(id)
           .then(function(returnedDataValue){
+            counter ++;
             if(returnedDataValue != null){
               if(id == returnedDataValue.id){
-                dataElementsValuesFromIndexDb[dataElement.id] = returnedDataValue.value;
+                $scope.data.dataValues[dataElement.id] = returnedDataValue.value;
               }
             }
-            $localStorage.dataEntryData.dataElementsValuesFromIndexDb=dataElementsValuesFromIndexDb;
-          },function(){});
-
-        if(dataElements.length == counter){
-          $scope.data.loading = false;
-          $state.go('app.dataEntryForm');
-        }
+          },function(){
+            counter ++;
+          });
       });
     }
-    $scope.getDataValues = function(dataElementId){
-      var dataElementsValues = $localStorage.dataEntryData.dataElementsValuesFromIndexDb;
-      console.log(dataElementId + ' :: ' +$localStorage.dataEntryData.dataElementsValuesFromIndexDb[dataElementId]);
-
-    };
 
     $scope.changePeriodInterval = function(type){
       var yearInput = String($scope.data.periodOption[0].periodValue);
