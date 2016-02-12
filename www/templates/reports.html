@@ -19,7 +19,8 @@
 
       <div class="row">
         <div class="col col-100">
-          <div class="list">
+          <button ng-if = "!data.reports" class="button button-full button-positive" ng-click="reloadReports()">Reload reports</button>
+          <div class="list" ng-if = "data.reports">
             <div class="item" ng-repeat="report in data.reports | filter: search" ng-click="selectReport(report.id)">
               <h2>{{ report.name }}</h2>
               <p>Created : {{report.created  | date:'d MMMM yyyy'}}</p>

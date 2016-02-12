@@ -20,6 +20,13 @@
                     </label>
                   </div>
 
+                  <div ng-if="isDate(dataElement.valueType)">
+                    <b>{{dataElement.displayName }}</b><br>
+                    <label class="item item-input">
+                      <input type="text" ng-change='changeDataEntryForm()' ui-date placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id]">
+                    </label>
+                  </div>
+
                   <div ng-if="isIntegerZeroOrPositive(dataElement.valueType)">
                     <b>{{dataElement.displayName }}</b><br>
                     <label class="item item-input">
@@ -82,6 +89,13 @@
                         <b>{{dataElement.displayName }}</b><br>
                         <label class="item item-input">
                           <input ng-change='changeDataEntryForm()' type="number" placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id]">
+                        </label>
+                      </div>
+
+                      <div ng-if="isDate(dataElement.valueType)">
+                        <b>{{dataElement.displayName }}</b><br>
+                        <label class="item item-input">
+                          <input type="text" ng-change='changeDataEntryForm()' ui-date placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id]">
                         </label>
                       </div>
 

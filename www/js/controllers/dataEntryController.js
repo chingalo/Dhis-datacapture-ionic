@@ -165,8 +165,9 @@ angular.module('dataCapture')
       ionicToast.show(message, 'bottom', false, 2500);
       $localStorage.dataEntryData.formType = 'DEFAULT';
       $scope.data.loading = false;
-      $state.go('app.dataEntryForm');
-      //prepareDataElementsValuesFromIndexDb();
+      var dataElements = null;
+
+     // $state.go('app.dataEntryForm');
     };
     $scope.generateCustomDataEntryForm = function(){
       $scope.data.loading = true;
@@ -177,7 +178,6 @@ angular.module('dataCapture')
         $localStorage.dataEntryData.formType = 'CUSTOM';
         $scope.data.loading = false;
         $state.go('app.dataEntryForm');
-        //prepareDataElementsValuesFromIndexDb();
       }else{
         var message = 'Custom data entry form for ' +  $localStorage.dataEntryData.dataSet.name + ' form has not been defined';
         progressMessage(message);
@@ -193,7 +193,6 @@ angular.module('dataCapture')
         $localStorage.dataEntryData.formType = 'SECTION';
         $scope.data.loading = false;
         $state.go('app.dataEntryForm');
-        //prepareDataElementsValuesFromIndexDb();
       }else{
         $scope.data.loading = false;
         var message = 'There are no form section for ' + $localStorage.dataEntryData.dataSet.name + ' that has been set';

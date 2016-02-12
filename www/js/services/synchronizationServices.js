@@ -18,8 +18,9 @@ angular.module('dataCapture')
         $interval.cancel(syncCtr);
       },
       syncUserLoginData : function(user){
-        var time = 1000*60*60;
+        var time = 1000*60;
         userSyncCtr = $interval(function () {
+          console.log('login');
           userServices.authenticateUser(user.username,user.password);
         }, time);
       },

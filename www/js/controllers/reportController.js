@@ -14,7 +14,6 @@ angular.module('dataCapture')
     if(! $localStorage.selectedReport){
       updateReports();
     }else{
-
       $scope.data.selectedReport = $localStorage.selectedReport;
       reportServices.getAllReportsFromIndexDb()
         .then(function(reports){
@@ -36,6 +35,10 @@ angular.module('dataCapture')
     $scope.$watch('data.orgUnitId', function() {
       $scope.data.period = null;
     });
+
+    $scope.reloadReports = function(){
+      updateReports();
+    };
 
     function updateReports(){
       $scope.data.loading = true;

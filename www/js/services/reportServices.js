@@ -11,7 +11,6 @@ angular.module('dataCapture')
         var defer = $q.defer();
         $http.get(baseUrl + '/api/reports.json?paging=false&fields=id,name,created,type')
           .success(function(results){
-
             defer.resolve(results.reports);
           })
           .error(function(){

@@ -212,7 +212,6 @@ angular.module('dataCapture', [
         $scope.data.loading = false;
       });
     }
-
     function addAssignedOrgUnit(orgUnits,baseUrl) {
       var message = 'Please wait to sync facility';
       ionicToast.show(message, 'top', false, 2500);
@@ -250,13 +249,11 @@ angular.module('dataCapture', [
       synchronizationServices.startSync(time);
       synchronizationServices.syncUserLoginData(user);
     }
-
-
   })
 
   .config(function ($stateProvider, $urlRouterProvider, $indexedDBProvider) {
     $indexedDBProvider
-      .connection('hisptz-test')
+      .connection('hisptz')
       .upgradeDatabase(1, function (event, db, tx) {
 
         var dataSets = db.createObjectStore('dataSets', {keyPath: 'id'});
