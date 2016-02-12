@@ -19,7 +19,7 @@ angular.module('dataCapture')
       },
       getIndividualDataSetFromServer : function(dataSetId,baseUrl){
         var defer = $q.defer();
-        $http.get(baseUrl + '/api/dataSets/'+dataSetId+'.json?fields=id,created,name,timelyDays,formType,version,periodType,openFuturePeriods,expiryDays,dataEntryForm,dataElements[id,name,displayName,created,valueType,lastUpdated,optionSet[name,options[name,is]],categoryCombo[:all]],organisationUnits[id,name],sections[id,name],indicators[:all],categoryCombo[id,name,displayName,categoryOptionCombos[id,name]]')
+        $http.get(baseUrl + '/api/dataSets/'+dataSetId+'.json?fields=id,created,name,timelyDays,formType,version,periodType,openFuturePeriods,expiryDays,dataEntryForm,dataElements[id,name,displayName,created,valueType,lastUpdated,optionSet[name,options[name,is]],categoryCombo[id,name,categoryOptionCombos[name,name,categoryOptions[:all]]]],organisationUnits[id,name],sections[id,name],indicators[:all],categoryCombo[id,name,displayName,categoryOptionCombos[id,name]]')
           .success(function(results){
             defer.resolve(results);
           })

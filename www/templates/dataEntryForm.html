@@ -152,11 +152,66 @@
             <div class="row" >
               <div class="col col-100">
                 Still on progress ....
+                {{data.dataValues|json}}
+                <div ng-repeat="dataElement in data.selectedDataEntryForm.dataSet.dataElements">
+                  <input type="text" ng-model="data.dataValues[dataElement.id][dataElement.id]">
+                  <div ng-if = "dataElement.categoryCombo.name == 'default'">
+
+                    <div ng-if="isInteger(dataElement.valueType)">
+                      <b>{{dataElement.displayName }}</b><br>
+                      <label class="item item-input">
+                        <input  type="number" placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id + '-' +dataElement.categoryCombo.categoryOptionCombos[0].id]">
+                      </label>
+                    </div>
+
+                    <div ng-if="isDate(dataElement.valueType)">
+                      <b>{{dataElement.displayName }}</b><br>
+                      <label class="item item-input">
+                        <input type="text"  ui-date placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id + '-' +dataElement.categoryCombo.categoryOptionCombos[0].id]">
+                      </label>
+                    </div>
+
+                    <div ng-if="isIntegerZeroOrPositive(dataElement.valueType)">
+                      <b>{{dataElement.displayName }}</b><br>
+                      <label class="item item-input">
+                        <input  type="number" min="0" placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id + '-' +dataElement.categoryCombo.categoryOptionCombos[0].id]">
+                      </label>
+                    </div>
+
+                  </div>
+
+                  <div ng-if = "dataElement.categoryCombo.name != 'default'" ng-repeat="categoryOptionCombos in dataElement.categoryCombo.categoryOptionCombos">
+
+                    <div ng-if="isInteger(dataElement.valueType)">
+                      <b>{{dataElement.displayName }}</b><br>
+                      <label class="item item-input">
+                        <input  type="number" placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
+                      </label>
+                    </div>
+
+                    <div ng-if="isDate(dataElement.valueType)">
+                      <b>{{dataElement.displayName }}</b><br>
+                      <label class="item item-input">
+                        <input type="text"  ui-date placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
+                      </label>
+                    </div>
+
+                    <div ng-if="isIntegerZeroOrPositive(dataElement.valueType)">
+                      <b>{{dataElement.displayName }}</b><br>
+                      <label class="item item-input">
+                        <input  type="number" min="0" placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
+                      </label>
+                    </div>
+
+                  </div>
+
+
+                </div>
+
               </div>
             </div>
           </div>
         </div>
-
 
       </div>
     </div>

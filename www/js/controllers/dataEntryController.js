@@ -49,6 +49,28 @@ angular.module('dataCapture')
       $scope.data.selectedData = {};
     }
 
+    function prepareDataElementsValuesFromIndexDb(){
+      var dataElements = $localStorage.dataEntryData.dataSet.dataElements;
+      var ou = $localStorage.dataEntryData.orgUnit;
+      var pe = $localStorage.dataEntryData.period;
+      var dataSetId = $localStorage.dataEntryData.dataSet.id;
+      $scope.data.loading = true;
+      var counter = 0;
+      dataElements.forEach(function(dataElement){
+        var id = dataElement.id + '-' +dataSetId+ '-' +pe+ '-' +ou;
+        dataSetsServices.getDataValueById(id)
+          .then(function(returnedDataValue){
+            counter ++;
+            if(returnedDataValue != null){
+              if(id == returnedDataValue.id){
+                $scope.data.dataValues[dataElement.id] = returnedDataValue.value;
+              }
+            }
+          },function(){
+            counter ++;
+          });
+      });
+    }
     //function for toaster messages
     function progressMessage(message){
       ionicToast.show(message, 'top', false, 2500);
@@ -66,7 +88,6 @@ angular.module('dataCapture')
       $scope.data.loading = true;
       $scope.data.hasCategoryComboOptions = false;
       dataSetsServices.getAllDataSets().then(function(dataSets){
-
         $scope.data.dataSets = dataSetsServices.getDataSetsByOrgUnitId($scope.data.orgUnitId,dataSets);
         $scope.data.loading = false;
       },function(){
@@ -78,7 +99,6 @@ angular.module('dataCapture')
 
     //checking changes on data entry form
     $scope.$watch('data.dataSetId', function() {
-
       $scope.data.loading = true;
       $scope.data.formSelectVisibility = false;
       $scope.data.selectedData = null;
@@ -86,12 +106,10 @@ angular.module('dataCapture')
       $scope.data.hasCategoryComboOptions = false;
       dataSetsServices.getDataSetById($scope.data.dataSetId,$scope.data.dataSets)
         .then(function(data){
-
           $scope.data.selectedDataSet = data;
           $scope.data.loading = false;
           periodOption(data);
         },function(){
-
           $scope.data.loading = false;
         })
     });
@@ -166,9 +184,19 @@ angular.module('dataCapture')
       $localStorage.dataEntryData.formType = 'DEFAULT';
       $scope.data.loading = false;
       var dataElements = null;
+      trimOffBRNScoreValues();
 
      // $state.go('app.dataEntryForm');
     };
+    function trimOffBRNScoreValues(){
+      var dataElements = $localStorage.dataEntryData.dataSet.dataElements;
+      dataElements.forEach(function(dataElement){
+        console.log(dataElement.categoryCombo.categoryOptionCombos.length);
+        var data = [dataElement.id-dataElement.id];
+        console.log(data)
+      });
+    }
+
     $scope.generateCustomDataEntryForm = function(){
       $scope.data.loading = true;
       var checkResults = checkingAndSetDataEntryForm('CUSTOM');
@@ -199,28 +227,6 @@ angular.module('dataCapture')
         progressMessage(message);
       }
     };
-    function prepareDataElementsValuesFromIndexDb(){
-      var dataElements = $localStorage.dataEntryData.dataSet.dataElements;
-      var ou = $localStorage.dataEntryData.orgUnit;
-      var pe = $localStorage.dataEntryData.period;
-      var dataSetId = $localStorage.dataEntryData.dataSet.id;
-      $scope.data.loading = true;
-      var counter = 0;
-      dataElements.forEach(function(dataElement){
-        var id = dataElement.id + '-' +dataSetId+ '-' +pe+ '-' +ou;
-        dataSetsServices.getDataValueById(id)
-          .then(function(returnedDataValue){
-            counter ++;
-            if(returnedDataValue != null){
-              if(id == returnedDataValue.id){
-                $scope.data.dataValues[dataElement.id] = returnedDataValue.value;
-              }
-            }
-          },function(){
-            counter ++;
-          });
-      });
-    }
 
     $scope.changePeriodInterval = function(type){
       var yearInput = String($scope.data.periodOption[0].periodValue);

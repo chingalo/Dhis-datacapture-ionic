@@ -21,7 +21,7 @@ angular.module('dataCapture')
       getIndividualSectionFromServer : function(sectionId,baseUrl){
 
         var defer = $q.defer();
-        $http.get(baseUrl + '/api/sections/'+sectionId+'.json?paging=false&fields=dataSet,id,name,indicators[:all],dataElements[id,name,categoryCombo[:all],displayName,created,valueType,lastUpdated,optionSet[name,options[name,id]]')
+        $http.get(baseUrl + '/api/sections/'+sectionId+'.json?paging=false&fields=dataSet,id,name,indicators[:all],dataElements[id,name,categoryCombo[id,name,categoryOptionCombos[name,name,categoryOptions[:all]]]],displayName,created,valueType,lastUpdated,optionSet[name,options[name,id]]')
           .success(function(results){
 
             defer.resolve(results);
