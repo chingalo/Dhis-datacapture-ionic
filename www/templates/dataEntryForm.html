@@ -183,21 +183,21 @@
                   <div ng-if = "dataElement.categoryCombo.name != 'default'" ng-repeat="categoryOptionCombos in dataElement.categoryCombo.categoryOptionCombos">
 
                     <div ng-if="isInteger(dataElement.valueType)">
-                      <b>{{dataElement.displayName }}</b><br>
+                      <b>{{dataElement.displayName }}-{{ categoryOptionCombos.name}}</b><br>
                       <label class="item item-input">
                         <input  type="number" placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
                       </label>
                     </div>
 
                     <div ng-if="isDate(dataElement.valueType)">
-                      <b>{{dataElement.displayName }}</b><br>
+                      <b>{{dataElement.displayName }}-{{ categoryOptionCombos.name}}</b><br>
                       <label class="item item-input">
                         <input type="text"  ui-date placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
                       </label>
                     </div>
 
                     <div ng-if="isIntegerZeroOrPositive(dataElement.valueType)">
-                      <b>{{dataElement.displayName }}</b><br>
+                      <b>{{dataElement.displayName }}-{{ categoryOptionCombos.name}}</b><br>
                       <label class="item item-input">
                         <input  type="number" min="0" placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
                       </label>
