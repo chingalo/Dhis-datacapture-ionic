@@ -49,12 +49,13 @@
                       </div>
                     </div>
 
-                    <div ng-if="isString(dataElement.valueType) && !hasDataSets(dataElement.valueType)">
+                    <!--<div ng-if="isString(dataElement.valueType) && !hasDataSets(dataElement.valueType)">
                       <b>{{dataElement.displayName }}</b><br>
                       <label class="item item-input">
                         <input ng-change='changeDataEntryForm()' type="text" placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
                       </label>
                     </div>
+-->
                     <div ng-if="isBoolean(dataElement.valueType)">
                       <b>{{dataElement.displayName }}<span ng-if = "dataElement.categoryCombo.name != 'default'" >&nbsp;:&nbsp;{{ categoryOptionCombos.name}}</span></b><br>
                       <div class="item item-input item-select" >
