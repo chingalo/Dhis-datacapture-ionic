@@ -57,18 +57,22 @@ angular.module('dataCapture')
       $scope.data.loading = true;
       var counter = 0;
       dataElements.forEach(function(dataElement){
-        var id = dataElement.id + '-' +dataSetId+ '-' +pe+ '-' +ou;
-        dataSetsServices.getDataValueById(id)
-          .then(function(returnedDataValue){
+        var categoryOptionCombos = dataElement.categoryCombo.categoryOptionCombos;
+        categoryOptionCombos.forEach(function(categoryOptionCombo){
+          var id = dataElement.id + '-' +dataSetId+ '-' +categoryOptionCombo.id+ '-' +pe+ '-' +ou;
+          dataSetsServices.getDataValueById(id)
+            .then(function(returnedDataValue){
             counter ++;
             if(returnedDataValue != null){
               if(id == returnedDataValue.id){
-                $scope.data.dataValues[dataElement.id] = returnedDataValue.value;
+
+                $scope.data.dataValues[dataElement.id+'-'+returnedDataValue.co] = returnedDataValue.value;
               }
             }
           },function(){
             counter ++;
           });
+        });
       });
     }
     //function for toaster messages
@@ -77,9 +81,6 @@ angular.module('dataCapture')
     }
 
     //checking changes on selected orgUnit
-    /* function changeOrgUnit(orgUnitId){
-     console.log(orgUnitId);
-     }*/
     $scope.$watch('data.orgUnitId', function() {
       $scope.data.dataSetId = null;
       $scope.data.dataSets = null;
@@ -128,12 +129,12 @@ angular.module('dataCapture')
       }
     };
     //@todo modify based on  api on docs
-    //@todo co :: Category option combo identifier for data element other than defaults
     function prepareDataValues(key,value){
       var ou = $localStorage.dataEntryData.orgUnit;
       var pe = $localStorage.dataEntryData.period;
       var dataSetId = $localStorage.dataEntryData.dataSet.id;
-      var id = key + '-' +dataSetId+ '-' +pe+ '-' +ou;
+      var modelValue = key.split('-');
+      var id = modelValue[0] + '-' +dataSetId+ '-'+modelValue[1]+'-'+ +pe+ '-' +ou;
       var dataValue = null;
       dataSetsServices.getDataValueById(id).then(function(returnedDataValue){
         dataValue = returnedDataValue;
@@ -149,10 +150,10 @@ angular.module('dataCapture')
         if(canUpdate){
           data = {
             "id":id,
-            "de": key,
+            "de": modelValue[0],
             "pe": pe,
             "value": value,
-            "co" : getCategoryOptionComboId(key),
+            "co" : modelValue[1],
             "ou" : ou,
             "cc":$localStorage.dataEntryData.dataSet.categoryCombo.id,
             "cp":$localStorage.dataEntryData.categoryOptionCombosId,
@@ -164,18 +165,6 @@ angular.module('dataCapture')
       });
 
     }
-    //@todo handling non default category option id for data element
-    function getCategoryOptionComboId(dataElementId){
-      var dataElements = $localStorage.dataEntryData.dataElements;
-      var categoryOptionCombosId =null;
-      dataElements.forEach(function(dataElement){
-        if(dataElement.id == dataElementId){
-          var categoryCombo = dataElement.categoryCombo;
-          categoryOptionCombosId = categoryCombo.categoryOptionCombos[0].id
-        }
-      });
-      return categoryOptionCombosId;
-    }
     //@todo trim off data elements for brn score values
     $scope.generateDefaultDataEntryForm = function(){
       $scope.data.loading = true;
@@ -183,17 +172,17 @@ angular.module('dataCapture')
       ionicToast.show(message, 'bottom', false, 2500);
       $localStorage.dataEntryData.formType = 'DEFAULT';
       $scope.data.loading = false;
-      var dataElements = null;
       trimOffBRNScoreValues();
-
-     // $state.go('app.dataEntryForm');
     };
     function trimOffBRNScoreValues(){
+      $scope.data.loading = true;
       var dataElements = $localStorage.dataEntryData.dataSet.dataElements;
       dataElements.forEach(function(dataElement){
-        console.log(dataElement.categoryCombo.categoryOptionCombos.length);
-        var data = [dataElement.id-dataElement.id];
-        console.log(data)
+        //console.log(dataElement.categoryCombo.categoryOptionCombos.length);
+        var data = [dataElement.id+'-'+dataElement.id];
+        //console.log(data)
+        $scope.data.loading = false;
+        $state.go('app.dataEntryForm');
       });
     }
 

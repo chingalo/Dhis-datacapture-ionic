@@ -1,73 +1,118 @@
 <ion-view view-title="">
   <ion-content>
-    <div class="row">
+    <div class="">
       <div class="">
-        <div class="card">
-          <div class="item item-text-wrap">
-            <h2 align="center">{{  data.selectedDataEntryForm.dataSet.name }} Data entry form</h2>
+        <div class="row">
+          <div class="col col-100">
+            <div class="item item-text-wrap">
+              <h2 align="center">{{  data.selectedDataEntryForm.dataSet.name }} Data entry form</h2>
+            </div>
           </div>
         </div>
-        <div class="card" ng-if = "data.selectedDataEntryForm.formType == 'DEFAULT' ">
-          <div class="item item-text-wrap">
-            <div ng-repeat="dataElement in data.selectedDataEntryForm.dataSet.dataElements">
-              <div class="row">
-                <div class="col-5"></div>
-                <div class="col col-90">
-                  <div ng-if="isInteger(dataElement.valueType)">
-                    <b>{{dataElement.displayName }}</b><br>
-                    <label class="item item-input">
-                      <input ng-change='changeDataEntryForm()' type="number" placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id]">
-                    </label>
-                  </div>
+        <div class="" ng-if = "data.selectedDataEntryForm.formType == 'DEFAULT' ">
+          <div class="row">
+            <div class = "col col-100">
+              <div class="item item-text-wrap">
+                <div ng-repeat="dataElement in data.selectedDataEntryForm.dataSet.dataElements">
+                  <div ng-if = "dataElement.categoryCombo.name == 'default'">
 
-                  <div ng-if="isDate(dataElement.valueType)">
-                    <b>{{dataElement.displayName }}</b><br>
-                    <label class="item item-input">
-                      <input type="text" ng-change='changeDataEntryForm()' ui-date placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id]">
-                    </label>
-                  </div>
-
-                  <div ng-if="isIntegerZeroOrPositive(dataElement.valueType)">
-                    <b>{{dataElement.displayName }}</b><br>
-                    <label class="item item-input">
-                      <input ng-change='changeDataEntryForm()' type="number" min="0" placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id]">
-                    </label>
-                  </div>
-
-                  <div ng-if="isString(dataElement.valueType) && !hasDataSets(dataElement)">
-                    <b>{{dataElement.displayName }}</b><br>
-                    <label class="item item-input">
-                      <input ng-change='changeDataEntryForm()' type="text" placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id]">
-                    </label>
-                  </div>
-
-                  <div ng-if="hasDataSets(dataElement)">
-                    <b>{{dataElement.displayName }}</b><br>
-                    <div class="item item-input item-select" >
-                      <div class="input-label" >
-                      </div>
-                      <select ng-change='changeDataEntryForm()' ng-model="data.dataValues[dataElement.id]">
-                        <option value="">Choose option</option>
-                        <option ng-repeat="item in getOptionSets(dataElement)" > {{ item.name }}</option>
-                      </select>
+                    <div ng-if="isInteger(dataElement.valueType)">
+                      <b>{{dataElement.displayName }}</b><br>
+                      <label class="item item-input">
+                        <input ng-change='changeDataEntryForm()' type="number" placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id + '-' +dataElement.categoryCombo.categoryOptionCombos[0].id]">
+                      </label>
                     </div>
-                  </div>
 
-                  <div ng-if="isBoolean(dataElement.valueType)">
-                    <b>{{dataElement.displayName }}</b><br>
-                    <div class="item item-input item-select" >
-                      <div class="input-label" >
-                      </div>
-                      <select ng-change='changeDataEntryForm()' ng-model="data.dataValues[dataElement.id]">
-                        <option value="">Choose option</option>
-                        <option value="true">Yes</option>
-                        <option value="false">No</option>
-                      </select>
+                    <div ng-if="isDate(dataElement.valueType)">
+                      <b>{{dataElement.displayName }}</b><br>
+                      <label class="item item-input">
+                        <input ng-change='changeDataEntryForm()' type="text"  ui-date placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id + '-' +dataElement.categoryCombo.categoryOptionCombos[0].id]">
+                      </label>
                     </div>
-                  </div>
 
+                    <div ng-if="isIntegerZeroOrPositive(dataElement.valueType)">
+                      <b>{{dataElement.displayName }}</b><br>
+                      <label class="item item-input">
+                        <input ng-change='changeDataEntryForm()' type="number" min="0" placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id + '-' +dataElement.categoryCombo.categoryOptionCombos[0].id]">
+                      </label>
+                    </div>
+
+                    <div ng-if="hasDataSets(dataElement)">
+                      <b>{{dataElement.displayName }}</b><br>
+                      <div class="item item-input item-select" >
+                        <div class="input-label" >
+                        </div>
+                        <select ng-change='changeDataEntryForm()' ng-model="data.dataValues[dataElement.id + '-' +dataElement.categoryCombo.categoryOptionCombos[0].id]">
+                          <option value="">Choose option</option>
+                          <option  ng-repeat="item in getOptionSets(dataElement)" > {{ item.name }}</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div ng-if="isBoolean(dataElement.valueType)">
+                      <b>{{dataElement.displayName }}</b><br>
+                      <div class="item item-input item-select" >
+                        <div class="input-label" >
+                        </div>
+                        <select ng-change='changeDataEntryForm()' ng-model="data.dataValues[dataElement.id + '-' +dataElement.categoryCombo.categoryOptionCombos[0].id]">
+                          <option value="">Choose option</option>
+                          <option value="true">Yes</option>
+                          <option value="false">No</option>
+                        </select>
+                      </div>
+                    </div>
+
+                  </div>
+                  <div ng-if = "dataElement.categoryCombo.name != 'default'" ng-repeat="categoryOptionCombos in dataElement.categoryCombo.categoryOptionCombos">
+
+                    <div ng-if="isInteger(dataElement.valueType)">
+                      <b>{{dataElement.displayName }}&nbsp;:&nbsp;{{ categoryOptionCombos.name}}</b><br>
+                      <label class="item item-input">
+                        <input ng-change='changeDataEntryForm()' type="number" placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
+                      </label>
+                    </div>
+
+                    <div ng-if="isDate(dataElement.valueType)">
+                      <b>{{dataElement.displayName }}&nbsp;:&nbsp;{{ categoryOptionCombos.name}}</b><br>
+                      <label class="item item-input">
+                        <input ng-change='changeDataEntryForm()' type="text"  ui-date placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
+                      </label>
+                    </div>
+
+                    <div ng-if="isIntegerZeroOrPositive(dataElement.valueType)">
+                      <b>{{dataElement.displayName }}&nbsp;:&nbsp;{{ categoryOptionCombos.name}}</b><br>
+                      <label class="item item-input">
+                        <input ng-change='changeDataEntryForm()' type="number" min="0" placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
+                      </label>
+                    </div>
+
+                    <div ng-if="hasDataSets(dataElement)">
+                      <b>{{dataElement.displayName }}&nbsp;:&nbsp;{{ categoryOptionCombos.name}}</b><br>
+                      <div class="item item-input item-select" >
+                        <div class="input-label" >
+                        </div>
+                        <select ng-change='changeDataEntryForm()' ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
+                          <option value="">Choose option</option>
+                          <option ng-repeat="item in getOptionSets(dataElement)" > {{ item.name }}</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div ng-if="isBoolean(dataElement.valueType)">
+                      <b>{{dataElement.displayName }}&nbsp;:&nbsp;{{ categoryOptionCombos.name}}</b><br>
+                      <div class="item item-input item-select" >
+                        <div class="input-label" >
+                        </div>
+                        <select ng-change='changeDataEntryForm()' ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
+                          <option value="">Choose option</option>
+                          <option value="true">Yes</option>
+                          <option value="false">No</option>
+                        </select>
+                      </div>
+                    </div>
+
+                  </div>
                 </div>
-                <div class="col-5"></div>
               </div>
             </div>
           </div>
@@ -76,70 +121,117 @@
 
         <div ng-if = "data.selectedDataEntryForm.formType == 'SECTION' ">
           <div ng-repeat="section in data.sectionsForm ">
-            <div class="card">
+            <div class="">
               <div class="item item-divider">
                 {{ section.name }}
               </div>
               <div>
                 <div ng-repeat="dataElement in section.dataElements">
                   <div class="row">
-                    <div class="col col-5"></div>
-                    <div class="col col-90">
-                      <div ng-if="isInteger(dataElement.valueType)">
-                        <b>{{dataElement.displayName }}</b><br>
-                        <label class="item item-input">
-                          <input ng-change='changeDataEntryForm()' type="number" placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id]">
-                        </label>
-                      </div>
+                    <div class = "col col-100">
+                      <div class="item item-text-wrap">
+                        <div ng-repeat="dataElement in data.selectedDataEntryForm.dataSet.dataElements">
+                          <div ng-if = "dataElement.categoryCombo.name == 'default'">
 
-                      <div ng-if="isDate(dataElement.valueType)">
-                        <b>{{dataElement.displayName }}</b><br>
-                        <label class="item item-input">
-                          <input type="text" ng-change='changeDataEntryForm()' ui-date placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id]">
-                        </label>
-                      </div>
+                            <div ng-if="isInteger(dataElement.valueType)">
+                              <b>{{dataElement.displayName }}</b><br>
+                              <label class="item item-input">
+                                <input ng-change='changeDataEntryForm()' type="number" placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id + '-' +dataElement.categoryCombo.categoryOptionCombos[0].id]">
+                              </label>
+                            </div>
 
-                      <div ng-if="isIntegerZeroOrPositive(dataElement.valueType)">
-                        <b>{{dataElement.displayName }}</b><br>
-                        <label class="item item-input">
-                          <input ng-change='changeDataEntryForm()' type="number" min="0" placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id]">
-                        </label>
-                      </div>
+                            <div ng-if="isDate(dataElement.valueType)">
+                              <b>{{dataElement.displayName }}</b><br>
+                              <label class="item item-input">
+                                <input ng-change='changeDataEntryForm()' type="text"  ui-date placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id + '-' +dataElement.categoryCombo.categoryOptionCombos[0].id]">
+                              </label>
+                            </div>
 
-                      <div ng-if="isString(dataElement.valueType) && !hasDataSets(dataElement)">
-                        <b>{{dataElement.displayName }}</b><br>
-                        <label class="item item-input">
-                          <input ng-change='changeDataEntryForm()' type="text" placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id]">
-                        </label>
-                      </div>
+                            <div ng-if="isIntegerZeroOrPositive(dataElement.valueType)">
+                              <b>{{dataElement.displayName }}</b><br>
+                              <label class="item item-input">
+                                <input ng-change='changeDataEntryForm()' type="number" min="0" placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id + '-' +dataElement.categoryCombo.categoryOptionCombos[0].id]">
+                              </label>
+                            </div>
 
-                      <div ng-if="hasDataSets(dataElement)">
-                        <b>{{dataElement.displayName }}</b><br>
-                        <div class="item item-input item-select" >
-                          <div class="input-label" >
+                            <div ng-if="hasDataSets(dataElement)">
+                              <b>{{dataElement.displayName }}</b><br>
+                              <div class="item item-input item-select" >
+                                <div class="input-label" >
+                                </div>
+                                <select ng-change='changeDataEntryForm()' ng-model="data.dataValues[dataElement.id + '-' +dataElement.categoryCombo.categoryOptionCombos[0].id]">
+                                  <option value="">Choose option</option>
+                                  <option  ng-repeat="item in getOptionSets(dataElement)" > {{ item.name }}</option>
+                                </select>
+                              </div>
+                            </div>
+
+                            <div ng-if="isBoolean(dataElement.valueType)">
+                              <b>{{dataElement.displayName }}</b><br>
+                              <div class="item item-input item-select" >
+                                <div class="input-label" >
+                                </div>
+                                <select ng-change='changeDataEntryForm()' ng-model="data.dataValues[dataElement.id + '-' +dataElement.categoryCombo.categoryOptionCombos[0].id]">
+                                  <option value="">Choose option</option>
+                                  <option value="true">Yes</option>
+                                  <option value="false">No</option>
+                                </select>
+                              </div>
+                            </div>
+
                           </div>
-                          <select ng-change='changeDataEntryForm()' ng-model="data.dataValues[dataElement.id]">
-                            <option value="">Choose option</option>
-                            <option ng-repeat="item in getOptionSets(dataElement)" > {{ item.name }}</option>
-                          </select>
+                          <div ng-if = "dataElement.categoryCombo.name != 'default'" ng-repeat="categoryOptionCombos in dataElement.categoryCombo.categoryOptionCombos">
+
+                            <div ng-if="isInteger(dataElement.valueType)">
+                              <b>{{dataElement.displayName }}&nbsp;:&nbsp;{{ categoryOptionCombos.name}}</b><br>
+                              <label class="item item-input">
+                                <input ng-change='changeDataEntryForm()' type="number" placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
+                              </label>
+                            </div>
+
+                            <div ng-if="isDate(dataElement.valueType)">
+                              <b>{{dataElement.displayName }}&nbsp;:&nbsp;{{ categoryOptionCombos.name}}</b><br>
+                              <label class="item item-input">
+                                <input ng-change='changeDataEntryForm()' type="text"  ui-date placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
+                              </label>
+                            </div>
+
+                            <div ng-if="isIntegerZeroOrPositive(dataElement.valueType)">
+                              <b>{{dataElement.displayName }}&nbsp;:&nbsp;{{ categoryOptionCombos.name}}</b><br>
+                              <label class="item item-input">
+                                <input ng-change='changeDataEntryForm()' type="number" min="0" placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
+                              </label>
+                            </div>
+
+                            <div ng-if="hasDataSets(dataElement)">
+                              <b>{{dataElement.displayName }}&nbsp;:&nbsp;{{ categoryOptionCombos.name}}</b><br>
+                              <div class="item item-input item-select" >
+                                <div class="input-label" >
+                                </div>
+                                <select ng-change='changeDataEntryForm()' ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
+                                  <option value="">Choose option</option>
+                                  <option ng-repeat="item in getOptionSets(dataElement)" > {{ item.name }}</option>
+                                </select>
+                              </div>
+                            </div>
+
+                            <div ng-if="isBoolean(dataElement.valueType)">
+                              <b>{{dataElement.displayName }}&nbsp;:&nbsp;{{ categoryOptionCombos.name}}</b><br>
+                              <div class="item item-input item-select" >
+                                <div class="input-label" >
+                                </div>
+                                <select ng-change='changeDataEntryForm()' ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
+                                  <option value="">Choose option</option>
+                                  <option value="true">Yes</option>
+                                  <option value="false">No</option>
+                                </select>
+                              </div>
+                            </div>
+
+                          </div>
                         </div>
                       </div>
-
-                      <div ng-if="isBoolean(dataElement.valueType)">
-                        <b>{{dataElement.displayName }}</b><br>
-                        <div class="item item-input item-select" >
-                          <div class="input-label" >
-                          </div>
-                          <select ng-change='changeDataEntryForm()' ng-model="data.dataValues[dataElement.id]">
-                            <option value="">Choose option</option>
-                            <option value="true">Yes</option>
-                            <option value="false">No</option>
-                          </select>
-                        </div>
-                      </div>
-
                     </div>
-                    <div class="col col-5"></div>
                   </div>
                 </div>
               </div>
@@ -152,62 +244,6 @@
             <div class="row" >
               <div class="col col-100">
                 Still on progress ....
-                {{data.dataValues|json}}
-                <div ng-repeat="dataElement in data.selectedDataEntryForm.dataSet.dataElements">
-                  <input type="text" ng-model="data.dataValues[dataElement.id][dataElement.id]">
-                  <div ng-if = "dataElement.categoryCombo.name == 'default'">
-
-                    <div ng-if="isInteger(dataElement.valueType)">
-                      <b>{{dataElement.displayName }}</b><br>
-                      <label class="item item-input">
-                        <input  type="number" placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id + '-' +dataElement.categoryCombo.categoryOptionCombos[0].id]">
-                      </label>
-                    </div>
-
-                    <div ng-if="isDate(dataElement.valueType)">
-                      <b>{{dataElement.displayName }}</b><br>
-                      <label class="item item-input">
-                        <input type="text"  ui-date placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id + '-' +dataElement.categoryCombo.categoryOptionCombos[0].id]">
-                      </label>
-                    </div>
-
-                    <div ng-if="isIntegerZeroOrPositive(dataElement.valueType)">
-                      <b>{{dataElement.displayName }}</b><br>
-                      <label class="item item-input">
-                        <input  type="number" min="0" placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id + '-' +dataElement.categoryCombo.categoryOptionCombos[0].id]">
-                      </label>
-                    </div>
-
-                  </div>
-
-                  <div ng-if = "dataElement.categoryCombo.name != 'default'" ng-repeat="categoryOptionCombos in dataElement.categoryCombo.categoryOptionCombos">
-
-                    <div ng-if="isInteger(dataElement.valueType)">
-                      <b>{{dataElement.displayName }}-{{ categoryOptionCombos.name}}</b><br>
-                      <label class="item item-input">
-                        <input  type="number" placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
-                      </label>
-                    </div>
-
-                    <div ng-if="isDate(dataElement.valueType)">
-                      <b>{{dataElement.displayName }}-{{ categoryOptionCombos.name}}</b><br>
-                      <label class="item item-input">
-                        <input type="text"  ui-date placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
-                      </label>
-                    </div>
-
-                    <div ng-if="isIntegerZeroOrPositive(dataElement.valueType)">
-                      <b>{{dataElement.displayName }}-{{ categoryOptionCombos.name}}</b><br>
-                      <label class="item item-input">
-                        <input  type="number" min="0" placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
-                      </label>
-                    </div>
-
-                  </div>
-
-
-                </div>
-
               </div>
             </div>
           </div>
