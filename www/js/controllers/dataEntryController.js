@@ -165,7 +165,6 @@ angular.module('dataCapture')
       });
 
     }
-    //@todo trim off data elements for brn score values
     $scope.generateDefaultDataEntryForm = function(){
       $scope.data.loading = true;
       var message = "Please wait...";
@@ -177,12 +176,21 @@ angular.module('dataCapture')
     function trimOffBRNScoreValues(){
       $scope.data.loading = true;
       var dataElements = $localStorage.dataEntryData.dataSet.dataElements;
+      var trimmedOffBRNScoreValues = [];
+      var counter = 0;
       dataElements.forEach(function(dataElement){
-        //console.log(dataElement.categoryCombo.categoryOptionCombos.length);
-        var data = [dataElement.id+'-'+dataElement.id];
-        //console.log(data)
-        $scope.data.loading = false;
-        $state.go('app.dataEntryForm');
+        counter ++;
+        var dataElementNameString = dataElement.name.split('_');
+        var length = dataElementNameString.length;
+        if(dataElementNameString[length -1] != "scorevalue"){
+          trimmedOffBRNScoreValues.push(dataElement);
+        }
+        if(counter == dataElements.length){
+          $scope.data.loading = false;
+          $scope.data.selectedDataEntryForm.dataSet.dataElements = trimmedOffBRNScoreValues;
+          $localStorage.dataEntryData.dataSet.dataElements = trimmedOffBRNScoreValues;
+          $state.go('app.dataEntryForm');
+        }
       });
     }
 
