@@ -24,7 +24,7 @@ angular.module('dataCapture')
     $scope.numberOfPagesSection=function(){
       var dataElements = $localStorage.dataEntryData.dataSet.sections;
       if(dataElements){
-        return Math.ceil(dataElements.length/$scope.pageSize);
+        return Math.ceil(dataElements.length/$scope.pageSizeSection);
       }else{
         return 0;
       }
@@ -32,7 +32,7 @@ angular.module('dataCapture')
     $scope.numberOfPagesDefault=function(){
       var dataElements = $scope.data.selectedDataEntryForm.dataSet.dataElements;
       if(dataElements){
-        return Math.ceil(dataElements.length/$scope.pageSize);
+        return Math.ceil(dataElements.length/$scope.pageSizeDefault);
       }else{
         return 0;
       }
@@ -372,8 +372,7 @@ angular.module('dataCapture')
     }
     //flexibility for form
     $scope.isInteger = function(key){
-      if(key == "NUMBER" || key == "NUMBER"){
-        console.log(key);
+      if(key == "NUMBER" || key == "INTEGER"){
         return true;
       }else{
         return false;
