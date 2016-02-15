@@ -14,14 +14,14 @@
               </div>
             </div>
 
-            <div ng-click="openModal('Organisation Unit')">
+            <div ng-click="openModal('Organisation Unit')" ng-if = "data.selectedReport.reportParams.paramOrganisationUnit">
               <b>Organisation Unit</b>
               <div class="item">
                 {{ data.orgUnit.name }}
               </div>
             </div>
 
-            <div class="row" ng-click="openModal('Period')" style="padding-top: 1%;">
+            <div class="row" ng-click="openModal('Period')" style="padding-top: 1%;" ng-if = "data.selectedReport.reportParams.paramReportingPeriod">
               <div class="col col-90">
                 <b>Period</b> :
                 <span ng-if = "data.period"></span>{{ data.period }}
