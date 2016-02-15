@@ -20,6 +20,10 @@ angular.module('dataCapture')
           case 'Quarterly':
             periodSelection = this.getQuarterlyPeriodSectionOptions(year,allowedFutureValue);
             break;
+          case 'Weekly':
+                break;
+          /*case '':
+                break;*/
           case 'Yearly':
             periodSelection = this.getYearlyPeriodSectionOptions(year,allowedFutureValue);
             break;
