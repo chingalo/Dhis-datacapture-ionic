@@ -13,7 +13,8 @@
           <div class="row">
             <div class = "col col-100">
               <div class="item item-text-wrap">
-                <div ng-repeat="dataElement in data.selectedDataEntryForm.dataSet.dataElements | paginationFilter:currentPage*pageSizeDefault | limitTo:pageSizeDefault">
+                <div ng-repeat="dataElement in data.selectedDataEntryForm.dataSet.dataElements | paginationFilter:currentPage*pageSizeDefault | limitTo:pageSizeDefault" >
+                  {{ isScoreValueDataElement(dataElement) }}
                   <div ng-repeat="categoryOptionCombos in dataElement.categoryCombo.categoryOptionCombos ">
 
                     <div ng-if="isInteger(dataElement.valueType)">
@@ -206,6 +207,11 @@
               </div>
             </div>
           </div>
+        </div>
+
+        <!-- validate, complete and incomplete buttons-->
+        <div class="row">
+
         </div>
 
       </div>

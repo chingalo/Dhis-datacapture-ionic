@@ -44,6 +44,7 @@ angular.module('dataCapture')
       $scope.data.selectedDataEntryForm = $localStorage.dataEntryData;
       $scope.data.loading = false;
       prepareDataElementsValuesFromIndexDb();
+      trimOffBRNScoreValues();
       if( $localStorage.dataEntryData.formType == 'SECTION'){
         $scope.data.loading = true;
         var selectedSections = $localStorage.dataEntryData.dataSet.sections;
@@ -192,8 +193,18 @@ angular.module('dataCapture')
       ionicToast.show(message, 'bottom', false, 2500);
       $localStorage.dataEntryData.formType = 'DEFAULT';
       $scope.data.loading = false;
-      trimOffBRNScoreValues();
+      //trimOffBRNScoreValues();
+      $state.go('app.dataEntryForm');
     };
+
+    /*$scope.isScoreValueDataElement = function(dataElement){
+      var result = true;
+      var dataElementNameString = dataElement.name.split('_');
+      if(dataElementNameString[length -1] != "scorevalue"){
+        result = false;
+      }
+      return result;
+    };*/
     function trimOffBRNScoreValues(){
       $scope.data.loading = true;
       var dataElements = $localStorage.dataEntryData.dataSet.dataElements;
@@ -210,7 +221,7 @@ angular.module('dataCapture')
           $scope.data.loading = false;
           $scope.data.selectedDataEntryForm.dataSet.dataElements = trimmedOffBRNScoreValues;
           $localStorage.dataEntryData.dataSet.dataElements = trimmedOffBRNScoreValues;
-          $state.go('app.dataEntryForm');
+          //$state.go('app.dataEntryForm');
         }
       });
     }
