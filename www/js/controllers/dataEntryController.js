@@ -17,6 +17,17 @@ angular.module('dataCapture')
     $scope.dataForTheTree =[];
     $scope.data.periodOption = [];
 
+    //pagination variables
+    $scope.currentPage = 0;
+    $scope.pageSize = 10;
+    $scope.numberOfPages=function(){
+      if($scope.data.reports){
+        return Math.ceil($scope.data.reports.length/$scope.pageSize);
+      }else{
+        return 0;
+      }
+    };
+
     if($localStorage.dataEntryData){
       $scope.data.loading = true;
       $scope.data.selectedData = $localStorage.dataEntryData;
@@ -134,7 +145,7 @@ angular.module('dataCapture')
       var pe = $localStorage.dataEntryData.period;
       var dataSetId = $localStorage.dataEntryData.dataSet.id;
       var modelValue = key.split('-');
-      var id = modelValue[0] + '-' +dataSetId+ '-'+modelValue[1]+'-'+ +pe+ '-' +ou;
+      var id = modelValue[0] + '-' +dataSetId+ '-'+modelValue[1]+'-'+pe+ '-' +ou;
       var dataValue = null;
       dataSetsServices.getDataValueById(id).then(function(returnedDataValue){
         dataValue = returnedDataValue;
@@ -352,6 +363,7 @@ angular.module('dataCapture')
     //flexibility for form
     $scope.isInteger = function(key){
       if(key == "NUMBER" || key == "NUMBER"){
+        console.log(key);
         return true;
       }else{
         return false;

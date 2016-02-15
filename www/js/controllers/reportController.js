@@ -2,12 +2,6 @@
  * Created by joseph on 2/1/16.
  */
 angular.module('dataCapture')
-  .filter('paginationFilter', function() {
-    return function(input, start) {
-      start = +start; //parse to int
-      return input.slice(start);
-    }
-  })
   .controller('reportController',function($scope,$state,ionicToast,
                                           $localStorage,reportServices,
                                           periodSelectionServices,
@@ -16,6 +10,7 @@ angular.module('dataCapture')
     $scope.data.user = $localStorage.loginUserData;
     $scope.data.reports = null;
 
+    //pagination variables
     $scope.currentPage = 0;
     $scope.pageSize = 10;
     $scope.numberOfPages=function(){
@@ -24,7 +19,6 @@ angular.module('dataCapture')
       }else{
         return 0;
       }
-
     };
 
     //@todo checking this logic

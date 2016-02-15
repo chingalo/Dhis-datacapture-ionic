@@ -358,4 +358,10 @@ angular.module('dataCapture', [
     // if none of the above states are matched, use this as the fallback
     $urlRouterProvider.otherwise('/login');
   })
+  .filter('paginationFilter', function() {
+    return function(input, start) {
+      start = +start; //parse to int
+      return input.slice(start);
+    }
+  })
 ;
