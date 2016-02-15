@@ -2,6 +2,12 @@
  * Created by joseph on 2/1/16.
  */
 angular.module('dataCapture')
+  .filter('startFrom', function() {
+    return function(input, start) {
+      start = +start; //parse to int
+      return input.slice(start);
+    }
+  })
   .controller('reportController',function($scope,$state,ionicToast,
                                           $localStorage,reportServices,
                                           periodSelectionServices,
@@ -9,6 +15,17 @@ angular.module('dataCapture')
     $scope.data = {};
     $scope.data.user = $localStorage.loginUserData;
     $scope.data.reports = null;
+
+    $scope.currentPage = 0;
+    $scope.pageSize = 10;
+    $scope.numberOfPages=function(){
+      if($scope.data.reports){
+        return Math.ceil($scope.data.reports.length/$scope.pageSize);
+      }else{
+        return 0;
+      }
+
+    };
 
     //@todo checking this logic
     if(! $localStorage.selectedReport){
