@@ -351,7 +351,14 @@ angular.module('dataCapture')
     }
     //flexibility for form
     $scope.isInteger = function(key){
-      if(key == "NUMBER"){
+      if(key == "NUMBER" || key == "NUMBER"){
+        return true;
+      }else{
+        return false;
+      }
+    };
+    $scope.isTrueOnly = function(key){
+      if(key == "TRUE_ONLY"){
         return true;
       }else{
         return false;
@@ -372,7 +379,7 @@ angular.module('dataCapture')
       }
     };
     $scope.isString = function(key){
-      if(key == "TEXT"){
+      if(key == "TEXT" || key == "LONG_TEXT"){
         return true;
       }else{
         return false;

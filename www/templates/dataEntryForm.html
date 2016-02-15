@@ -37,7 +37,14 @@
                       </label>
                     </div>
 
-                    <div ng-if="hasDataSets(dataElement)">
+                    <div ng-if="isString(dataElement.valueType) && !hasDataSets(dataElement.valueType)">
+                      <b>{{dataElement.displayName }}</b><br>
+                      <label class="item item-input">
+                        <input ng-change='changeDataEntryForm()' type="text" placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id + '-' +dataElement.categoryCombo.categoryOptionCombos[0].id]">
+                      </label>
+                    </div>
+
+                    <div ng-if="hasDataSets(dataElement) && !isInteger(dataElement.valueType) && !isIntegerZeroOrPositive(dataElement.valueType)">
                       <b>{{dataElement.displayName }}</b><br>
                       <div class="item item-input item-select" >
                         <div class="input-label" >
@@ -45,6 +52,18 @@
                         <select ng-change='changeDataEntryForm()' ng-model="data.dataValues[dataElement.id + '-' +dataElement.categoryCombo.categoryOptionCombos[0].id]">
                           <option value="">Choose option</option>
                           <option  ng-repeat="item in getOptionSets(dataElement)" > {{ item.name }}</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div ng-if="isTrueOnly(dataElement.valueType)">
+                      <b>{{dataElement.displayName }}</b><br>
+                      <div class="item item-input item-select" >
+                        <div class="input-label" >
+                        </div>
+                        <select ng-change='changeDataEntryForm()' ng-model="data.dataValues[dataElement.id + '-' +dataElement.categoryCombo.categoryOptionCombos[0].id]">
+                          <option value="">Choose option</option>
+                          <option value="true">Yes</option>
                         </select>
                       </div>
                     </div>
@@ -86,7 +105,7 @@
                       </label>
                     </div>
 
-                    <div ng-if="hasDataSets(dataElement)">
+                    <div ng-if="hasDataSets(dataElement) && !isInteger(dataElement.valueType) && !isIntegerZeroOrPositive(dataElement.valueType)">
                       <b>{{dataElement.displayName }}&nbsp;:&nbsp;{{ categoryOptionCombos.name}}</b><br>
                       <div class="item item-input item-select" >
                         <div class="input-label" >
@@ -98,6 +117,13 @@
                       </div>
                     </div>
 
+                    <div ng-if="isString(dataElement.valueType) && !hasDataSets(dataElement.valueType)">
+                      <b>{{dataElement.displayName }}</b><br>
+                      <label class="item item-input">
+                        <input ng-change='changeDataEntryForm()' type="text" placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
+                      </label>
+                    </div>
+
                     <div ng-if="isBoolean(dataElement.valueType)">
                       <b>{{dataElement.displayName }}&nbsp;:&nbsp;{{ categoryOptionCombos.name}}</b><br>
                       <div class="item item-input item-select" >
@@ -107,6 +133,18 @@
                           <option value="">Choose option</option>
                           <option value="true">Yes</option>
                           <option value="false">No</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div ng-if="isTrueOnly(dataElement.valueType)">
+                      <b>{{dataElement.displayName }}</b><br>
+                      <div class="item item-input item-select" >
+                        <div class="input-label" >
+                        </div>
+                        <select ng-change='changeDataEntryForm()' ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
+                          <option value="">Choose option</option>
+                          <option value="true">Yes</option>
                         </select>
                       </div>
                     </div>
