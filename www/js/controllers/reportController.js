@@ -15,6 +15,7 @@ angular.module('dataCapture')
     $scope.pageSize = 10;
     $scope.numberOfPages=function(){
       if($scope.data.reports){
+
         return Math.ceil($scope.data.reports.length/$scope.pageSize);
       }else{
         return 0;

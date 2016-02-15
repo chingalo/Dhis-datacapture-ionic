@@ -19,10 +19,20 @@ angular.module('dataCapture')
 
     //pagination variables
     $scope.currentPage = 0;
-    $scope.pageSize = 10;
-    $scope.numberOfPages=function(){
-      if($scope.data.reports){
-        return Math.ceil($scope.data.reports.length/$scope.pageSize);
+    $scope.pageSizeDefault = 5;
+    $scope.pageSizeSection = 1;
+    $scope.numberOfPagesSection=function(){
+      var dataElements = $localStorage.dataEntryData.dataSet.sections;
+      if(dataElements){
+        return Math.ceil(dataElements.length/$scope.pageSize);
+      }else{
+        return 0;
+      }
+    };
+    $scope.numberOfPagesDefault=function(){
+      var dataElements = $scope.data.selectedDataEntryForm.dataSet.dataElements;
+      if(dataElements){
+        return Math.ceil(dataElements.length/$scope.pageSize);
       }else{
         return 0;
       }
