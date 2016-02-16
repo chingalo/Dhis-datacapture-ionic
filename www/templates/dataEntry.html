@@ -1,12 +1,6 @@
 <ion-view view-title="Data Entry">
   <ion-content>
 
-    <!--<div class="row">
-      <div class="col col-100">
-        <button class="button " ng-click="openModal('Organisation Unit')">Select Organisation Unit</button>
-      </div>
-    </div>-->
-
     <div class="row">
       <div class="col col-100">
         <div class="card">
@@ -79,15 +73,15 @@
     </div>
 
     <div class="row" ng-if="data.formSelectVisibility">
-      <div class="col col-33">
+      <div class="col col-50">
         <button class="button button-full button-positive" ng-click="generateDefaultDataEntryForm()">Default</button>
       </div>
-      <div class="col col-33">
+      <div class="col col-50">
         <button class="button button-full button-positive" ng-click="generateSectionDataEntryForm()">Section</button>
       </div>
-      <div class="col col-33">
+      <!--<div class="col col-33">
         <button class="button button-full button-positive" ng-click="generateCustomDataEntryForm()">Custom</button>
-      </div>
+      </div>-->
     </div>
 
     <div class="row" ng-if = "data.loading" style="text-align: center;font-size: 14px;">

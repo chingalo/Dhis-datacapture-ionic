@@ -101,7 +101,6 @@ angular.module('dataCapture')
     function progressMessage(message){
       ionicToast.show(message, 'top', false, 2500);
     }
-
     //checking changes on selected orgUnit
     $scope.$watch('data.orgUnitId', function() {
       $scope.data.dataSetId = null;
@@ -181,8 +180,7 @@ angular.module('dataCapture')
             "cp":$localStorage.dataEntryData.categoryOptionCombosId,
             "sync":false
           };
-          console.log(data);
-          //dataSetsServices.saveDataSetDataValue(data);
+          dataSetsServices.saveDataSetDataValue(data);
         }
       },function(){
       });
@@ -192,10 +190,11 @@ angular.module('dataCapture')
       var dataElements = $scope.data.selectedDataEntryForm.dataSet.dataElements;
       dataElements.forEach(function(dataElement){
         if(dataElement.id == dataElementId){
-          console.log(dataElement.valueType);
+          if($scope.isDate(dataElement.valueType)){
+            result = true;
+          }
         }
       });
-
       return result;
     }
     function formatDate(dateValue){
@@ -243,7 +242,6 @@ angular.module('dataCapture')
         }
       });
     }
-
     $scope.generateCustomDataEntryForm = function(){
       $scope.data.loading = true;
       var checkResults = checkingAndSetDataEntryForm('CUSTOM');
@@ -314,8 +312,10 @@ angular.module('dataCapture')
       var dataElements = $scope.data.selectedDataSet.dataElements;
       $scope.data.selectedData = {
         orgUnit : $scope.data.orgUnit.id,
+        orgUnitName : $scope.data.orgUnit.name,
         dataSet : $scope.data.selectedDataSet,
         period : $scope.data.period,
+        periodDisplayName : $scope.getPeriodDisplayValue($scope.data.period),
         numberOfFields : dataElements.length,
         formType : '',
         categoryOptionCombosId : categoryOptionCombosId
@@ -324,7 +324,6 @@ angular.module('dataCapture')
       $localStorage.dataEntryData = $scope.data.selectedData;
       $localStorage.dataEntryData.dataElements = dataElements;
     }
-
     $scope.getPeriodDisplayValue=function(period){
       var periodDisplayValue = '';
       $scope.data.periodOption.forEach(function(periodData){
@@ -334,12 +333,10 @@ angular.module('dataCapture')
       });
       return periodDisplayValue;
     }
-
     $scope.openModal = function(modalType){
       $scope.data.modalType = modalType;
       $scope.modal.show();
     };
-
     getAllAssignedOrgUnits();
     function getAllAssignedOrgUnits(){
       $scope.data.loading = true;
@@ -399,6 +396,15 @@ angular.module('dataCapture')
       }
       return results;
     }
+
+    $scope.completeDataEntryForm = function(){
+
+      console.log("complete btn");
+    };
+    $scope.inCompleteDataEntryForm = function(){
+
+      console.log("Incomplete btn");
+    };
     //flexibility for form
     $scope.isInteger = function(key){
       if(key == "NUMBER" || key == "INTEGER"){
