@@ -22,9 +22,9 @@ angular.module('dataCapture')
     $scope.pageSizeDefault = 5;
     $scope.pageSizeSection = 1;
     $scope.numberOfPagesSection=function(){
-      var dataElements = $localStorage.dataEntryData.dataSet.sections;
-      if(dataElements){
-        return Math.ceil(dataElements.length/$scope.pageSizeSection);
+      var numberOfSections = $localStorage.dataEntryData.dataSet.sections;
+      if(numberOfSections){
+        return Math.ceil(numberOfSections.length/$scope.pageSizeSection);
       }else{
         return 0;
       }
@@ -174,18 +174,45 @@ angular.module('dataCapture')
             "id":id,
             "de": modelValue[0],
             "pe": pe,
-            "value": value,
+            "value": isDatElementHasDateValueDate(modelValue[0]) ? formatDate(value):value,
             "co" : modelValue[1],
             "ou" : ou,
             "cc":$localStorage.dataEntryData.dataSet.categoryCombo.id,
             "cp":$localStorage.dataEntryData.categoryOptionCombosId,
             "sync":false
           };
-          dataSetsServices.saveDataSetDataValue(data);
+          console.log(data);
+          //dataSetsServices.saveDataSetDataValue(data);
         }
       },function(){
       });
+    }
+    function isDatElementHasDateValueDate(dataElementId){
+      var result = false;
+      var dataElements = $scope.data.selectedDataEntryForm.dataSet.dataElements;
+      dataElements.forEach(function(dataElement){
+        if(dataElement.id == dataElementId){
+          console.log(dataElement.valueType);
+        }
+      });
 
+      return result;
+    }
+    function formatDate(dateValue){
+      var m,d = (new Date(dateValue));
+      m = d.getMonth() + 1;
+      var date = d.getFullYear() + '-';
+      if(m > 9){
+        date = date + m + '-';
+      }else{
+        date = date + '0' + m + '-';
+      }
+      if(d.getDate() > 9){
+        date = date + d.getDate();
+      }else{
+        date = date + '0' +d.getDate();
+      }
+      return date;
     }
     $scope.generateDefaultDataEntryForm = function(){
       $scope.data.loading = true;
@@ -196,15 +223,6 @@ angular.module('dataCapture')
       //trimOffBRNScoreValues();
       $state.go('app.dataEntryForm');
     };
-
-    /*$scope.isScoreValueDataElement = function(dataElement){
-      var result = true;
-      var dataElementNameString = dataElement.name.split('_');
-      if(dataElementNameString[length -1] != "scorevalue"){
-        result = false;
-      }
-      return result;
-    };*/
     function trimOffBRNScoreValues(){
       $scope.data.loading = true;
       var dataElements = $localStorage.dataEntryData.dataSet.dataElements;
