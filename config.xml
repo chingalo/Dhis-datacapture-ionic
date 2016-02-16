@@ -44,6 +44,7 @@
   <plugin name="cordova-plugin-whitelist" spec="~1" />
 
   <access origin="http://*" />
+  <allow-navigation href="*" />
   <feature name="http://api.phonegap.com/1.0/network"/>
   <allow-intent href="http://*/*" />
   <allow-intent href="https://*/*" />
