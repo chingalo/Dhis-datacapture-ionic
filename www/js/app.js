@@ -98,8 +98,10 @@ angular.module('dataCapture', [
       var base = $scope.data.baseUrl;
       $localStorage.baseUrl = base;
       if($localStorage.loginUser){
-        $scope.data.loading = false;
-        $state.go('app.dataEntry')
+        if($localStorage.loginUser.password == $password && $localStorage.loginUser.username == $username){
+          $scope.data.loading = false;
+          $state.go('app.dataEntry')
+        }
       }else{
         Ext.Ajax.request({
           url: base + '/dhis-web-commons-security/login.action?failed=false',
@@ -146,7 +148,7 @@ angular.module('dataCapture', [
               },
               failure: function () {
                 $scope.data.password = null;
-                var message = 'Fail to login, please Check your network';
+                var message = 'Fail to login, please server URL or Network connection';
                 progressMessage(message);
                 $scope.data.loading = false;
                 synchronizationServices.stopSyncUserLoginData();
@@ -157,7 +159,7 @@ angular.module('dataCapture', [
           failure: function () {
             $scope.data.password = null;
             //fail to connect to the server
-            var message = 'Fail to connect to the server, please check server URL';
+            var message = 'Fail to connect to the server, please check server URL or Network connection';
             progressMessage(message);
             $scope.data.loading = false;
             synchronizationServices.stopSyncUserLoginData();
