@@ -11,7 +11,6 @@ angular.module('dataCapture', [
     'indexedDB',
     'ngSanitize',
     'ui.date',
-    'treeControl',
     'multi-select-tree'
   ])
 
