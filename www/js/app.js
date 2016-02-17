@@ -30,7 +30,7 @@ angular.module('dataCapture', [
     });
   })
 
-  .controller('mainController', function ($scope,$interval,$state,userServices,synchronizationServices,$ionicHistory,$ionicModal, ionicToast, $localStorage, dataSetsServices, sectionsServices, $indexedDB) {
+  .controller('mainController', function ($scope,$window,$interval,$state,userServices,synchronizationServices,$ionicHistory,$ionicModal, ionicToast, $localStorage, dataSetsServices, sectionsServices, $indexedDB) {
 
     $scope.data = {};
     var url = 'http://41.217.202.50:8080/dhis';
@@ -80,10 +80,12 @@ angular.module('dataCapture', [
       $ionicHistory.clearCache().then(function() {
         $ionicHistory.clearHistory();
         $ionicHistory.nextViewOptions({ disableBack: true, historyRoot: true });
-        //deleteAssignedOrgUnit();
+        deleteAssignedOrgUnit();
         synchronizationServices.stopSyncUserLoginData();
         $scope.data.loading = false;
-        message = "You have logged out successfully"
+        message = "You have logged out successfully";
+        progressMessage(message);
+        $window.location.reload(true);
         $state.go('login');
       });
     };

@@ -8,22 +8,27 @@ angular.module('dataCapture')
                                              dataValueSetServices,
                                              periodSelectionServices,sectionsServices){
 
-    $scope.data = {};
-    $scope.data.user = $localStorage.loginUserData;
-    $scope.data.selectedData = {};
-    $scope.data.formSelectVisibility = false;
-    $scope.data.dataValues ={};
-    $scope.data.sectionsForm =[];
-    $scope.data.loading = false;
-    $scope.dataForTheTree =[];
-    $scope.data.periodOption = [];
-    $scope.data.orgUnits = [];
-    $scope.data.orgUnit = [];
 
-    //pagination variables
-    $scope.currentPage = 0;
-    $scope.pageSizeDefault = 5;
-    $scope.pageSizeSection = 1;
+    function init(){
+      $scope.data = {};
+      $scope.data.user = $localStorage.loginUserData;
+      $scope.data.selectedData = {};
+      $scope.data.formSelectVisibility = false;
+      $scope.data.dataValues ={};
+      $scope.data.sectionsForm =[];
+      $scope.data.loading = false;
+      $scope.dataForTheTree =[];
+      $scope.data.periodOption = [];
+      $scope.data.orgUnits = [];
+      $scope.data.orgUnit = [];
+      $scope.data.selectedDataEntryForm = null;
+
+      //pagination variables
+      $scope.currentPage = 0;
+      $scope.pageSizeDefault = 5;
+      $scope.pageSizeSection = 1;
+    }
+    init();
     $scope.numberOfPagesSection=function(){
       var numberOfSections = $localStorage.dataEntryData.dataSet.sections;
       if(numberOfSections){
@@ -40,7 +45,6 @@ angular.module('dataCapture')
         return 0;
       }
     };
-
     if($localStorage.dataEntryData){
       $scope.data.loading = true;
       $scope.data.selectedData = $localStorage.dataEntryData;
