@@ -58,6 +58,7 @@ angular.module('dataCapture', [
     $scope.data.baseUrl = $localStorage.baseUrl;
     $scope.login = function () {
       if ($scope.data.baseUrl) {
+        formatBaseUrl($scope.data.baseUrl);
         if ($scope.data.username && $scope.data.password) {
           authenticateUser($scope.data.username, $scope.data.password);
         } else {
@@ -90,12 +91,32 @@ angular.module('dataCapture', [
       });
     };
 
+    function formatBaseUrl(baseUrl){
+      var formattedBaseUrl = "";
+      var baseUrlString = baseUrl.split('/');
+      var length = baseUrlString.length;
+      for(var i=0;i < length; i++){
+        if(i == 1){
+          formattedBaseUrl += '//';
+        }else{
+          if(baseUrlString[i]){
+            if(i == 0){
+              formattedBaseUrl = baseUrlString[i];
+            }else{
+              formattedBaseUrl = formattedBaseUrl + '/' +baseUrlString[i];
+            }
+          }
+        }
+      }
+      return formattedBaseUrl;
+    }
+
     //function handle all authentications to DHIS2 server
     //TODO logic for pull all metadata necessary to support offline support
     //@todo add on user services to authenticate user
     function authenticateUser($username, $password) {
       $scope.data.loading = true;
-      var base = $scope.data.baseUrl;
+      var base = formatBaseUrl($scope.data.baseUrl);
       $localStorage.baseUrl = base;
       if($localStorage.loginUser){
         if($localStorage.loginUser.password == $password && $localStorage.loginUser.username == $username){
