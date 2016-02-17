@@ -3,25 +3,17 @@
 
     <div class="row">
       <div class="col col-100">
-        <multi-select-tree data-input-model="data.orgUnits" multi-select="false"
-                           data-output-model="data.orgUnit"
-                           data-default-label="Click here to Select Organisation Unit"
-                           data-callback = "selectOnly1Or2(item, selectedItems)">
-        </multi-select-tree>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col col-100">
         <div class="">
           <div class="item item-text-wrap">
 
             <div class="row" >
               <div class="col col-100">
                 <b>Organisation Unit</b>
-                <div class="item" ng-if = "data.orgUnit[0].name ">
-                  {{ data.orgUnit[0].name }}
-                </div>
+                <multi-select-tree data-input-model="data.orgUnits" multi-select="false"
+                                   data-output-model="data.orgUnit"
+                                   data-default-label="Click here to Select Organisation Unit"
+                                   data-callback = "selectOnly1Or2(item, selectedItems)">
+                </multi-select-tree>
               </div>
             </div>
             <div style="padding-top: 1%;" class="row">
@@ -75,7 +67,7 @@
             <h2>{{ data.selectedData.dataSet.name }}</h2>
             <p>Organisation Unit : {{ data.orgUnit[0].name }}</p>
             <p>Period : {{ getPeriodDisplayValue(data.period) }}</p>
-            <p>Number Of Fields : {{ data.selectedData.numberOfFields }}</p>
+            <p>Number Of Questions : {{ data.selectedData.numberOfFields }}</p>
           </div>
         </div>
 
