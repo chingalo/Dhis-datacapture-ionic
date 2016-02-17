@@ -13,13 +13,13 @@
 
     <div class="row">
       <div class="col col-100">
-        <div class="card">
+        <div class="">
           <div class="item item-text-wrap">
 
             <div class="row" >
               <div class="col col-100">
                 <b>Organisation Unit</b>
-                <div class="item">
+                <div class="item" ng-if = "data.orgUnit[0].name ">
                   {{ data.orgUnit[0].name }}
                 </div>
               </div>
@@ -30,7 +30,7 @@
                 <div class="item item-input item-select" >
                   <div class="input-label" >
                   </div>
-                  <select disabled ng-if = "!data.orgUnit[0].name  && $scope.data.dataSets.length == 0" ng-model="data.dataSetId">
+                  <select disabled ng-if = "!data.orgUnit[0].name  && data.dataSets.length == 0">
                     <option value="">Choose Form</option>
                   </select>
                   <select ng-if = "data.orgUnit[0].name"   ng-model="data.dataSetId">
@@ -73,7 +73,7 @@
         <div class="card" ng-if="data.formSelectVisibility" >
           <div class="item item-text-wrap">
             <h2>{{ data.selectedData.dataSet.name }}</h2>
-            <p>Organisation Unit : {{ data.orgUnit.name }}</p>
+            <p>Organisation Unit : {{ data.orgUnit[0].name }}</p>
             <p>Period : {{ getPeriodDisplayValue(data.period) }}</p>
             <p>Number Of Fields : {{ data.selectedData.numberOfFields }}</p>
           </div>

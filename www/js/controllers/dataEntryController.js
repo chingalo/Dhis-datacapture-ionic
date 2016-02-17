@@ -5,6 +5,7 @@ angular.module('dataCapture')
   .controller('dataEntryController',function($scope,$indexedDB,
                                              $state,$ionicModal,ionicToast,
                                              $localStorage,userServices,dataSetsServices,
+                                             dataValueSetServices,
                                              periodSelectionServices,sectionsServices){
 
     $scope.data = {};
@@ -46,6 +47,7 @@ angular.module('dataCapture')
       $scope.data.selectedDataEntryForm = $localStorage.dataEntryData;
       $scope.data.loading = false;
       prepareDataElementsValuesFromIndexDb();
+      dataValueSetServices.getDataValueSet();
       trimOffBRNScoreValues();
       if( $localStorage.dataEntryData.formType == 'SECTION'){
         $scope.data.loading = true;
