@@ -5,6 +5,9 @@ angular.module('dataCapture')
   .factory('userServices',function($http,$q,$localStorage,$indexedDB){
 
     var userServices = {
+      logOutUser : function(){
+
+      },
       authenticateUser : function(username,password){
         var base = $localStorage.baseUrl ;
         if(base){

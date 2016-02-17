@@ -74,6 +74,19 @@ angular.module('dataCapture')
           });
         })
       },
+      deleteAllDataValues : function(){
+        var defer = $q.defer();
+        $indexedDB.openStore('dataValues', function (dataValues) {
+          dataValues.clear().then(function () {
+            //success
+            defer.resolve();
+          }, function () {
+            //error
+            defer.reject();
+          })
+        });
+        return defer.promise;
+      },
       getDataValueById : function(id){
         var defer = $q.defer();
         $indexedDB.openStore('dataValues',function(dataValuesData){

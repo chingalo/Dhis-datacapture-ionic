@@ -1,0 +1,29 @@
+<ion-modal-view>
+  <ion-header-bar>
+    <h1 class="title" >
+      Data Reset Confirmation
+    </h1>
+    <div class="buttons">
+      <button class="button button-clear" ng-click="close()">Close</button>
+    </div>
+  </ion-header-bar>
+  <ion-content>
+
+    <div class="row">
+      <div class="col col-100">
+        <div class="item item-text-wrap">
+          <p>Are sure you want to delete all <span ng-if = "data.resetDataOption=='dataEntryValues'">data entry values</span> <span ng-if = "data.resetDataOption=='allData'">all data</span> on this device</p>
+          <div class="row">
+            <div class="col col-50">
+              <button class="button button-balanced button-full" ng-click="close()">No</button>
+            </div>
+            <div class="col col-50">
+              <button class="button button-full button-assertive" ng-click="confirmDataReset()">yes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </ion-content>
+</ion-modal-view>

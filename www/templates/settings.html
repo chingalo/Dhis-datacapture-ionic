@@ -2,7 +2,7 @@
   <ion-content>
     <div class="row">
       <div class="col col-100">
-        <div class="card">
+
           <div class="item item-divider">
             Synchronization setting
           </div>
@@ -27,9 +27,7 @@
               </div>
             </div>
           </div>
-        </div>
 
-        <div class="card">
           <div class="item item-divider">
             Default form setting
           </div>
@@ -38,11 +36,24 @@
               <div class="item">
                 <h2>sorting order</h2>
                 <ion-radio name ="defaultFormSorting" ng-model="data.defaultForm.sorting" ng-value="'name'">By Name</ion-radio>
-                <ion-radio name ="defaultFormSorting" ng-model="data.defaultForm.sorting" ng-value="'dateCraeted'">By Date Created</ion-radio>
+                <ion-radio name ="defaultFormSorting" ng-model="data.defaultForm.sorting" ng-value="'dateCreated'">By Date Created</ion-radio>
               </div>
             </div>
           </div>
+        <div class="item item-divider">
+          Data reset
         </div>
+        <div class="item item-text-wrap">
+          <button class="button button-full button-assertive" ng-click="resetDataButtonActionConfirmation('dataEntryValues')">Reset Data Entry values</button>
+          <button class="button button-full button-assertive" ng-click="resetDataButtonActionConfirmation('allData')">Reset All Data</button>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="row" ng-if = "data.loading" style="text-align: center;font-size: 14px;">
+      <div class="col col-100">
+        <ion-spinner icon="ios"></ion-spinner>
       </div>
     </div>
   </ion-content>
