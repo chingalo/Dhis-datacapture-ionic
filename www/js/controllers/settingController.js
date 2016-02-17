@@ -6,7 +6,7 @@ angular.module('dataCapture')
 
     $localStorage.appSetting = {
       synchronization : {
-        time : {type : 'seconds',value : 60},
+        time : {type : getSyncTime()?$localStorage.syncTimeType:'seconds',value : getSyncTime()?getSyncTime():60},
         preference : 'mobile'
       },
       defaultForm : {
@@ -14,6 +14,7 @@ angular.module('dataCapture')
       }
     };
     $scope.data = $localStorage.appSetting;
+
 
     $scope.$watch('data.defaultForm.sorting',function(){
       $localStorage.appSetting = $scope.data.synchronization;
@@ -50,9 +51,24 @@ angular.module('dataCapture')
           newValue = 60*1000;
       }
       $localStorage.syncTime = newValue;
+      $localStorage.syncTimeType = type;
       synchronizationServices.stopSync();
       synchronizationServices.startSync(newValue);
-
+    }
+    function getSyncTime(){
+      var newValue = null;
+      switch($localStorage.syncTimeType){
+        case 'seconds':
+          newValue = $localStorage.syncTime/1000;
+          break;
+        case 'minutes':
+          newValue = $localStorage.syncTime/(60  * 1000);
+          break;
+        case 'hours':
+          newValue = $localStorage.syncTime/(60 * 60 * 1000);
+          break;
+      }
+      return newValue;
     }
 
   });

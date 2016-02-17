@@ -8,7 +8,7 @@ angular.module('dataCapture')
     var synchronizationServices = {
       startSync : function(syncTime){
         if(!syncTime){
-          syncTime = 60*1000;
+          syncTime = 1000*60;
         }
         syncCtr = $interval(function () {
           syncProcess();
