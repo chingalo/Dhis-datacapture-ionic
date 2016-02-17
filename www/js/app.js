@@ -11,7 +11,8 @@ angular.module('dataCapture', [
     'indexedDB',
     'ngSanitize',
     'ui.date',
-    'treeControl'
+    'treeControl',
+    'multi-select-tree'
   ])
 
   .run(function ($ionicPlatform) {
@@ -72,6 +73,7 @@ angular.module('dataCapture', [
 
     $scope.logOut = function () {
       //TODO some logic flow during log out process
+      $scope.data.loading = true;
       delete $localStorage.loginUser;
       delete $localStorage.dataEntryData;
       delete $localStorage.loginUserData;
@@ -79,8 +81,10 @@ angular.module('dataCapture', [
       $ionicHistory.clearCache().then(function() {
         $ionicHistory.clearHistory();
         $ionicHistory.nextViewOptions({ disableBack: true, historyRoot: true });
-        deleteAssignedOrgUnit();
+        //deleteAssignedOrgUnit();
         synchronizationServices.stopSyncUserLoginData();
+        $scope.data.loading = false;
+        message = "You have logged out successfully"
         $state.go('login');
       });
     };

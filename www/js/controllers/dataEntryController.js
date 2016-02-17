@@ -16,6 +16,7 @@ angular.module('dataCapture')
     $scope.data.loading = false;
     $scope.dataForTheTree =[];
     $scope.data.periodOption = [];
+    $scope.data.orgUnits = [];
 
     //pagination variables
     $scope.currentPage = 0;
@@ -102,6 +103,9 @@ angular.module('dataCapture')
       ionicToast.show(message, 'top', false, 2500);
     }
     //checking changes on selected orgUnit
+    $scope.$watch('data.orgUnit', function(){
+      console.log($scope.data.orgUnit);
+    });
     $scope.$watch('data.orgUnitId', function() {
       $scope.data.dataSetId = null;
       $scope.data.dataSets = null;
@@ -344,6 +348,7 @@ angular.module('dataCapture')
         .then(function(data){
           if(data.length > 0){
             $scope.dataForTheTree = data;
+            $scope.data.orgUnits = data;
             $scope.data.loading = false;
           }else {
             getAllAssignedOrgUnits();

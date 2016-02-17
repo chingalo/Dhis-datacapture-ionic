@@ -3,6 +3,14 @@
 
     <div class="row">
       <div class="col col-100">
+        <multi-select-tree data-input-model="data.orgUnits" multi-select="false"
+                           data-output-model="data.orgUnit" data-default-label="Click here to Select..." data-callback = "selectOnly1Or2(item, selectedItems)"></multi-select-tree>
+        <br/>Selected items: {{data.orgUnit}}
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col col-100">
         <div class="card">
           <div class="item item-text-wrap">
 
@@ -10,7 +18,7 @@
               <div class="col col-100">
                 <b>Organisation Unit</b>
                 <div class="item">
-                  {{ data.orgUnit.name }}
+                  {{ data.orgUnit[0].name }}
                 </div>
               </div>
             </div>
