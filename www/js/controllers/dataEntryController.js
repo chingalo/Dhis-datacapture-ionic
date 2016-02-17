@@ -17,6 +17,7 @@ angular.module('dataCapture')
     $scope.dataForTheTree =[];
     $scope.data.periodOption = [];
     $scope.data.orgUnits = [];
+    $scope.data.orgUnit = [];
 
     //pagination variables
     $scope.currentPage = 0;
@@ -85,16 +86,16 @@ angular.module('dataCapture')
           var id = dataElement.id + '-' +dataSetId+ '-' +categoryOptionCombo.id+ '-' +pe+ '-' +ou;
           dataSetsServices.getDataValueById(id)
             .then(function(returnedDataValue){
-            counter ++;
-            if(returnedDataValue != null){
-              if(id == returnedDataValue.id){
+              counter ++;
+              if(returnedDataValue != null){
+                if(id == returnedDataValue.id){
 
-                $scope.data.dataValues[dataElement.id+'-'+returnedDataValue.co] = returnedDataValue.value;
+                  $scope.data.dataValues[dataElement.id+'-'+returnedDataValue.co] = returnedDataValue.value;
+                }
               }
-            }
-          },function(){
-            counter ++;
-          });
+            },function(){
+              counter ++;
+            });
         });
       });
     }
@@ -104,23 +105,23 @@ angular.module('dataCapture')
     }
     //checking changes on selected orgUnit
     $scope.$watch('data.orgUnit', function(){
-      console.log($scope.data.orgUnit);
-    });
-    $scope.$watch('data.orgUnitId', function() {
       $scope.data.dataSetId = null;
       $scope.data.dataSets = null;
       $scope.data.formSelectVisibility = false;
       $scope.data.period = null;
-      $scope.data.loading = true;
       $scope.data.hasCategoryComboOptions = false;
-      dataSetsServices.getAllDataSets().then(function(dataSets){
-        $scope.data.dataSets = dataSetsServices.getDataSetsByOrgUnitId($scope.data.orgUnitId,dataSets);
-        $scope.data.loading = false;
-      },function(){
-        var message = 'Data entry form has not been found';
-        progressMessage(message);
-        $scope.data.loading = false;
-      });
+      if($scope.data.orgUnit.length > 0){
+        $scope.data.loading = true;
+        var orgUnitId = $scope.data.orgUnit[0].id;
+        dataSetsServices.getAllDataSets().then(function(dataSets){
+          $scope.data.dataSets = dataSetsServices.getDataSetsByOrgUnitId(orgUnitId,dataSets);
+          $scope.data.loading = false;
+        },function(){
+          var message = 'Data entry form has not been found';
+          progressMessage(message);
+          $scope.data.loading = false;
+        });
+      }
     });
 
     //checking changes on data entry form
@@ -315,8 +316,8 @@ angular.module('dataCapture')
     function saveSelectedDataSetToLocalStorage(categoryOptionCombosId){
       var dataElements = $scope.data.selectedDataSet.dataElements;
       $scope.data.selectedData = {
-        orgUnit : $scope.data.orgUnit.id,
-        orgUnitName : $scope.data.orgUnit.name,
+        orgUnit : $scope.data.orgUnit[0].id,
+        orgUnitName : $scope.data.orgUnit[0].name,
         dataSet : $scope.data.selectedDataSet,
         period : $scope.data.period,
         periodDisplayName : $scope.getPeriodDisplayValue($scope.data.period),
@@ -347,7 +348,6 @@ angular.module('dataCapture')
       userServices.getAssignedOrgUnitFromIndexDb()
         .then(function(data){
           if(data.length > 0){
-            $scope.dataForTheTree = data;
             $scope.data.orgUnits = data;
             $scope.data.loading = false;
           }else {
@@ -357,30 +357,8 @@ angular.module('dataCapture')
           //error
           $scope.data.loading = false;
         })
-
     }
     //function for period selections
-    $scope.showSelected = function(orgUnit){
-      $scope.close();
-      $scope.data.orgUnit = orgUnit;
-      //changeOrgUnit(orgUnit.id);
-      $scope.data.orgUnitId = orgUnit.id;
-    };
-    $scope.treeOptions = {
-      nodeChildren: "children",
-      dirSelectable: true,
-      allowDeselect : false,
-      injectClasses: {
-        ul: "a1",
-        li: "a2",
-        liSelected: "a7",
-        iExpanded: "a3",
-        iCollapsed: "a4",
-        iLeaf: "a5",
-        label: "a6",
-        labelSelected: "a8"
-      }
-    };
     function periodOption(dataSet){
       var year = parseInt(new Date().getFullYear()) -1;
       $scope.data.periodOption = periodSelectionServices.getPeriodSelections(year,dataSet);

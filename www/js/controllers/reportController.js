@@ -9,6 +9,8 @@ angular.module('dataCapture')
     $scope.data = {};
     $scope.data.user = $localStorage.loginUserData;
     $scope.data.reports = null;
+    $scope.data.orgUnits = [];
+    $scope.data.orgUnit = [];
 
     //pagination variables
     $scope.currentPage = 0;
@@ -113,41 +115,16 @@ angular.module('dataCapture')
       userServices.getAssignedOrgUnitFromIndexDb()
         .then(function(data){
           if(data.length > 0){
-            $scope.dataForTheTree = data;
+            $scope.data.orgUnits = data;
             $scope.data.loading = false;
           }else {
             getAllAssignedOrgUnits();
           }
-
         },function(){
           //error
-
           $scope.data.loading = false;
         })
-
     }
-    $scope.showSelected = function(orgUnit){
-      $scope.close();
-      $scope.data.orgUnit = orgUnit;
-      //changeOrgUnit(orgUnit.id);
-      $scope.data.orgUnitId = orgUnit.id;
-    };
-    $scope.treeOptions = {
-      nodeChildren: "children",
-      dirSelectable: true,
-      allowDeselect : false,
-      injectClasses: {
-        ul: "a1",
-        li: "a2",
-        liSelected: "a7",
-        iExpanded: "a3",
-        iCollapsed: "a4",
-        iLeaf: "a5",
-        label: "a6",
-        labelSelected: "a8"
-      }
-    };
-
     $scope.changePeriodInterval = function(type){
       var year = null;
       if(type =='next'){

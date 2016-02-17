@@ -8,13 +8,6 @@
     </div>
   </ion-header-bar>
   <ion-content>
-    <div class="row" ng-if="data.modalType == 'Organisation Unit'">
-      <div class="col col-100">
-        <div treecontrol class="tree-classic" tree-model="dataForTheTree" options="treeOptions" on-selection="showSelected(node)" selected-node="node1">
-          {{node.name}}
-        </div>
-      </div>
-    </div>
 
     <div ng-if="data.modalType == 'Period'">
       <div class="row">

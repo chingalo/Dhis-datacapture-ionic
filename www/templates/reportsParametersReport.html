@@ -7,20 +7,25 @@
             <h2 align="center">{{ data.selectedReport.name }} Report</h2>
           </div>
           <div class="item item-text-wrap">
-
-            <div class="row">
-              <div class="col col-100">
-                <button class="button " ng-click="openModal('Organisation Unit')">Select Organisation Unit</button>
+            <div ng-if = "data.selectedReport.reportParams.paramOrganisationUnit">
+              <div class="row">
+                <div class="col col-100">
+                  <multi-select-tree data-input-model="data.orgUnits" multi-select="false"
+                                     data-output-model="data.orgUnit"
+                                     data-default-label="Click here to Select Organisation Unit"
+                                     data-callback = "selectOnly1Or2(item, selectedItems)">
+                  </multi-select-tree>
+                </div>
+              </div>
+              <div class="row" >
+                <div class="col col-100">
+                  <b>Organisation Unit</b>
+                  <div class="item">
+                    {{ data.orgUnit[0].name }}
+                  </div>
+                </div>
               </div>
             </div>
-
-            <div ng-click="openModal('Organisation Unit')" ng-if = "data.selectedReport.reportParams.paramOrganisationUnit">
-              <b>Organisation Unit</b>
-              <div class="item">
-                {{ data.orgUnit.name }}
-              </div>
-            </div>
-
             <div class="row" ng-click="openModal('Period')" style="padding-top: 1%;" ng-if = "data.selectedReport.reportParams.paramReportingPeriod">
               <div class="col col-90">
                 <b>Period</b> :

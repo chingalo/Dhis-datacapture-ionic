@@ -4,8 +4,10 @@
     <div class="row">
       <div class="col col-100">
         <multi-select-tree data-input-model="data.orgUnits" multi-select="false"
-                           data-output-model="data.orgUnit" data-default-label="Click here to Select..." data-callback = "selectOnly1Or2(item, selectedItems)"></multi-select-tree>
-        <br/>Selected items: {{data.orgUnit}}
+                           data-output-model="data.orgUnit"
+                           data-default-label="Click here to Select Organisation Unit"
+                           data-callback = "selectOnly1Or2(item, selectedItems)">
+        </multi-select-tree>
       </div>
     </div>
 
@@ -14,7 +16,7 @@
         <div class="card">
           <div class="item item-text-wrap">
 
-            <div class="row" ng-click="openModal('Organisation Unit')">
+            <div class="row" >
               <div class="col col-100">
                 <b>Organisation Unit</b>
                 <div class="item">
@@ -28,10 +30,10 @@
                 <div class="item item-input item-select" >
                   <div class="input-label" >
                   </div>
-                  <select disabled ng-if = "!data.orgUnitId && $scope.data.dataSets.length == 0" ng-model="data.dataSetId">
+                  <select disabled ng-if = "!data.orgUnit[0].name  && $scope.data.dataSets.length == 0" ng-model="data.dataSetId">
                     <option value="">Choose Form</option>
                   </select>
-                  <select ng-if = "data.orgUnitId"   ng-model="data.dataSetId">
+                  <select ng-if = "data.orgUnit[0].name"   ng-model="data.dataSetId">
                     <option value="">Choose Form</option>
                     <option ng-repeat="dataSet in data.dataSets" value="{{ dataSet.id }}">{{ dataSet.name }}</option>
                   </select>
