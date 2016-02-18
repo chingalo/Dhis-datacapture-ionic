@@ -11,7 +11,7 @@
 
       <div class="row">
         <div class="col col-100">
-          <button ng-if = "!data.reports" class="button button-full button-positive" ng-click="reloadReports()">Reload reports</button>
+          <button ng-if = "data.reports.length <= 0" class="button button-full button-positive" ng-click="reloadReports()">Reload reports</button>
           <div class="list" ng-if = "data.reports">
             <div class="item" ng-repeat="report in data.reports | paginationFilter:currentPage*pageSize | limitTo:pageSize" ng-click="selectReport(report.id)">
               <h2>{{ report.name }}</h2>
@@ -21,7 +21,7 @@
         </div>
       </div>
 
-      <div class="row">
+      <div class="row" ng-if = "data.reports.length > 0">
         <div class="col col-45">
           <button class="button button-full button-positive" ng-disabled="currentPage == 0" ng-click="currentPage=currentPage-1">
             Previous

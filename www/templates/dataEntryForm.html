@@ -46,7 +46,7 @@
                         </div>
                         <select ng-change='changeDataEntryForm()' ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
                           <option value="">Choose option</option>
-                          <option ng-repeat="item in getOptionSets(dataElement)" > {{ item.name }}</option>
+                          <option value = "{{ item.name }}" ng-repeat="item in getOptionSets(dataElement)" > {{ item.name }}</option>
                         </select>
                       </div>
                     </div>
@@ -141,7 +141,7 @@
                           </div>
                           <select ng-change='changeDataEntryForm()' ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
                             <option value="">Choose option</option>
-                            <option ng-repeat="item in getOptionSets(dataElement)" > {{ item.name }}</option>
+                            <option value = "{{ item.name }}" ng-repeat="item in getOptionSets(dataElement)" > {{ item.name }}</option>
                           </select>
                         </div>
                       </div>

@@ -2,7 +2,9 @@
  * Created by joseph on 2/4/16.
  */
 angular.module('dataCapture')
-  .factory('synchronizationServices',function($http,$q,$localStorage,userServices,$indexedDB,$interval,dataSetsServices){
+  .factory('synchronizationServices',function($http,$q,$localStorage,userServices,
+                                              ionicToast,
+                                              $indexedDB,$interval,dataSetsServices){
     var syncCtr,userSyncCtr;
 
     var synchronizationServices = {

@@ -106,6 +106,8 @@ angular.module('dataCapture')
       });
     }
     function prepareDataElementsValuesFromServer(){
+      $scope.data.loading = true;
+      progressMessage("Downloading data values from server");
       var dataSet = $localStorage.dataEntryData.dataSet.id;
       var period = $localStorage.dataEntryData.period;
       var orgUnit = $localStorage.dataEntryData.orgUnit;
@@ -117,30 +119,46 @@ angular.module('dataCapture')
               var value = isDataElementValueTypeNumber(dataElementValues.dataElement)?parseInt(dataElementValues.value):dataElementValues.value;
               $scope.data.dataValues[dataElementValues.dataElement+'-'+dataElementValues.categoryOptionCombo] = value;
             });
+            $scope.data.loading = false;
           }
         },function(){
           //error
-          console.log('error to read data from server ');
+          $scope.data.loading = false;
         });
     }
-    //@todo checking preference issues 
+    //@todo checking preference issues
     function saveDataValuesFromServerToIndexDb(dataElementValues){
       var ou = $localStorage.dataEntryData.orgUnit;
       var pe = $localStorage.dataEntryData.period;
       var dataSetId = $localStorage.dataEntryData.dataSet.id;
       var id = dataElementValues.dataElement + '-' +dataSetId+ '-'+dataElementValues.categoryOptionCombo+'-'+pe+ '-' +ou;
-      var data = {
-        "id":id,
-        "de": dataElementValues.dataElement,
-        "pe": pe,
-        "value": isDataElementValueTypeNumber(dataElementValues.dataElement)?parseInt(dataElementValues.value):dataElementValues.value,
-        "co" : dataElementValues.categoryOptionCombo,
-        "ou" : ou,
-        "cc":$localStorage.dataEntryData.dataSet.categoryCombo.id,
-        "cp":dataElementValues.attributeOptionCombo,
-        "sync":true
-      };
-     dataSetsServices.saveDataSetDataValue(data);
+      dataSetsServices.getDataValueById(id).then(function(returnedDataValue){
+        var dataValue = returnedDataValue;
+        var data = null;
+        var canUpdate = false;
+        if(dataValue == null ){
+          canUpdate = true;
+        }else{
+          if(dataValue.value != dataElementValues.value){
+            canUpdate = true;
+          }
+        }
+        if(canUpdate){
+          data = {
+            "id":id,
+            "de": dataElementValues.dataElement,
+            "pe": pe,
+            "value": isDataElementValueTypeNumber(dataElementValues.dataElement)?parseInt(dataElementValues.value):dataElementValues.value,
+            "co" : dataElementValues.categoryOptionCombo,
+            "ou" : ou,
+            "cc":$localStorage.dataEntryData.dataSet.categoryCombo.id,
+            "cp":dataElementValues.attributeOptionCombo,
+            "sync":true
+          };
+          dataSetsServices.saveDataSetDataValue(data);
+        }
+      },function(){
+      });
     }
     function isDataElementValueTypeNumber(dataElementId){
       var result = false;
@@ -156,7 +174,7 @@ angular.module('dataCapture')
     }
     //function for toaster messages
     function progressMessage(message){
-      ionicToast.show(message, 'top', false, 2500);
+      ionicToast.show(message, 'top', false, 2000);
     }
     //checking changes on selected orgUnit
     $scope.$watch('data.orgUnit', function(){
@@ -245,6 +263,7 @@ angular.module('dataCapture')
       },function(){
       });
     }
+
     function isDatElementHasDateValueDate(dataElementId){
       var result = false;
       var dataElements = $scope.data.selectedDataEntryForm.dataSet.dataElements;

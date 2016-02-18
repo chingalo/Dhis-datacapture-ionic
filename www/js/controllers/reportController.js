@@ -58,28 +58,18 @@ angular.module('dataCapture')
       $scope.data.loading = true;
       reportServices.getAllReportsFromServer()
         .then(function(reports){
-          $scope.data.reports = [];
+          $scope.data.reports = reports;
+          reportServices.saveReportToIndexDb(reports);
           reports.forEach(function(report){
-            if(report.type == "HTML"){
-              $scope.data.reports.push(report);
-              reportServices.getIndividualReportFromServer(report.id).then(function(reportData){
-                reportServices.saveReportToIndexDb(reportData);
-              },function(){
-                //error
-              });
-            }
+            reportServices.saveReportToIndexDb(report);
           });
+          if(reports.length <= 0){
+            progressMessage('There are no report available at the moment');
+          }
           $scope.data.loading = false;
         },function(){
           //error
-          reportServices.getAllReportsFromIndexDb()
-            .then(function(reports){
-              $scope.data.reports =reports;
-              $scope.data.loading = false;
-            },function(){
-              //error
-              $scope.data.loading = false;
-            });
+          $scope.data.loading = false;
         });
     }
 

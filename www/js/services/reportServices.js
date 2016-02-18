@@ -9,7 +9,9 @@ angular.module('dataCapture')
     var reportServices = {
       getAllReportsFromServer:function(){
         var defer = $q.defer();
-        $http.get(baseUrl + '/api/reports.json?paging=false&fields=id,name,created,type')
+        var fields = "fields=id,name,created,type,relativePeriods,reportParams,designContent";
+        var filter = "filter=type:eq:HTML&filter=name:like:mobile";
+        $http.get(baseUrl + '/api/reports.json?paging=false&'+filter+'&'+fields)
           .success(function(results){
             defer.resolve(results.reports);
           })
