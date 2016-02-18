@@ -2,8 +2,10 @@
  * Created by joseph on 2/1/16.
  */
 angular.module('dataCapture')
-  .controller('settingController',function($scope,ionicToast,
+  .controller('settingController',function($scope,ionicToast,$ionicHistory,$state,
                                            $ionicModal,dataSetsServices,
+                                           sectionsServices,reportServices,
+                                           userServices,
                                            $localStorage,synchronizationServices){
 
     function progressMessage(message){
@@ -41,7 +43,7 @@ angular.module('dataCapture')
       switch (type){
         case 'seconds':
           newValue = value * 1000;
-              break;
+          break;
         case 'minutes':
           newValue = value * 60  * 1000;
           break;
@@ -86,26 +88,75 @@ angular.module('dataCapture')
     };
     $scope.confirmDataReset = function(){
       $scope.close();
-      if($scope.data.resetDataOption == "allData"){
-        deleteAllData();
-      }
-      if($scope.data.resetDataOption == "dataEntryValues"){
-        deleteAllDtaValue();
+      switch ($scope.data.resetDataOption){
+        case 'allData':
+          deleteAllData();
+          break;
+        case 'dataEntryValues':
+          deleteAllDtaValue();
+          break;
       }
     };
 
     function deleteAllDtaValue(){
       $scope.data.loading = true;
-     dataSetsServices.deleteAllDataValues()
-       .then(function(){
-         $scope.data.loading = false;
-         progressMessage("Data Entry values has been reset successfully")
-       },function(){
-         $scope.data.loading = false;
-       })
+      dataSetsServices.deleteAllDataValues()
+        .then(function(){
+          $scope.data.loading = false;
+          progressMessage("Data Entry values has been reset successfully")
+        },function(){
+          $scope.data.loading = false;
+        })
     }
     function deleteAllData(){
-      console.log('delete data');
+      dataSetsServices.deleteAllDataValues()
+        .then(function(){
+          dataSetsServices.deleteAllDataSets()
+            .then(function(){
+              sectionsServices.deleteAllSections()
+                .then(function(){
+                  reportServices.deleteAllReports()
+                    .then(function(){
+                      userServices.deleteOrgUnitFromIndexDb()
+                        .then(function(){
+                          logOutUser();
+                        },function(){
+                          //org unit
+                        });
+                    },function(){
+                      //report
+                    });
+                },function(){
+                  //sections
+                });
+            },function(){
+              //data sets
+              $scope.data.loading = false;
+            });
+        },function(){
+          //data values
+          $scope.data.loading = false;
+        });
+    }
+
+    function logOutUser(){
+      $scope.data.loading = true;
+      delete $localStorage.loginUser;
+      delete $localStorage.dataEntryData;
+      delete $localStorage.loginUserData;
+      delete $localStorage.selectedReport;
+      $ionicHistory.clearCache().then(function() {
+        $ionicHistory.clearHistory();
+        $ionicHistory.nextViewOptions({
+          disableBack: true
+        });
+        synchronizationServices.stopSyncUserLoginData();
+        $scope.data.loading = false;
+        var message = "All Data has been reset successfully";
+        progressMessage(message);
+        //$window.location.reload(true);
+        $state.go('login', {}, {location: "replace", reload: true});
+      });
     }
 
   });

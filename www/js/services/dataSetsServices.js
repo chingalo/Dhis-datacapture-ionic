@@ -40,6 +40,19 @@ angular.module('dataCapture')
         });
         return defer.promise;
       },
+      deleteAllDataSets : function(){
+        var defer = $q.defer();
+        $indexedDB.openStore('dataSets', function (dataSets) {
+          dataSets.clear().then(function () {
+            //success
+            defer.resolve();
+          }, function () {
+            //error
+            defer.reject();
+          })
+        });
+        return defer.promise;
+      },
       getDataSetsByOrgUnitId : function(orgUnitId,dataSets){
         var orgUnitDataSets = [];
         dataSets.forEach(function(dataSet){

@@ -84,7 +84,7 @@ angular.module('dataCapture', [
         deleteAssignedOrgUnit();
         synchronizationServices.stopSyncUserLoginData();
         $scope.data.loading = false;
-        message = "You have logged out successfully";
+        var message = "You have logged out successfully";
         progressMessage(message);
         $window.location.reload(true);
         $state.go('login');

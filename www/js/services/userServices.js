@@ -5,9 +5,6 @@ angular.module('dataCapture')
   .factory('userServices',function($http,$q,$localStorage,$indexedDB){
 
     var userServices = {
-      logOutUser : function(){
-
-      },
       authenticateUser : function(username,password){
         var base = $localStorage.baseUrl ;
         if(base){
@@ -52,6 +49,19 @@ angular.module('dataCapture')
           .error(function(){
             defer.reject();
           });
+        return defer.promise;
+      },
+      deleteOrgUnitFromIndexDb:function(){
+        var defer = $q.defer();
+        $indexedDB.openStore('orgUnits', function (orgUnits) {
+          orgUnits.clear().then(function () {
+            //success
+            defer.resolve();
+          }, function () {
+            //error
+            defer.reject();
+          })
+        })
         return defer.promise;
       },
       getAssignedOrgUnitFromIndexDb : function(){

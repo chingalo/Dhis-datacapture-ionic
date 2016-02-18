@@ -10,7 +10,6 @@ angular.module('dataCapture')
         var defer = $q.defer();
         $http.get(baseUrl + '/api/sections.json?paging=false&fields=id')
           .success(function(results){
-
             defer.resolve(results.sections);
           })
           .error(function(){
@@ -19,12 +18,10 @@ angular.module('dataCapture')
         return defer.promise;
       },
       getIndividualSectionFromServer : function(sectionId,baseUrl){
-
         var defer = $q.defer();
         var field = "fields=dataSet,id,name,indicators[:all],dataElements[id,name,categoryCombo[id,name,categoryOptionCombos[id,name]],displayName,created,valueType,lastUpdated,optionSet[name,options[name,id]]";
         $http.get(baseUrl + '/api/sections/'+sectionId+'.json?'+field)
           .success(function(results){
-
             defer.resolve(results);
           })
           .error(function(){
@@ -40,7 +37,19 @@ angular.module('dataCapture')
             defer.reject('error');
           });
         });
-
+        return defer.promise;
+      },
+      deleteAllSections: function(){
+        var defer = $q.defer();
+        $indexedDB.openStore('sections', function (sections) {
+          sections.clear().then(function () {
+            //success
+            defer.resolve();
+          }, function () {
+            //error
+            defer.reject();
+          })
+        });
         return defer.promise;
       }
     };

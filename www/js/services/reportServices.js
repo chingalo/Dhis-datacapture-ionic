@@ -38,6 +38,19 @@ angular.module('dataCapture')
           });
         })
       },
+      deleteAllReports : function(){
+        var defer = $q.defer();
+        $indexedDB.openStore('reports', function (reports) {
+          reports.clear().then(function () {
+            //success
+            defer.resolve();
+          }, function () {
+            //error
+            defer.reject();
+          })
+        });
+        return defer.promise;
+      },
       getAllReportsFromIndexDb : function(){
 
         var defer = $q.defer();
