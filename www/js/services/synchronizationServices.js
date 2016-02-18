@@ -28,6 +28,7 @@ angular.module('dataCapture')
         $interval.cancel(userSyncCtr);
       }
     };
+
     function syncProcess(){
       sendDataValues();
     }
@@ -36,7 +37,6 @@ angular.module('dataCapture')
         .then(function(dataValues){
           var formattedDataValues = formatDataValues(dataValues);
           dataSetsServices.uploadDataValuesToTheServer(formattedDataValues,dataValues);//.then(function(){},function(){});
-
       },function(){
           //fail to get data for sync
         });

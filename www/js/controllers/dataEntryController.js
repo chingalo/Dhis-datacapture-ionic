@@ -51,7 +51,7 @@ angular.module('dataCapture')
       $scope.data.selectedDataEntryForm = $localStorage.dataEntryData;
       $scope.data.loading = false;
       prepareDataElementsValuesFromIndexDb();
-      dataValueSetServices.getDataValueSet();
+      prepareDataElementsValuesFromServer();
       trimOffBRNScoreValues();
       if( $localStorage.dataEntryData.formType == 'SECTION'){
         $scope.data.loading = true;
@@ -104,6 +104,55 @@ angular.module('dataCapture')
             });
         });
       });
+    }
+    function prepareDataElementsValuesFromServer(){
+      var dataSet = $localStorage.dataEntryData.dataSet.id;
+      var period = $localStorage.dataEntryData.period;
+      var orgUnit = $localStorage.dataEntryData.orgUnit;
+      dataValueSetServices.getDataValueSet(dataSet,period,orgUnit)
+        .then(function(dataElementsValuesFromServer){
+          if(dataElementsValuesFromServer){
+            dataElementsValuesFromServer.forEach(function(dataElementValues){
+              saveDataValuesFromServerToIndexDb(dataElementValues);
+              var value = isDataElementValueTypeNumber(dataElementValues.dataElement)?parseInt(dataElementValues.value):dataElementValues.value;
+              $scope.data.dataValues[dataElementValues.dataElement+'-'+dataElementValues.categoryOptionCombo] = value;
+            });
+          }
+        },function(){
+          //error
+          console.log('error to read data from server ');
+        });
+    }
+    //@todo checking preference issues 
+    function saveDataValuesFromServerToIndexDb(dataElementValues){
+      var ou = $localStorage.dataEntryData.orgUnit;
+      var pe = $localStorage.dataEntryData.period;
+      var dataSetId = $localStorage.dataEntryData.dataSet.id;
+      var id = dataElementValues.dataElement + '-' +dataSetId+ '-'+dataElementValues.categoryOptionCombo+'-'+pe+ '-' +ou;
+      var data = {
+        "id":id,
+        "de": dataElementValues.dataElement,
+        "pe": pe,
+        "value": isDataElementValueTypeNumber(dataElementValues.dataElement)?parseInt(dataElementValues.value):dataElementValues.value,
+        "co" : dataElementValues.categoryOptionCombo,
+        "ou" : ou,
+        "cc":$localStorage.dataEntryData.dataSet.categoryCombo.id,
+        "cp":dataElementValues.attributeOptionCombo,
+        "sync":true
+      };
+     dataSetsServices.saveDataSetDataValue(data);
+    }
+    function isDataElementValueTypeNumber(dataElementId){
+      var result = false;
+      var dataElements = $localStorage.dataEntryData.dataSet.dataElements;
+      dataElements.forEach(function(dataElement){
+        if(dataElement.id == dataElementId){
+          if($scope.isIntegerZeroOrPositive(dataElement.valueType)|| $scope.isInteger(dataElement.valueType)){
+            result = true;
+          }
+        }
+      });
+      return result;
     }
     //function for toaster messages
     function progressMessage(message){
