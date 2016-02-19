@@ -21,9 +21,9 @@ angular.module('dataCapture')
             periodSelection = this.getQuarterlyPeriodSectionOptions(year,allowedFutureValue);
             break;
           case 'Weekly':
-                break;
+            break;
           /*case '':
-                break;*/
+           break;*/
           case 'Yearly':
             periodSelection = this.getYearlyPeriodSectionOptions(year,allowedFutureValue);
             break;
@@ -51,6 +51,26 @@ angular.module('dataCapture')
               });
             }
           }
+        }else{
+          if(year == currentYear + 1){
+            var indexOfAllowedMonth = parseInt(new Date().getMonth()) - 1;
+            for(var i=11;i >=0; i --){
+              var month = i + 1;
+              if(indexOfAllowedMonth >= i){
+                if(month > 9){
+                  data.push({
+                    displayValue :monthlyYearData[i] +' '+year,
+                    periodValue : year + '' +month
+                  });
+                }else {
+                  data.push({
+                    displayValue :monthlyYearData[i] +' '+year,
+                    periodValue : year + '0' +month
+                  });
+                }
+              }
+            }
+          }
         }
         return data;
       },
@@ -65,7 +85,22 @@ angular.module('dataCapture')
               displayValue :quarterlyYearData[i] + ' ' +year ,
               periodValue : year+'Q' +quarter
             });
-          }}
+          }
+        }else{
+          if(year == currentYear + 1){
+            var currentMonth = parseInt(new Date().getMonth());
+            var allowedQuarter = parseInt((currentMonth+1)/4);
+            for(var i=3;i >= 0; i --){
+              var quarter = i + 1;
+              if(allowedQuarter > i){
+                data.push({
+                  displayValue :quarterlyYearData[i] + ' ' +year ,
+                  periodValue : year+'Q' +quarter
+                });
+              }
+            }
+          }
+        }
         return data;
       },
       getYearlyPeriodSectionOptions : function(year,allowedFutureValue){

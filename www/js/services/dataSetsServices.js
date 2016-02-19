@@ -64,8 +64,8 @@ angular.module('dataCapture')
           })
         });
         return orgUnitDataSets;
-      }
-      ,getDataSetById:function(dataSetId,dataSets){
+      },
+      getDataSetById:function(dataSetId,dataSets){
         var defer = $q.defer();
         if(dataSetId && dataSets){
           dataSets.forEach(function(dataSet){
@@ -158,7 +158,6 @@ angular.module('dataCapture')
             });
         })
       }
-
 
     };
 
