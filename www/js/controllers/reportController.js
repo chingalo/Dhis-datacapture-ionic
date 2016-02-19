@@ -117,6 +117,20 @@ angular.module('dataCapture')
           $scope.data.loading = false;
         })
     }
+    $scope.generateReportParameters = function(){
+      userServices.getAssignedOrgUnitFromIndexDb()
+        .then(function(data){
+          if(data.length > 0){
+            $scope.data.orgUnits = data;
+            $scope.data.loading = false;
+          }else {
+            getAllAssignedOrgUnits();
+          }
+        },function(){
+          //error
+          $scope.data.loading = false;
+        })
+    }
     $scope.changePeriodInterval = function(type){
       var year = null;
       if(type =='next'){
@@ -163,6 +177,13 @@ angular.module('dataCapture')
         $localStorage.reportParams = {
           ou:$scope.data.orgUnit[0].id,
           pe:$scope.data.period
+        }
+        dhis2 = {
+          report:{
+            organisationUnit:$scope.data.orgUnit[0],
+            organisationUnitChildren:$scope.data.orgUnit[0].children,
+            organisationUnitHierarchy:
+          }
         }
       }
       $state.go('app.generatedReport');
