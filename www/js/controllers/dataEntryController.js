@@ -134,12 +134,13 @@ angular.module('dataCapture')
       var id = dataElementValues.dataElement + '-' +dataSetId+ '-'+dataElementValues.categoryOptionCombo+'-'+pe+ '-' +ou;
       dataSetsServices.getDataValueById(id).then(function(returnedDataValue){
         var dataValue = returnedDataValue;
+        var value = isDataElementValueTypeNumber(dataElementValues.dataElement)?parseInt(dataElementValues.value):dataElementValues.value;
         var data = null;
         var canUpdate = false;
         if(dataValue == null ){
           canUpdate = true;
         }else{
-          if(dataValue.value != dataElementValues.value){
+          if(dataValue.value != value){
             canUpdate = true;
           }
         }
@@ -148,7 +149,7 @@ angular.module('dataCapture')
             "id":id,
             "de": dataElementValues.dataElement,
             "pe": pe,
-            "value": isDataElementValueTypeNumber(dataElementValues.dataElement)?parseInt(dataElementValues.value):dataElementValues.value,
+            "value": value,
             "co" : dataElementValues.categoryOptionCombo,
             "ou" : ou,
             "cc":$localStorage.dataEntryData.dataSet.categoryCombo.id,
@@ -455,13 +456,22 @@ angular.module('dataCapture')
     }
 
     $scope.completeDataEntryForm = function(){
-
-      console.log("complete btn");
+      var parameter = getDatSetCompletenessParameter();
+      console.log(parameter);
     };
+
     $scope.inCompleteDataEntryForm = function(){
-
-      console.log("Incomplete btn");
+      var parameter = getDatSetCompletenessParameter();
+      console.log(parameter);
     };
+    function getDatSetCompletenessParameter(){
+      var dataEntryForm = $localStorage.dataEntryData;
+      var parameter = "ds="+dataEntryForm.dataSet.id+"&pe="+dataEntryForm.period+"&ou="+dataEntryForm.orgUnit;
+      if(dataEntryForm.categoryOptionCombosId){
+        parameter += "&cc="+dataEntryForm.dataSet.categoryCombo.id+"&cp="+dataEntryForm.categoryOptionCombosId;
+      }
+      return parameter;
+    }
     //flexibility for form
     $scope.isInteger = function(key){
       if(key == "NUMBER" || key == "INTEGER"){

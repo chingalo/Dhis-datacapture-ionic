@@ -16,6 +16,21 @@ angular.module('dataCapture')
             defer.reject();
           });
         return defer.promise;
+      },
+      getDataValuesFromIndexDb : function(){
+        var defer = $q.defer();
+        $indexedDB.openStore('dataValues',function(dataValuesData){
+          dataValuesData.getAll().then(function(dataValues){
+            defer.resolve(dataValues);
+          },function(){
+            //error get all data values from indexDB
+            defer.reject();
+          });
+        });
+        return defer.promise;
+      },
+      completeOnDataSetRegistrations:function(parameter){
+
       }
 
     };

@@ -3,9 +3,7 @@
  */
 angular.module('dataCapture')
   .factory('reportServices',function($http,$q,$localStorage,$indexedDB){
-
     var baseUrl = $localStorage.baseUrl;
-
     var reportServices = {
       getAllReportsFromServer:function(){
         var defer = $q.defer();
@@ -14,17 +12,6 @@ angular.module('dataCapture')
         $http.get(baseUrl + '/api/reports.json?paging=false&'+filter+'&'+fields)
           .success(function(results){
             defer.resolve(results.reports);
-          })
-          .error(function(){
-            defer.reject('error');
-          });
-        return defer.promise;
-      },
-      getIndividualReportFromServer : function(reportId){
-        var defer = $q.defer();
-        $http.get(baseUrl + '/api/reports/'+ reportId +'.json?fields=id,name,created,type,relativePeriods,reportParams,designContent')
-          .success(function(report){
-            defer.resolve(report);
           })
           .error(function(){
             defer.reject('error');
