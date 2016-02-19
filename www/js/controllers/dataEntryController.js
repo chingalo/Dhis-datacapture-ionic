@@ -114,6 +114,7 @@ angular.module('dataCapture')
       dataValueSetServices.getDataValueSet(dataSet,period,orgUnit)
         .then(function(dataElementsValuesFromServer){
           if(dataElementsValuesFromServer){
+            progressMessage(dataElementsValuesFromServer.length + " data values has been found from server");
             dataElementsValuesFromServer.forEach(function(dataElementValues){
               saveDataValuesFromServerToIndexDb(dataElementValues);
               var value = isDataElementValueTypeNumber(dataElementValues.dataElement)?parseInt(dataElementValues.value):dataElementValues.value;
@@ -123,6 +124,7 @@ angular.module('dataCapture')
           }
         },function(){
           //error
+          progressMessage('Fail to retrieve data values form server, it might be due to network connectivity');
           $scope.data.loading = false;
         });
     }
@@ -462,7 +464,7 @@ angular.module('dataCapture')
         progressMessage('Data entry form has been completed successfully');
       },function(){
         //error on complete form
-        progressMessage('Data entry form  has not been completed, please check the network');
+        progressMessage('Data entry form  has not been completed, it might be due to network connectivity');
       });
     };
 
@@ -473,7 +475,7 @@ angular.module('dataCapture')
         progressMessage('Data entry form has been uncompleted successfully');
       },function(){
         //error on incomplete form
-        progressMessage('Data entry form  has not been uncompleted, please check the network');
+        progressMessage('Data entry form  has not been uncompleted, it might be due to network connectivity');
       });
     };
     function getDatSetCompletenessParameter(){
