@@ -19,10 +19,10 @@
                 </div>
               </div>
             </div>
-            <div class="row" ng-click="openModal('Period')" style="padding-top: 1%;" ng-if = "data.selectedReport.reportParams.paramReportingPeriod">
+            <div class="row" ng-click="openModal('Period')" style="padding-top: 1%;">
               <div class="col col-90">
                 <b>Period</b> :
-                <span ng-if = "data.period"></span>{{ data.period }}
+                <span ng-if = "data.period"></span>{{ getPeriodDisplayValue(data.period) }}
                 <span ng-if = "! data.period">Click to select Period</span>
               </div>
               <div class="col col-10">
@@ -30,6 +30,9 @@
               </div>
             </div>
           </div>
+
+          <button ng-click="generateReport('withParameter')">Generate Report</button>
+
 
 
         </div>

@@ -24,6 +24,11 @@ angular.module('dataCapture')
       }
     };
 
+    if($localStorage.reportParams){
+      reportParams = $localStorage.reportParams;
+      console.log(reportParams);
+    }
+
     //@todo checking this logic
     if(! $localStorage.selectedReport){
       updateReports();
@@ -44,16 +49,15 @@ angular.module('dataCapture')
     function progressMessage(message){
       ionicToast.show(message, 'bottom', false, 2500);
     }
-
     //checking changes on selected orgUnit
-    $scope.$watch('data.orgUnitId', function() {
+    $scope.$watch('data.orgUnit', function(){
+      delete $localStorage.reportParams;
       $scope.data.period = null;
     });
 
     $scope.reloadReports = function(){
       updateReports();
     };
-
     function updateReports(){
       $scope.data.loading = true;
       reportServices.getAllReportsFromServer()
@@ -72,7 +76,6 @@ angular.module('dataCapture')
           $scope.data.loading = false;
         });
     }
-
     $scope.selectReport = function(reportId){
       delete $localStorage.selectedReport;
       getReportDetails(reportId);
@@ -86,10 +89,10 @@ angular.module('dataCapture')
               $localStorage.selectedReport = report;
               if(report.reportParams.paramOrganisationUnit || report.reportParams.paramOrganisationUnit){
                 $scope.data.loading = false;
-                $state.go('app.reportsParametersReport');
+                $state.go('app.reportsParametersForm');
               }else{
                 $scope.data.loading = false;
-                $state.go('app.reportsNoParametersReport');
+                $scope.generateReport('withOutParameter');
               }
             }
           });
@@ -98,7 +101,6 @@ angular.module('dataCapture')
           $scope.data.loading = false;
         });
     }
-
     getAllAssignedOrgUnits();
     function getAllAssignedOrgUnits(){
       $scope.data.loading = true;
@@ -127,17 +129,14 @@ angular.module('dataCapture')
       }
       $scope.data.periodOption = getPeriodOption(year);
     };
-
     $ionicModal.fromTemplateUrl('templates/modal.html', {
       scope: $scope
     }).then(function(modal) {
       $scope.modal = modal;
     });
-
     $scope.close = function() {
       $scope.modal.hide();
     };
-
     $scope.periodSelect = function(){
       $scope.close();
       if($scope.data.selectedDataSet){
@@ -153,10 +152,20 @@ angular.module('dataCapture')
         $localStorage.dataEntryData = $scope.data.selectedData;
       }
     };
-
     $scope.openModal = function(modalType){
       $scope.data.modalType = modalType;
       $scope.modal.show();
+    };
+
+    $scope.generateReport = function(type){
+      if(type == 'withParameter'){
+        //if( && )
+        $localStorage.reportParams = {
+          ou:$scope.data.orgUnit[0].id,
+          pe:$scope.data.period
+        }
+      }
+      $state.go('app.generatedReport');
     };
 
     periodOption();
@@ -164,7 +173,6 @@ angular.module('dataCapture')
       var year = 2016;
       $scope.data.periodOption = getPeriodOption(year);
     }
-
     function getPeriodOption(year){
       var period = [];
       for(var i = 0; i < 10; i ++){
@@ -175,6 +183,15 @@ angular.module('dataCapture')
         });
       }
       return period;
+    }
+    $scope.getPeriodDisplayValue=function(period){
+      var periodDisplayValue = '';
+      $scope.data.periodOption.forEach(function(periodData){
+        if(periodData.periodValue == period){
+          periodDisplayValue = periodData.displayValue;
+        }
+      });
+      return periodDisplayValue;
     }
 
   });

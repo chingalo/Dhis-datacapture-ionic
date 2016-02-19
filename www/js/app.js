@@ -11,7 +11,8 @@ angular.module('dataCapture', [
     'indexedDB',
     'ngSanitize',
     'ui.date',
-    'multi-select-tree'
+    'multi-select-tree',
+    'ngSanitize'
   ])
 
   .run(function ($ionicPlatform) {
@@ -172,7 +173,6 @@ angular.module('dataCapture', [
                 progressMessage(message);
                 $scope.data.loading = false;
                 synchronizationServices.stopSyncUserLoginData();
-                $scope.$apply();
               }
             });
           },
@@ -183,7 +183,6 @@ angular.module('dataCapture', [
             progressMessage(message);
             $scope.data.loading = false;
             synchronizationServices.stopSyncUserLoginData();
-            $scope.$apply();
           }
         });
       }
@@ -344,20 +343,20 @@ angular.module('dataCapture', [
           }
         }
       })
-      .state('app.reportsParametersReport', {
-        url: '/reports-parameters-report',
+      .state('app.reportsParametersForm', {
+        url: '/reports-parameters-form',
         views: {
           'menuContent': {
-            templateUrl: 'templates/reportsParametersReport.html',
+            templateUrl: 'templates/reportsParametersForm.html',
             controller: 'reportController'
           }
         }
       })
-      .state('app.reportsNoParametersReport', {
-        url: '/reports-no-parameters-report',
+      .state('app.generatedReport', {
+        url: '/generated-report',
         views: {
           'menuContent': {
-            templateUrl: 'templates/reportsNoParametersReport.html',
+            templateUrl: 'templates/generatedReport.html',
             controller: 'reportController'
           }
         }
@@ -391,10 +390,10 @@ angular.module('dataCapture', [
       return input.slice(start);
     }
   })
-  .filter('to_trusted', ['$sce', function($sce){
-  return function(text) {
-    return $sce.trustAsHtml(text);
-  };
-}])
+  .filter('to_trusted_html', ['$sce', function($sce){
+    return function(text) {
+      return $sce.trustAsHtml(text);
+    };
+  }])
 
 ;

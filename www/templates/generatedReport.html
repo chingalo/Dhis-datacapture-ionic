@@ -1,0 +1,14 @@
+<ion-view view-title="">
+  <ion-content>
+    <div class="row">
+      <div class="col col-100">
+        <div class="item item-divider">
+          <h2 align="center">{{ data.selectedReport.name }} Report</h2>
+        </div>
+        <div class="item item-text-wrap">
+          <div ng-bind-html="data.selectedReport.designContent | to_trusted_html"></div>
+        </div>
+      </div>
+    </div>
+  </ion-content>
+</ion-view>
