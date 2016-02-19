@@ -178,13 +178,13 @@ angular.module('dataCapture')
           ou:$scope.data.orgUnit[0].id,
           pe:$scope.data.period
         }
-        dhis2 = {
+        /*dhis2 = {
           report:{
             organisationUnit:$scope.data.orgUnit[0],
             organisationUnitChildren:$scope.data.orgUnit[0].children,
             organisationUnitHierarchy:
           }
-        }
+        }*/
       }
       $state.go('app.generatedReport');
     };
