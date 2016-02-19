@@ -457,12 +457,24 @@ angular.module('dataCapture')
 
     $scope.completeDataEntryForm = function(){
       var parameter = getDatSetCompletenessParameter();
-      console.log(parameter);
+      dataValueSetServices.completeOnDataSetRegistrations(parameter).then(function(){
+        //success on complete form
+        progressMessage('Data entry form has been completed successfully');
+      },function(){
+        //error on complete form
+        progressMessage('Data entry form  has not been completed, please check the network');
+      });
     };
 
-    $scope.inCompleteDataEntryForm = function(){
+    $scope.unCompleteDataEntryForm = function(){
       var parameter = getDatSetCompletenessParameter();
-      console.log(parameter);
+      dataValueSetServices.inCompleteOnDataSetRegistrations(parameter).then(function(){
+        //success on incomplete form
+        progressMessage('Data entry form has been uncompleted successfully');
+      },function(){
+        //error on incomplete form
+        progressMessage('Data entry form  has not been uncompleted, please check the network');
+      });
     };
     function getDatSetCompletenessParameter(){
       var dataEntryForm = $localStorage.dataEntryData;

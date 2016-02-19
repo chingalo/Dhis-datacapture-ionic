@@ -30,7 +30,28 @@ angular.module('dataCapture')
         return defer.promise;
       },
       completeOnDataSetRegistrations:function(parameter){
-
+        var defer = $q.defer();
+        $http.post(baseUrl+'/api/completeDataSetRegistrations?'+parameter,null)
+          .then(function(){
+            //success
+            defer.resolve();
+          },function(){
+            //error
+            defer.reject();
+          });
+        return defer.promise;
+      },
+      inCompleteOnDataSetRegistrations:function(parameter){
+        var defer = $q.defer();
+        $http.delete(baseUrl+'/api/completeDataSetRegistrations?'+parameter,null)
+          .then(function(){
+            //success
+            defer.resolve();
+          },function(){
+            //error
+            defer.reject();
+          });
+        return defer.promise;
       }
 
     };
