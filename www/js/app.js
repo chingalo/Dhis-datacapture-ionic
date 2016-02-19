@@ -93,19 +93,18 @@ angular.module('dataCapture', [
 
     function formatBaseUrl(baseUrl){
       var formattedBaseUrl = "";
+      var newArray = [];
       var baseUrlString = baseUrl.split('/');
       var length = baseUrlString.length;
       for(var i=0;i < length; i++){
-        if(i == 1){
-          formattedBaseUrl += '//';
-        }else{
-          if(baseUrlString[i]){
-            if(i == 0){
-              formattedBaseUrl = baseUrlString[i];
-            }else{
-              formattedBaseUrl = formattedBaseUrl + '/' +baseUrlString[i];
-            }
-          }
+        if(baseUrlString[i]){
+          newArray.push(baseUrlString[i]);
+        }
+      }
+      formattedBaseUrl = newArray[0] + '/';
+      for(var j =0 ; j< newArray.length; j ++){
+        if(j != 0){
+          formattedBaseUrl = formattedBaseUrl + '/'+newArray[j];
         }
       }
       return formattedBaseUrl;
@@ -392,4 +391,10 @@ angular.module('dataCapture', [
       return input.slice(start);
     }
   })
+  .filter('to_trusted', ['$sce', function($sce){
+  return function(text) {
+    return $sce.trustAsHtml(text);
+  };
+}])
+
 ;
