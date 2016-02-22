@@ -191,6 +191,8 @@ angular.module('dataCapture')
         var orgUnitId = $scope.data.orgUnit[0].id;
         dataSetsServices.getAllDataSets().then(function(dataSets){
           $scope.data.dataSets = dataSetsServices.getDataSetsByOrgUnitId(orgUnitId,dataSets);
+          var message = $scope.data.dataSets.length + ' Data entry form has been found';
+          progressMessage(message);
           $scope.data.loading = false;
         },function(){
           var message = 'Data entry form has not been found';
