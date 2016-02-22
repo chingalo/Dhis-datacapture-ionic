@@ -73,7 +73,7 @@ angular.module('dataCapture', [
     };
 
     $scope.logOut = function () {
-      //TODO some logic flow during log out process
+      //TODO some logic flow during log out process as reset all data on setting
       $scope.data.loading = true;
       delete $localStorage.loginUser;
       delete $localStorage.dataEntryData;
@@ -87,8 +87,8 @@ angular.module('dataCapture', [
         $scope.data.loading = false;
         var message = "You have logged out successfully";
         progressMessage(message);
-        $window.location.reload(true);
-        $state.go('login');
+        //$window.location.reload(true);
+        $state.go('login', {}, {location: "replace", reload: true});
       });
     };
 
