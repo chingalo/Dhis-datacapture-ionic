@@ -11,7 +11,6 @@ angular.module('dataCapture')
     $scope.data.reports = null;
     $scope.data.orgUnits = [];
     $scope.data.orgUnit = [];
-
     //pagination variables
     $scope.currentPage = 0;
     $scope.pageSize = 10;
@@ -23,7 +22,6 @@ angular.module('dataCapture')
         return 0;
       }
     };
-
     if($localStorage.reportParams){
       reportParams = $localStorage.reportParams;
       console.log(reportParams);
@@ -67,9 +65,7 @@ angular.module('dataCapture')
           reports.forEach(function(report){
             reportServices.saveReportToIndexDb(report);
           });
-          if(reports.length <= 0){
-            progressMessage('There are no report available at the moment');
-          }
+          progressMessage('There are '+ reports.length + ' report(s) available at the moment');
           $scope.data.loading = false;
         },function(){
           //error

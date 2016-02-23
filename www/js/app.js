@@ -338,7 +338,7 @@ angular.module('dataCapture', [
         url: '/reports',
         views: {
           'menuContent': {
-            templateUrl: 'templates/reports.html',
+            templateUrl: 'templates/reportsList.html',
             controller: 'reportController'
           }
         }

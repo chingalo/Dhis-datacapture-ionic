@@ -6,12 +6,18 @@
         <ion-spinner icon="ios"></ion-spinner>
       </div>
     </div>
-
     <div ng-if = "!data.loading">
 
       <div class="row">
         <div class="col col-100">
-          <button ng-if = "data.reports.length <= 0" class="button button-full button-positive" ng-click="reloadReports()">Reload reports</button>
+          <button class="button button-full button-clear" ng-click="reloadReports()">
+            <i class="icon ion-loop"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col col-100">
           <div class="list" ng-if = "data.reports">
             <div class="item" ng-repeat="report in data.reports | paginationFilter:currentPage*pageSize | limitTo:pageSize" ng-click="selectReport(report.id)">
               <h2>{{ report.name }}</h2>
