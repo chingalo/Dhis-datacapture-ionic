@@ -22,9 +22,8 @@ angular.module('dataCapture')
         return 0;
       }
     };
-    if($localStorage.reportParams){
-      reportParams = $localStorage.reportParams;
-      console.log(reportParams);
+    if($localStorage.dhis2){
+      dhis2 = $localStorage.dhis2;
     }
 
     //@todo checking this logic
@@ -167,6 +166,7 @@ angular.module('dataCapture')
       $scope.modal.show();
     };
 
+    //@todo checking if report parameter meet
     $scope.generateReport = function(type){
       if(type == 'withParameter'){
         //if( && )
@@ -183,19 +183,6 @@ angular.module('dataCapture')
             period :$scope.data.period
           }
         };
-        console.log($localStorage.dhis2);
-
-        $localStorage.reportParams = {
-          ou:$scope.data.orgUnit[0].id,
-          pe:$scope.data.period
-        }
-        /*dhis2 = {
-         report:{
-         organisationUnit:$scope.data.orgUnit[0],
-         organisationUnitChildren:$scope.data.orgUnit[0].children,
-         organisationUnitHierarchy:
-         }
-         }*/
       }
       $state.go('app.generatedReport');
     };
