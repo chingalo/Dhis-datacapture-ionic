@@ -42,7 +42,7 @@ angular.module('dataCapture')
       },
       getAssignedOrgUnitChildrenFromServer : function(orgUnitId,baseUrl){
         var defer = $q.defer();
-        var fields = "fields=id,name,ancestors[id,name],children[id,name,children[id,name,children[id,name,children[id,name,children[id,name]]]]]";
+        var fields = "fields=id,name,code,ancestors[id,name],children[id,name,code,children[id,name,code,children[id,name,code,children[id,name,code,children[id,name,code]]]]]";
         $http.get(baseUrl + '/api/organisationUnits/'+orgUnitId+'.json?'+fields)
           .success(function(results){
             defer.resolve(results);

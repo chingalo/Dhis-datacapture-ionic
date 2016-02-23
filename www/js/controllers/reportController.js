@@ -170,20 +170,46 @@ angular.module('dataCapture')
     $scope.generateReport = function(type){
       if(type == 'withParameter'){
         //if( && )
+        var selectedOrUnit = {
+          id : $scope.data.orgUnit[0].id,
+          name : $scope.data.orgUnit[0].name,
+          code : $scope.data.orgUnit[0].code
+        };
+        $localStorage.dhis2 = {
+          report : {
+            organisationUnit : selectedOrUnit,
+            organisationUnitHierarchy : getOrganisationUnitHierarchy($scope.data.orgUnit[0].ancestors,selectedOrUnit),
+            organisationUnitChildren : $scope.data.orgUnit[0].children,
+            period :$scope.data.period
+          }
+        };
+        console.log($localStorage.dhis2);
+
         $localStorage.reportParams = {
           ou:$scope.data.orgUnit[0].id,
           pe:$scope.data.period
         }
         /*dhis2 = {
-          report:{
-            organisationUnit:$scope.data.orgUnit[0],
-            organisationUnitChildren:$scope.data.orgUnit[0].children,
-            organisationUnitHierarchy:
-          }
-        }*/
+         report:{
+         organisationUnit:$scope.data.orgUnit[0],
+         organisationUnitChildren:$scope.data.orgUnit[0].children,
+         organisationUnitHierarchy:
+         }
+         }*/
       }
       $state.go('app.generatedReport');
     };
+
+    function getOrganisationUnitHierarchy(orgUnitAncestors,selectedOrUnit){
+      var data = [];
+      var length = orgUnitAncestors.length;
+      data.push(selectedOrUnit);
+      for(var i=0 ;i < length; i ++){
+        var index = length - [i + 1];
+        data.push(orgUnitAncestors[index])
+      }
+      return data;
+    }
 
     periodOption();
     function periodOption(){
