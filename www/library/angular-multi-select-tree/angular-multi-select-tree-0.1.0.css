@@ -213,7 +213,8 @@
   display: inline-block;
   width: 35px;
   height: 30px;
-  margin: 0.5%;
+  margin: 0.1%;
+  padding: 2%;
   border-top: 6px solid transparent;
   border-bottom: 6px solid transparent;
   border-left: 10px solid #525252;
