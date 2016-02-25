@@ -76,7 +76,7 @@ angular.module('dataCapture', [
       //TODO some logic flow during log out process as reset all data on setting
       $scope.data.loading = true;
       delete $localStorage.loginUser;
-      delete $localStorage.dataEntryData;
+      //delete $localStorage.dataEntryData;
       delete $localStorage.loginUserData;
       delete $localStorage.selectedReport;
       $ionicHistory.clearCache().then(function() {
