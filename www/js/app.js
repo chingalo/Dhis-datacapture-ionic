@@ -86,9 +86,9 @@ angular.module('dataCapture', [
         synchronizationServices.stopSyncUserLoginData();
         $scope.data.loading = false;
         var message = "You have logged out successfully";
-        progressMessage(message);
         $state.go('login');
         $window.location.reload();
+        progressMessage(message);
         //$state.go('login', {}, {location: "replace", reload: true});
       });
     };
