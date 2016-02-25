@@ -87,7 +87,7 @@ angular.module('dataCapture', [
         $scope.data.loading = false;
         var message = "You have logged out successfully";
         progressMessage(message);
-        $state.go('login', {}, {reload: true});
+        $state.go('login', {}, {location: "replace", reload: true});
       });
     };
 
@@ -156,7 +156,7 @@ angular.module('dataCapture', [
                   loadDataSets(base);
                   startSyncProcess($localStorage.loginUser);
                   //redirect to landing page for success login
-                  $state.go('app.dataEntry');
+                  $state.go('app.dataEntry', {}, {location: "replace", reload: true});
                 } catch (e) {
                   var message = 'Fail to login, please check your username or password';
                   progressMessage(message);
