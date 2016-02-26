@@ -163,23 +163,45 @@ angular.module('dataCapture')
     //@todo checking if report parameters meet
     $scope.generateReport = function(type){
       if(type == 'withParameter'){
-        //if( && )
-        var selectedOrUnit = {
-          id : $scope.data.orgUnit[0].id,
-          name : $scope.data.orgUnit[0].name,
-          code : $scope.data.orgUnit[0].code
-        };
-        $localStorage.dhis2 = {
-          report : {
-            organisationUnit : selectedOrUnit,
-            organisationUnitHierarchy : getOrganisationUnitHierarchy($scope.data.orgUnit[0].ancestors,selectedOrUnit),
-            organisationUnitChildren : $scope.data.orgUnit[0].children,
-            period :$scope.data.period
-          }
-        };
+        if(isParameterMeet()){
+          var selectedOrUnit = {
+            id : $scope.data.orgUnit[0].id,
+            name : $scope.data.orgUnit[0].name,
+            code : $scope.data.orgUnit[0].code
+          };
+          $localStorage.dhis2 = {
+            report : {
+              organisationUnit : selectedOrUnit,
+              organisationUnitHierarchy : getOrganisationUnitHierarchy($scope.data.orgUnit[0].ancestors,selectedOrUnit),
+              organisationUnitChildren : $scope.data.orgUnit[0].children,
+              period :$scope.data.period
+            }
+          };
+
+          $state.go('app.generatedReport');
+        }else{
+          var message = "Please select report parameter(s) first";
+          ionicToast.show(message, 'top', false, 1500);
+        }
       }
-      $state.go('app.generatedReport');
+      else{
+        $state.go('app.generatedReport');
+      }
     };
+    function isParameterMeet(){
+      var result = false;
+      var report = $localStorage.selectedReport;
+      if(report.reportParams.paramOrganisationUnit && report.reportParams.paramOrganisationUnit){
+        if($scope.data.orgUnit[0] && $scope.data.period){
+          result =true;
+        }
+      }else{
+        if($scope.data.period || $scope.data.orgUnit[0]){
+          result =true;
+        }
+      }
+      return result;
+    }
 
     function getOrganisationUnitHierarchy(orgUnitAncestors,selectedOrUnit){
       var data = [];
