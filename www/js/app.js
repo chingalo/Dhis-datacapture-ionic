@@ -276,7 +276,8 @@ angular.module('dataCapture', [
     }
   })
 
-  .config(function ($stateProvider, $urlRouterProvider, $indexedDBProvider) {
+  .config(function ($stateProvider, $urlRouterProvider, $indexedDBProvider,$ionicConfigProvider) {
+    $ionicConfigProvider.scrolling.jsScrolling(false);
     $indexedDBProvider
       .connection('hisptz')
       .upgradeDatabase(1, function (event, db, tx) {

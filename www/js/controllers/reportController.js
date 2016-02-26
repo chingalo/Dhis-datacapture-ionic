@@ -25,7 +25,6 @@ angular.module('dataCapture')
     if($localStorage.dhis2){
       dhis2 = $localStorage.dhis2;
     }
-
     //@todo checking this logic
     if(! $localStorage.selectedReport){
       updateReports();
@@ -46,11 +45,6 @@ angular.module('dataCapture')
     function progressMessage(message){
       ionicToast.show(message, 'bottom', false, 2500);
     }
-    //checking changes on selected orgUnit
-    $scope.$watch('data.orgUnit', function(){
-      delete $localStorage.reportParams;
-      $scope.data.period = null;
-    });
 
     $scope.reloadReports = function(){
       updateReports();
@@ -125,18 +119,30 @@ angular.module('dataCapture')
           //error
           $scope.data.loading = false;
         })
-    }
+    };
+
+    //checking changes on selected orgUnit
+    $scope.$watch('data.orgUnit', function(){
+      delete $localStorage.reportParams;
+      $scope.data.period = null;
+    });
     $scope.changePeriodInterval = function(type){
       var year = null;
       if(type =='next'){
-        year = parseInt($scope.data.periodOption[0].year);
+        year = parseInt($scope.data.periodOption[0].periodValue);
         year +=9;
       }else{
         var periodOptionLength = $scope.data.periodOption.length;
         periodOptionLength = parseInt(periodOptionLength);
-        year = $scope.data.periodOption[periodOptionLength-1].year;
+        year = $scope.data.periodOption[periodOptionLength-1].periodValue;
       }
-      $scope.data.periodOption = getPeriodOption(year);
+      if(year > parseInt(new Date().getFullYear())){
+        var message = "There no period option further than this at moment";
+        ionicToast.show(message, 'top', false, 1500);
+      }else{
+        $scope.data.periodOption = getPeriodOption(year);
+      }
+
     };
     $ionicModal.fromTemplateUrl('templates/modal.html', {
       scope: $scope
@@ -148,25 +154,13 @@ angular.module('dataCapture')
     };
     $scope.periodSelect = function(){
       $scope.close();
-      if($scope.data.selectedDataSet){
-        var dataElements = $scope.data.selectedDataSet.dataElements;
-        $scope.data.selectedData = {
-          orgUnit : getSelectedOrgUnit($scope.data.orgUnitId),
-          dataSet : $scope.data.selectedDataSet,
-          period : $scope.data.period,
-          numberOfFields : dataElements.length,
-          formType : ''
-        };
-        $scope.data.formSelectVisibility = true;
-        $localStorage.dataEntryData = $scope.data.selectedData;
-      }
     };
     $scope.openModal = function(modalType){
       $scope.data.modalType = modalType;
       $scope.modal.show();
     };
 
-    //@todo checking if report parameter meet
+    //@todo checking if report parameters meet
     $scope.generateReport = function(type){
       if(type == 'withParameter'){
         //if( && )
@@ -200,7 +194,7 @@ angular.module('dataCapture')
 
     periodOption();
     function periodOption(){
-      var year = 2016;
+      var year = parseInt(new Date().getFullYear());
       $scope.data.periodOption = getPeriodOption(year);
     }
     function getPeriodOption(year){
