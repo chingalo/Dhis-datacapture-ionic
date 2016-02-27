@@ -199,7 +199,8 @@ angular.module('dataCapture')
         $scope.data.loading = true;
         var orgUnitId = $scope.data.orgUnit[0].id;
         dataSetsServices.getAllDataSets().then(function(dataSets){
-          $scope.data.dataSets = dataSetsServices.getDataSetsByOrgUnitId(orgUnitId,dataSets);
+          var allDataSetsByOrgUnit = dataSetsServices.getDataSetsByOrgUnitId(orgUnitId,dataSets);
+          $scope.data.dataSets = getAllowedDataSet(allDataSetsByOrgUnit);
           var message = $scope.data.dataSets.length + ' Data entry form has been found';
           progressMessage(message);
           $scope.data.loading = false;
@@ -210,6 +211,27 @@ angular.module('dataCapture')
         });
       }
     });
+
+    //function to get data set based on user role
+    function getAllowedDataSet(allDataSetsByOrgUnit){
+      var allowedDataSet = [];
+      allDataSetsByOrgUnit.forEach(function(dataSet){
+        if(isDataSetAllowed(dataSet.id)){
+          allowedDataSet.push(dataSet);
+        }
+      });
+      return allowedDataSet;
+    }
+    function isDataSetAllowed(dataSetId){
+      var result = false;
+      var userAssignedDataSets = $localStorage.loginUserData.userCredentials.userRoles[0].dataSets;
+      userAssignedDataSets.forEach(function(userAssignedDataSet){
+        if(dataSetId == userAssignedDataSet.id){
+          result = true;
+        }
+      });
+      return result;
+    }
 
     //checking changes on data entry form
     $scope.$watch('data.dataSetId', function() {
@@ -335,7 +357,7 @@ angular.module('dataCapture')
       $state.go('app.dataEntryForm');
     };
 
-    //funtion to trim off brn score values data element
+    //function to trim off brn score values data element
     function trimOffBRNScoreValues(){
       $scope.data.loading = true;
       var dataElements = $localStorage.dataEntryData.dataSet.dataElements;
