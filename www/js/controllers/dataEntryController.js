@@ -225,7 +225,9 @@ angular.module('dataCapture')
       }
     });
 
-    $scope.changeDataEntryForm = function(){
+    //@todo pass data elements on functions
+    $scope.changeDataEntryForm = function(dataElement){
+      console.log(dataElement.id)
       for(var key in $scope.data.dataValues){
         if($scope.data.dataValues[key]){
           prepareDataValues(key,$scope.data.dataValues[key]);
@@ -238,6 +240,7 @@ angular.module('dataCapture')
       var pe = $localStorage.dataEntryData.period;
       var dataSetId = $localStorage.dataEntryData.dataSet.id;
       var modelValue = key.split('-');
+      //dataset-de-co-pe-ou
       var id = modelValue[0] + '-' +dataSetId+ '-'+modelValue[1]+'-'+pe+ '-' +ou;
       var dataValue = null;
       dataSetsServices.getDataValueById(id).then(function(returnedDataValue){

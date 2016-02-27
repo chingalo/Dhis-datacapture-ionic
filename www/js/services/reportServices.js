@@ -3,9 +3,9 @@
  */
 angular.module('dataCapture')
   .factory('reportServices',function($http,$q,$localStorage,$indexedDB){
-    var baseUrl = $localStorage.baseUrl;
+    //var baseUrl = $localStorage.baseUrl;
     var reportServices = {
-      getAllReportsFromServer:function(){
+      getAllReportsFromServer:function(baseUrl){
         var defer = $q.defer();
         var fields = "fields=id,name,created,type,relativePeriods,reportParams,designContent";
         var filter = "filter=type:eq:HTML&filter=name:like:mobile";

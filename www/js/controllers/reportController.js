@@ -51,7 +51,7 @@ angular.module('dataCapture')
     };
     function updateReports(){
       $scope.data.loading = true;
-      reportServices.getAllReportsFromServer()
+      reportServices.getAllReportsFromServer($localStorage.baseUrl)
         .then(function(reports){
           $scope.data.reports = reports;
           reportServices.saveReportToIndexDb(reports);

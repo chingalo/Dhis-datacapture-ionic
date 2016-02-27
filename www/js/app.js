@@ -31,7 +31,12 @@ angular.module('dataCapture', [
     });
   })
 
-  .controller('mainController', function ($scope,$window,$interval,$state,userServices,synchronizationServices,$ionicHistory,$ionicModal, ionicToast, $localStorage, dataSetsServices, sectionsServices, $indexedDB) {
+  .controller('mainController', function ($scope,$window,$interval,$state,
+                                          userServices,synchronizationServices,
+                                          $ionicHistory,$ionicModal, ionicToast,
+                                          indicatorsServices,reportServices,
+                                          $localStorage, dataSetsServices,
+                                          sectionsServices, $indexedDB) {
 
     $scope.data = {};
     var url = 'http://41.217.202.50:8080/dhis';
@@ -134,9 +139,10 @@ angular.module('dataCapture', [
           withCredentials: true,
           useDefaultXhrHeader: false,
           success: function () {
+            var fields = "fields=[:all],userCredentials[userRoles[dataSets[id,name]]";
             //call checking if user is available
             Ext.Ajax.request({
-              url: base + '/api/me.json',
+              url: base + '/api/me.json?'+fields,
               callbackKey: 'callback',
               method: 'GET',
               params: {
@@ -204,7 +210,40 @@ angular.module('dataCapture', [
                 //error
               });
           });
+          $scope.data.loading = false;
+          //loading indicators
+          loadIndicators(base);
         }, function () {
+        });
+    }
+    function loadIndicators(base){
+      $scope.data.loading = true;
+      indicatorsServices.getAllIndicatorsFromServer(base)
+        .then(function(indicators){
+          indicators.forEach(function(indicator){
+            indicatorsServices.saveIndicatorIntoIndexDb(indicator);
+          });
+          $scope.data.loading = false;
+          //leading reports
+          loadReports(base)
+        },function(){
+          //error
+          $scope.data.loading = false;
+        });
+    }
+    function loadReports(base){
+      $scope.data.loading = true;
+      reportServices.getAllReportsFromServer(base)
+        .then(function(reports){
+          $scope.data.reports = reports;
+          reportServices.saveReportToIndexDb(reports);
+          reports.forEach(function(report){
+            reportServices.saveReportToIndexDb(report);
+          });
+          $scope.data.loading = false;
+        },function(){
+          //error
+          $scope.data.loading = false;
         });
     }
     /*
@@ -212,8 +251,6 @@ angular.module('dataCapture', [
      */
     function loadDataSets(base) {
       $localStorage.baseUrl = base;
-      //load all data entry sections forms
-      loadDataEntrySections(base);
       $scope.data.loading = true;
       $scope.$apply();
       dataSetsServices.getAllDataSetsFromServer(base).then(function (dataSets) {
@@ -231,7 +268,8 @@ angular.module('dataCapture', [
           });
         });
         $scope.data.loading = false;
-
+        //load all data entry sections forms
+        loadDataEntrySections(base);
       }, function () {
         //error getting data sets from server
         $scope.data.loading = false;
@@ -300,6 +338,10 @@ angular.module('dataCapture', [
         var dataSets = db.createObjectStore('dataValues', {keyPath: 'id'});
         dataSets.createIndex('id_index', 'id', {unique: true});
 
+      })
+      .upgradeDatabase(2, function(event, db, tx){
+        var dataSets = db.createObjectStore('indicators', {keyPath: 'id'});
+        dataSets.createIndex('id_index', 'id', {unique: true});
       });
 
     $stateProvider
