@@ -2,7 +2,7 @@
  * Created by joseph on 1/29/16.
  */
 angular.module('dataCapture')
-  .controller('dataEntryController',function($scope,$indexedDB,
+  .controller('dataEntryController',function($scope,$indexedDB,$filter,
                                              $state,$ionicModal,ionicToast,
                                              $localStorage,userServices,dataSetsServices,
                                              dataValueSetServices,
@@ -135,7 +135,7 @@ angular.module('dataCapture')
         });
     }
 
-    //function to save datavalues to form server to indexdb
+    //function to save data values to form server to indexDb
     function saveDataValuesFromServerToIndexDb(dataElementValues){
       var ou = $localStorage.dataEntryData.orgUnit;
       var pe = $localStorage.dataEntryData.period;
@@ -222,6 +222,8 @@ angular.module('dataCapture')
       });
       return allowedDataSet;
     }
+
+    //function to checking data set is assigned to user
     function isDataSetAllowed(dataSetId){
       var result = false;
       var userAssignedDataSets = $localStorage.loginUserData.userCredentials.userRoles[0].dataSets;
@@ -496,9 +498,9 @@ angular.module('dataCapture')
     function getAllAssignedOrgUnits(){
       $scope.data.loading = true;
       userServices.getAssignedOrgUnitFromIndexDb()
-        .then(function(data){
-          if(data.length > 0){
-            $scope.data.orgUnits = data;
+        .then(function(orgUnits){
+          if(orgUnits.length > 0){
+            $scope.data.orgUnits = getSortedOrgUnit(orgUnits);
             $scope.data.loading = false;
           }else {
             getAllAssignedOrgUnits();
@@ -507,6 +509,26 @@ angular.module('dataCapture')
           //error
           $scope.data.loading = false;
         })
+    }
+
+    //function to get sorted orgUnits
+    function getSortedOrgUnit(orgUnits){
+      var data = [];
+      orgUnits.forEach(function(orgUnit){
+        data.push(sortingOrUnit(orgUnit));
+      });
+      return data;
+    }
+
+    //sorting all orgUnits and its children
+    function sortingOrUnit(parentOrgUnit){
+      if(parentOrgUnit.children) {
+        parentOrgUnit.children = $filter('orderBy')(parentOrgUnit.children, 'name');
+        parentOrgUnit.children.forEach(function (child,index) {
+          parentOrgUnit.children[index]=sortingOrUnit(child);
+        });
+      }
+      return parentOrgUnit;
     }
 
     //function for period selections

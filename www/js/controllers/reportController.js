@@ -2,7 +2,7 @@
  * Created by joseph on 2/1/16.
  */
 angular.module('dataCapture')
-  .controller('reportController',function($scope,$state,ionicToast,
+  .controller('reportController',function($scope,$state,ionicToast,$filter,
                                           $localStorage,reportServices,
                                           periodSelectionServices,
                                           userServices,$ionicModal){
@@ -108,14 +108,14 @@ angular.module('dataCapture')
         });
     }
 
-    //function  to get assigned org units for tree
+    //function to get all user assigned orgUnit for tree
     getAllAssignedOrgUnits();
     function getAllAssignedOrgUnits(){
       $scope.data.loading = true;
       userServices.getAssignedOrgUnitFromIndexDb()
-        .then(function(data){
-          if(data.length > 0){
-            $scope.data.orgUnits = data;
+        .then(function(orgUnits){
+          if(orgUnits.length > 0){
+            $scope.data.orgUnits = getSortedOrgUnit(orgUnits);
             $scope.data.loading = false;
           }else {
             getAllAssignedOrgUnits();
@@ -125,22 +125,26 @@ angular.module('dataCapture')
           $scope.data.loading = false;
         })
     }
-    //
-    //
-    //$scope.generateReportParameters = function(){
-    //  userServices.getAssignedOrgUnitFromIndexDb()
-    //    .then(function(data){
-    //      if(data.length > 0){
-    //        $scope.data.orgUnits = data;
-    //        $scope.data.loading = false;
-    //      }else {
-    //        getAllAssignedOrgUnits();
-    //      }
-    //    },function(){
-    //      //error
-    //      $scope.data.loading = false;
-    //    })
-    //};
+
+    //function to get sorted orgUnits
+    function getSortedOrgUnit(orgUnits){
+      var data = [];
+      orgUnits.forEach(function(orgUnit){
+        data.push(sortingOrUnit(orgUnit));
+      });
+      return data;
+    }
+
+    //sorting all orgUnits and its children
+    function sortingOrUnit(parentOrgUnit){
+      if(parentOrgUnit.children) {
+        parentOrgUnit.children = $filter('orderBy')(parentOrgUnit.children, 'name');
+        parentOrgUnit.children.forEach(function (child,index) {
+          parentOrgUnit.children[index]=sortingOrUnit(child);
+        });
+      }
+      return parentOrgUnit;
+    }
 
     //checking changes on selected orgUnit
     $scope.$watch('data.orgUnit', function(){
