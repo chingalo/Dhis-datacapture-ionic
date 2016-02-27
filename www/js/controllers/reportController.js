@@ -6,6 +6,8 @@ angular.module('dataCapture')
                                           $localStorage,reportServices,
                                           periodSelectionServices,
                                           userServices,$ionicModal){
+
+    //variable for reports
     $scope.data = {};
     $scope.data.user = $localStorage.loginUserData;
     $scope.data.reports = null;
@@ -14,6 +16,8 @@ angular.module('dataCapture')
     //pagination variables
     $scope.currentPage = 0;
     $scope.pageSize = 10;
+
+    //function to handle pagination on report list
     $scope.numberOfPages=function(){
       if($scope.data.reports){
 
@@ -25,24 +29,27 @@ angular.module('dataCapture')
     if($localStorage.dhis2){
       dhis2 = $localStorage.dhis2;
     }
-    //@todo checking this logic
+
+    //checking for selection of report
     if(! $localStorage.selectedReport){
-      loadReportsFromIndexdb();
+      loadReportsFromIndexDb();
     }else{
       $scope.data.selectedReport = $localStorage.selectedReport;
-      loadReportsFromIndexdb();
+      loadReportsFromIndexDb();
     }
-
 
     //function for toaster messages
     function progressMessage(message){
       ionicToast.show(message, 'bottom', false, 2500);
     }
 
+    //function to reload report form server
     $scope.reloadReports = function(){
       updateReports();
     };
-    function loadReportsFromIndexdb(){
+
+    //function to load reports from index db
+    function loadReportsFromIndexDb(){
       reportServices.getAllReportsFromIndexDb()
         .then(function(reports){
           $scope.data.reports =reports;
@@ -53,6 +60,8 @@ angular.module('dataCapture')
           $scope.data.loading = false;
         });
     }
+
+    //function to take updates of reports from index db
     function updateReports(){
       $scope.data.loading = true;
       reportServices.getAllReportsFromServer($localStorage.baseUrl)
@@ -69,10 +78,14 @@ angular.module('dataCapture')
           $scope.data.loading = false;
         });
     }
+
+    //function to handle selected report
     $scope.selectReport = function(reportId){
       delete $localStorage.selectedReport;
       getReportDetails(reportId);
     };
+
+    //function to get report details
     function getReportDetails(reportId){
       $scope.data.loading = true;
       reportServices.getAllReportsFromIndexDb()
@@ -94,6 +107,8 @@ angular.module('dataCapture')
           $scope.data.loading = false;
         });
     }
+
+    //function  to get assigned org units for tree
     getAllAssignedOrgUnits();
     function getAllAssignedOrgUnits(){
       $scope.data.loading = true;
@@ -110,26 +125,30 @@ angular.module('dataCapture')
           $scope.data.loading = false;
         })
     }
-    $scope.generateReportParameters = function(){
-      userServices.getAssignedOrgUnitFromIndexDb()
-        .then(function(data){
-          if(data.length > 0){
-            $scope.data.orgUnits = data;
-            $scope.data.loading = false;
-          }else {
-            getAllAssignedOrgUnits();
-          }
-        },function(){
-          //error
-          $scope.data.loading = false;
-        })
-    };
+    //
+    //
+    //$scope.generateReportParameters = function(){
+    //  userServices.getAssignedOrgUnitFromIndexDb()
+    //    .then(function(data){
+    //      if(data.length > 0){
+    //        $scope.data.orgUnits = data;
+    //        $scope.data.loading = false;
+    //      }else {
+    //        getAllAssignedOrgUnits();
+    //      }
+    //    },function(){
+    //      //error
+    //      $scope.data.loading = false;
+    //    })
+    //};
 
     //checking changes on selected orgUnit
     $scope.$watch('data.orgUnit', function(){
       delete $localStorage.reportParams;
       $scope.data.period = null;
     });
+
+    //function to control changes of period option selection
     $scope.changePeriodInterval = function(type){
       var year = null;
       if(type =='next'){
@@ -148,23 +167,31 @@ angular.module('dataCapture')
       }
 
     };
+
+    //function for pop up model
     $ionicModal.fromTemplateUrl('templates/modal.html', {
       scope: $scope
     }).then(function(modal) {
       $scope.modal = modal;
     });
+
+    //function to control closing of pop up modle
     $scope.close = function() {
       $scope.modal.hide();
     };
+
+    //function to control period selection
     $scope.periodSelect = function(){
       $scope.close();
     };
+
+    //function to control open up for model
     $scope.openModal = function(modalType){
       $scope.data.modalType = modalType;
       $scope.modal.show();
     };
 
-    //@todo checking if report parameters meet
+    //function for generate view for parameter
     $scope.generateReport = function(type){
       if(type == 'withParameter'){
         if(isParameterMeet()){
@@ -181,7 +208,6 @@ angular.module('dataCapture')
               period :$scope.data.period
             }
           };
-
           $state.go('app.generatedReport');
         }else{
           var message = "Please select report parameter(s) first";
@@ -192,6 +218,8 @@ angular.module('dataCapture')
         $state.go('app.generatedReport');
       }
     };
+
+    //function to checking to checking if report parameter met
     function isParameterMeet(){
       var result = false;
       var report = $localStorage.selectedReport;
@@ -207,6 +235,7 @@ angular.module('dataCapture')
       return result;
     }
 
+    //function to get organisation hierarchy for a given orgUnit
     function getOrganisationUnitHierarchy(orgUnitAncestors,selectedOrUnit){
       var data = [];
       var length = orgUnitAncestors.length;
@@ -218,11 +247,14 @@ angular.module('dataCapture')
       return data;
     }
 
+    //function to render period selection
     periodOption();
     function periodOption(){
       var year = parseInt(new Date().getFullYear());
       $scope.data.periodOption = getPeriodOption(year);
     }
+
+    //function to get period options
     function getPeriodOption(year){
       var period = [];
       for(var i = 0; i < 10; i ++){
@@ -234,6 +266,8 @@ angular.module('dataCapture')
       }
       return period;
     }
+
+    //function to get display name for period
     $scope.getPeriodDisplayValue=function(period){
       var periodDisplayValue = '';
       $scope.data.periodOption.forEach(function(periodData){

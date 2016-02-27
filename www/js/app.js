@@ -221,6 +221,8 @@ angular.module('dataCapture', [
           loadIndicators(base);
         }, function () {
           //error
+          var message = "Fail to download form sections";
+          progressTopMessage(message);
           $scope.data.loading = false;
         });
     }
@@ -239,6 +241,8 @@ angular.module('dataCapture', [
           loadReports(base)
         },function(){
           //error
+          var message = "Fail to download indicators";
+          progressTopMessage(message);
           $scope.data.loading = false;
         });
     }
@@ -256,6 +260,8 @@ angular.module('dataCapture', [
           $scope.data.loading = false;
         },function(){
           //error
+          var message = "Fail to download reports";
+          progressTopMessage(message);
           $scope.data.loading = false;
         });
     }
@@ -280,6 +286,7 @@ angular.module('dataCapture', [
             })
           }, function () {
             //error
+
           });
         });
         $scope.data.loading = false;
@@ -287,6 +294,8 @@ angular.module('dataCapture', [
         loadDataEntrySections(base);
       }, function () {
         //error getting data sets from server
+        var message = "Fail to download data entry forms";
+        progressTopMessage(message);
         $scope.data.loading = false;
       });
     }

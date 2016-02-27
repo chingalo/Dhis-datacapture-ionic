@@ -9,26 +9,25 @@ angular.module('dataCapture')
                                              periodSelectionServices,sectionsServices){
 
 
-    function init(){
-      $scope.data = {};
-      $scope.data.user = $localStorage.loginUserData;
-      $scope.data.selectedData = {};
-      $scope.data.formSelectVisibility = false;
-      $scope.data.dataValues ={};
-      $scope.data.sectionsForm =[];
-      $scope.data.loading = false;
-      $scope.dataForTheTree =[];
-      $scope.data.periodOption = [];
-      $scope.data.orgUnits = [];
-      $scope.data.orgUnit = [];
-      $scope.data.selectedDataEntryForm = null;
+    $scope.data = {};
+    $scope.data.user = $localStorage.loginUserData;
+    $scope.data.selectedData = {};
+    $scope.data.formSelectVisibility = false;
+    $scope.data.dataValues ={};
+    $scope.data.sectionsForm =[];
+    $scope.data.loading = false;
+    $scope.dataForTheTree =[];
+    $scope.data.periodOption = [];
+    $scope.data.orgUnits = [];
+    $scope.data.orgUnit = [];
+    $scope.data.selectedDataEntryForm = null;
 
-      //pagination variables
-      $scope.currentPage = 0;
-      $scope.pageSizeDefault = 5;
-      $scope.pageSizeSection = 1;
-    }
-    init();
+    //pagination variables
+    $scope.currentPage = 0;
+    $scope.pageSizeDefault = 5;
+    $scope.pageSizeSection = 1;
+
+    //function to control pagination on data entry sections
     $scope.numberOfPagesSection=function(){
       var numberOfSections = $localStorage.dataEntryData.dataSet.sections;
       if(numberOfSections){
@@ -37,6 +36,8 @@ angular.module('dataCapture')
         return 0;
       }
     };
+
+    //function to control pagination on data entry default form
     $scope.numberOfPagesDefault=function(){
       var dataElements = $scope.data.selectedDataEntryForm.dataSet.dataElements;
       if(dataElements){
@@ -45,13 +46,14 @@ angular.module('dataCapture')
         return 0;
       }
     };
+
+    //checking if data entry form is selected
     if($localStorage.dataEntryData){
       $scope.data.loading = true;
       $scope.data.selectedData = $localStorage.dataEntryData;
       $scope.data.selectedDataEntryForm = $localStorage.dataEntryData;
       $scope.data.loading = false;
       prepareDataElementsValuesFromIndexDb();
-      prepareDataElementsValuesFromServer();
       trimOffBRNScoreValues();
       if( $localStorage.dataEntryData.formType == 'SECTION'){
         $scope.data.loading = true;
@@ -79,6 +81,7 @@ angular.module('dataCapture')
       $scope.data.selectedData = {};
     }
 
+    //function to prepare data elements and values to be rendered on form
     function prepareDataElementsValuesFromIndexDb(){
       var dataElements = $localStorage.dataEntryData.dataSet.dataElements;
       var ou = $localStorage.dataEntryData.orgUnit;
@@ -104,7 +107,10 @@ angular.module('dataCapture')
             });
         });
       });
+      prepareDataElementsValuesFromServer();
     }
+
+    //function to prepare data elements and values from server to be rendered on form
     function prepareDataElementsValuesFromServer(){
       $scope.data.loading = true;
       progressMessage("Downloading data values from server");
@@ -128,12 +134,13 @@ angular.module('dataCapture')
           $scope.data.loading = false;
         });
     }
-    //@todo checking preference issues
+
+    //function to save datavalues to form server to indexdb
     function saveDataValuesFromServerToIndexDb(dataElementValues){
       var ou = $localStorage.dataEntryData.orgUnit;
       var pe = $localStorage.dataEntryData.period;
       var dataSetId = $localStorage.dataEntryData.dataSet.id;
-      var id = dataElementValues.dataElement + '-' +dataSetId+ '-'+dataElementValues.categoryOptionCombo+'-'+pe+ '-' +ou;
+      var id = dataSetId + '-' +dataElementValues.dataElement+ '-'+dataElementValues.categoryOptionCombo+'-'+pe+ '-' +ou;
       dataSetsServices.getDataValueById(id).then(function(returnedDataValue){
         var dataValue = returnedDataValue;
         var value = isDataElementValueTypeNumber(dataElementValues.dataElement)?parseInt(dataElementValues.value):dataElementValues.value;
@@ -175,10 +182,12 @@ angular.module('dataCapture')
       });
       return result;
     }
+
     //function for toaster messages
     function progressMessage(message){
       ionicToast.show(message, 'top', false, 2000);
     }
+
     //checking changes on selected orgUnit
     $scope.$watch('data.orgUnit', function(){
       $scope.data.dataSetId = null;
@@ -225,23 +234,35 @@ angular.module('dataCapture')
       }
     });
 
-    //@todo pass data elements on functions
+    //function to checking changes on data elements values from data entry form
     $scope.changeDataEntryForm = function(dataElement){
-      console.log(dataElement.id)
+      if(dataElement.attributeValues.length > 0){
+        extendDataElementFunctions(dataElement);
+      }
       for(var key in $scope.data.dataValues){
         if($scope.data.dataValues[key]){
           prepareDataValues(key,$scope.data.dataValues[key]);
         }
       }
     };
+
+    //@todo complete calling extended function
+    //function to extend data element functions
+    function extendDataElementFunctions(dataElement){
+      var attributeObject = eval(dataElement.dataElement.attributeValues[0].value);
+      angular.extend(dataElement,attributeObject);
+      if(dataElement.events){
+        //activate ectended functions
+      }
+    }
     //@todo modify based on  api on docs
+    //function to save data values from the form
     function prepareDataValues(key,value){
       var ou = $localStorage.dataEntryData.orgUnit;
       var pe = $localStorage.dataEntryData.period;
       var dataSetId = $localStorage.dataEntryData.dataSet.id;
       var modelValue = key.split('-');
-      //dataset-de-co-pe-ou
-      var id = modelValue[0] + '-' +dataSetId+ '-'+modelValue[1]+'-'+pe+ '-' +ou;
+      var id = dataSetId + '-' +modelValue[0] + '-'+modelValue[1]+'-'+pe+ '-' +ou;
       var dataValue = null;
       dataSetsServices.getDataValueById(id).then(function(returnedDataValue){
         dataValue = returnedDataValue;
@@ -272,6 +293,7 @@ angular.module('dataCapture')
       });
     }
 
+    //function to check id data element take date as input using data elementId
     function isDatElementHasDateValueDate(dataElementId){
       var result = false;
       var dataElements = $scope.data.selectedDataEntryForm.dataSet.dataElements;
@@ -284,6 +306,8 @@ angular.module('dataCapture')
       });
       return result;
     }
+
+    //function to format date as supported on dhis
     function formatDate(dateValue){
       var m,d = (new Date(dateValue));
       m = d.getMonth() + 1;
@@ -300,15 +324,18 @@ angular.module('dataCapture')
       }
       return date;
     }
+
+    //function to generate default data entry form
     $scope.generateDefaultDataEntryForm = function(){
       $scope.data.loading = true;
       var message = "Please wait...";
       ionicToast.show(message, 'bottom', false, 2500);
       $localStorage.dataEntryData.formType = 'DEFAULT';
       $scope.data.loading = false;
-      //trimOffBRNScoreValues();
       $state.go('app.dataEntryForm');
     };
+
+    //funtion to trim off brn score values data element
     function trimOffBRNScoreValues(){
       $scope.data.loading = true;
       var dataElements = $localStorage.dataEntryData.dataSet.dataElements;
@@ -329,6 +356,8 @@ angular.module('dataCapture')
         }
       });
     }
+
+    //function to generate custom data entry form
     $scope.generateCustomDataEntryForm = function(){
       $scope.data.loading = true;
       var checkResults = checkingAndSetDataEntryForm('CUSTOM');
@@ -344,6 +373,8 @@ angular.module('dataCapture')
         $scope.data.loading = false;
       }
     };
+
+    //function to generate section data entry form
     $scope.generateSectionDataEntryForm = function(){
       $scope.data.loading = true;
       var message = "Please wait...";
@@ -360,6 +391,7 @@ angular.module('dataCapture')
       }
     };
 
+    //function to handle period option changes
     $scope.changePeriodInterval = function(type){
       var yearInput = String($scope.data.periodOption[0].periodValue);
       var year = yearInput.substring(0, 4);
@@ -376,14 +408,20 @@ angular.module('dataCapture')
         ionicToast.show(message, 'top', false, 1500);
       }
     };
+
+    //function to handle pop up modal
     $ionicModal.fromTemplateUrl('templates/modal.html', {
       scope: $scope
     }).then(function(modal) {
       $scope.modal = modal;
     });
+
+    //function to close pop up model
     $scope.close = function() {
       $scope.modal.hide();
     };
+
+    //function to handle selection of date entry period selection
     $scope.periodSelect = function(){
       $scope.close();
       if($scope.data.selectedDataSet.categoryCombo.categoryOptionCombos[0].name != 'default'){
@@ -395,6 +433,8 @@ angular.module('dataCapture')
         }
       }
     };
+
+    //function to save all details necessary for data entry to local storage
     function saveSelectedDataSetToLocalStorage(categoryOptionCombosId){
       var dataElements = $scope.data.selectedDataSet.dataElements;
       $scope.data.selectedData = {
@@ -411,6 +451,8 @@ angular.module('dataCapture')
       $localStorage.dataEntryData = $scope.data.selectedData;
       $localStorage.dataEntryData.dataElements = dataElements;
     }
+
+    //function to get period display name value
     $scope.getPeriodDisplayValue=function(period){
       var periodDisplayValue = '';
       $scope.data.periodOption.forEach(function(periodData){
@@ -420,10 +462,14 @@ angular.module('dataCapture')
       });
       return periodDisplayValue;
     }
+
+    //function to open the pop p modal
     $scope.openModal = function(modalType){
       $scope.data.modalType = modalType;
       $scope.modal.show();
     };
+
+    //function to get all user assigned orgUnit for tree
     getAllAssignedOrgUnits();
     function getAllAssignedOrgUnits(){
       $scope.data.loading = true;
@@ -440,11 +486,14 @@ angular.module('dataCapture')
           $scope.data.loading = false;
         })
     }
+
     //function for period selections
     function periodOption(dataSet){
       var year = parseInt(new Date().getFullYear()) -1;
       $scope.data.periodOption = periodSelectionServices.getPeriodSelections(year,dataSet);
     }
+
+    //function to check data entry form type
     function checkingAndSetDataEntryForm(type){
       var dataSet = $localStorage.dataEntryData.dataSet;
       var numberOfSections = dataSet.sections.length;
@@ -462,6 +511,7 @@ angular.module('dataCapture')
       return results;
     }
 
+    //function to handle form completeness
     $scope.completeDataEntryForm = function(){
       var parameter = getDatSetCompletenessParameter();
       dataValueSetServices.completeOnDataSetRegistrations(parameter).then(function(){
@@ -473,6 +523,7 @@ angular.module('dataCapture')
       });
     };
 
+    //function to handle form un-completeness
     $scope.unCompleteDataEntryForm = function(){
       var parameter = getDatSetCompletenessParameter();
       dataValueSetServices.inCompleteOnDataSetRegistrations(parameter).then(function(){
@@ -483,6 +534,8 @@ angular.module('dataCapture')
         progressMessage('Data entry form  has not been uncompleted, it might be due to network connectivity');
       });
     };
+
+    //function to get all data set completeness parameters
     function getDatSetCompletenessParameter(){
       var dataEntryForm = $localStorage.dataEntryData;
       var parameter = "ds="+dataEntryForm.dataSet.id+"&pe="+dataEntryForm.period+"&ou="+dataEntryForm.orgUnit;
@@ -491,6 +544,7 @@ angular.module('dataCapture')
       }
       return parameter;
     }
+
     //flexibility for form
     $scope.isInteger = function(key){
       if(key == "NUMBER" || key == "INTEGER"){
