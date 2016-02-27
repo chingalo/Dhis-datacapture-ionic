@@ -44,6 +44,9 @@ angular.module('dataCapture', [
     function progressMessage(message) {
       ionicToast.show(message, 'bottom', false, 2500);
     }
+    function progressTopMessage(message) {
+      ionicToast.show(message, 'top', false, 2000);
+    }
     if (!$localStorage.baseUrl) {
       $localStorage.baseUrl = url;
     }
@@ -194,6 +197,9 @@ angular.module('dataCapture', [
     }
 
     function loadDataEntrySections(base) {
+      $scope.data.loading = true;
+      var message = "Downloading available form sections";
+      progressTopMessage(message);
       sectionsServices.getAllSectionsFromServer(base)
         .then(function (sections) {
           sections.forEach(function (section) {
@@ -214,10 +220,15 @@ angular.module('dataCapture', [
           //loading indicators
           loadIndicators(base);
         }, function () {
+          //error
+          $scope.data.loading = false;
         });
     }
     function loadIndicators(base){
       $scope.data.loading = true;
+      $scope.data.loading = true;
+      var message = "Downloading available indicators for reports";
+      progressTopMessage(message);
       indicatorsServices.getAllIndicatorsFromServer(base)
         .then(function(indicators){
           indicators.forEach(function(indicator){
@@ -233,6 +244,8 @@ angular.module('dataCapture', [
     }
     function loadReports(base){
       $scope.data.loading = true;
+      var message = "Downloading available reports for offline support";
+      progressTopMessage(message);
       reportServices.getAllReportsFromServer(base)
         .then(function(reports){
           $scope.data.reports = reports;
@@ -253,6 +266,8 @@ angular.module('dataCapture', [
       $localStorage.baseUrl = base;
       $scope.data.loading = true;
       $scope.$apply();
+      var message = "Downloading available data entry forms";
+      progressTopMessage(message);
       dataSetsServices.getAllDataSetsFromServer(base).then(function (dataSets) {
         dataSets.forEach(function (dataSet) {
           dataSetsServices.getIndividualDataSetFromServer(dataSet.id,base).then(function (data) {

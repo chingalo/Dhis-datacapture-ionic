@@ -27,19 +27,12 @@ angular.module('dataCapture')
     }
     //@todo checking this logic
     if(! $localStorage.selectedReport){
-      updateReports();
+      loadReportsFromIndexdb();
     }else{
       $scope.data.selectedReport = $localStorage.selectedReport;
-      reportServices.getAllReportsFromIndexDb()
-        .then(function(reports){
-
-          $scope.data.reports =reports;
-          $scope.data.loading = false;
-        },function(){
-          //error
-          $scope.data.loading = false;
-        });
+      loadReportsFromIndexdb();
     }
+
 
     //function for toaster messages
     function progressMessage(message){
@@ -49,6 +42,17 @@ angular.module('dataCapture')
     $scope.reloadReports = function(){
       updateReports();
     };
+    function loadReportsFromIndexdb(){
+      reportServices.getAllReportsFromIndexDb()
+        .then(function(reports){
+          $scope.data.reports =reports;
+          $scope.data.loading = false;
+        },function(){
+          //error
+          updateReports();
+          $scope.data.loading = false;
+        });
+    }
     function updateReports(){
       $scope.data.loading = true;
       reportServices.getAllReportsFromServer($localStorage.baseUrl)
