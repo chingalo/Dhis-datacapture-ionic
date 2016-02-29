@@ -471,7 +471,7 @@ angular.module('dataCapture', [
           $element.tooltipster({
             animation: attrs.animation,
             trigger: "click",
-            position: "right",
+            position: "top",
             positionTracker: true,
             maxWidth: 500,
             contentAsHTML: true
