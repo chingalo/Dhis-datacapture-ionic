@@ -227,11 +227,12 @@ angular.module('dataCapture')
     //function to checking data set is assigned to user
     function isDataSetAllowed(dataSetId){
       var result = false;
-      var userAssignedDataSets = $localStorage.loginUserData.userCredentials.userRoles[0].dataSets;
-      userAssignedDataSets.forEach(function(userAssignedDataSet){
-        if(dataSetId == userAssignedDataSet.id){
-          result = true;
-        }
+      $localStorage.loginUserData.userCredentials.userRoles.forEach(function(userRole){
+        userRole.dataSets.forEach(function(userAssignedDataSet){
+          if(dataSetId == userAssignedDataSet.id){
+            result = true;
+          }
+        });
       });
       return result;
     }
