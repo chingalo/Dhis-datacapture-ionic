@@ -19,7 +19,7 @@ angular.module('dataCapture')
       },
       getIndividualSectionFromServer : function(sectionId,baseUrl){
         var defer = $q.defer();
-        var field = "fields=dataSet,id,name,indicators[id,name,indicatorType[factor],denominatorDescription,numeratorDescription,numerator,denominator],dataElements[id,name,attributeValues[value],categoryCombo[id,name,categoryOptionCombos[id,name]],displayName,valueType,optionSet[name,options[name,id]]";
+        var field = "fields=dataSet,id,name,indicators[id,name,indicatorType[factor],denominatorDescription,numeratorDescription,numerator,denominator],dataElements[id,name,attributeValues[value],categoryCombo[id,name,categoryOptionCombos[id,name]],displayName,description,valueType,optionSet[name,options[name,id]]";
         $http.get(baseUrl + '/api/sections/'+sectionId+'.json?'+field)
           .success(function(results){
             defer.resolve(results);

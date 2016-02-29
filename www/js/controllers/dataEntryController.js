@@ -53,7 +53,7 @@ angular.module('dataCapture')
       $scope.data.selectedData = $localStorage.dataEntryData;
       $scope.data.selectedDataEntryForm = $localStorage.dataEntryData;
       $scope.data.loading = false;
-      prepareDataElementsValuesFromIndexDb();
+      prepareDataElementsValuesFromServer();
       trimOffBRNScoreValues();
       if( $localStorage.dataEntryData.formType == 'SECTION'){
         $scope.data.loading = true;
@@ -107,7 +107,6 @@ angular.module('dataCapture')
             });
         });
       });
-      prepareDataElementsValuesFromServer();
     }
 
     //function to prepare data elements and values from server to be rendered on form
@@ -127,11 +126,13 @@ angular.module('dataCapture')
               $scope.data.dataValues[dataElementValues.dataElement+'-'+dataElementValues.categoryOptionCombo] = value;
             });
             $scope.data.loading = false;
+            prepareDataElementsValuesFromIndexDb();
           }
         },function(){
           //error
           progressMessage('Fail to retrieve data values form server, it might be due to network connectivity');
           $scope.data.loading = false;
+          prepareDataElementsValuesFromIndexDb();
         });
     }
 
@@ -270,12 +271,13 @@ angular.module('dataCapture')
       }
     };
 
-    //@todo complete calling extended function
-    //function to extend data element functions
+    //@todo complete calling extended function checking for extend atrribute
+    //function to extend data element functions,
     function extendDataElementFunctions(dataElement){
       var attributeObject = eval(dataElement.dataElement.attributeValues[0].value);
       angular.extend(dataElement,attributeObject);
       if(dataElement.events){
+        //if(dataElement.events.)
         //activate ectended functions
       }
     }
