@@ -19,7 +19,7 @@ angular.module('dataCapture')
       },
       getIndividualDataSetFromServer : function(dataSetId,baseUrl){
         var defer = $q.defer();
-        var field = "fields=id,name,timelyDays,formType,version,periodType,openFuturePeriods,expiryDays,dataEntryForm,dataElements[id,name,displayName,description,attributeValues[value],valueType,optionSet[name,options[name,id]],categoryCombo[id,name,categoryOptionCombos[id,name]]],organisationUnits[id,name],sections[id,name],indicators[id,name,indicatorType[factor],denominatorDescription,numeratorDescription,numerator,denominator],categoryCombo[id,name,displayName,categoryOptionCombos[id,name]]"
+        var field = "fields=id,name,timelyDays,formType,version,periodType,openFuturePeriods,expiryDays,dataEntryForm,dataElements[id,name,displayName,description,formName,attributeValues[value],valueType,optionSet[name,options[name,id]],categoryCombo[id,name,categoryOptionCombos[id,name]]],organisationUnits[id,name],sections[id,name],indicators[id,name,indicatorType[factor],denominatorDescription,numeratorDescription,numerator,denominator],categoryCombo[id,name,displayName,categoryOptionCombos[id,name]]"
         $http.get(baseUrl + '/api/dataSets/'+dataSetId+'.json?'+field)
           .success(function(results){
             defer.resolve(results);
