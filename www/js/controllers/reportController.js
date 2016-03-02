@@ -27,7 +27,7 @@ angular.module('dataCapture')
       }
     };
     if($localStorage.dhis2){
-      dhis2 = $localStorage.dhis2;
+      dhis2.report = $localStorage.dhis2.report;
     }
 
     //checking for selection of report

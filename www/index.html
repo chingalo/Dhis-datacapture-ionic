@@ -55,7 +55,220 @@
     <script type="text/javascript" src="library/reports/highcharts-more.js"></script>
     <script src="library/tooltipster/jquery.tooltipster.js"></script>
     <script>
-      var dhis2 = {};
+      var dhis2 = {
+        validation: {
+          isNumber: function (value) {
+            var regex = /^(-?0|-?[1-9]\d*)(\.\d+)?(E\d+)?$/;
+            return regex.test(value);
+          }
+        },
+        report: {}
+      }
+      dhis2.de = {
+        getDataElementTotalValue: function (de, dataSet,match) {
+          var defer = $.Deferred();
+          var sum = new Number();
+          var dataValuesStore = $.indexedDB("hisptz").objectStore("dataValues");
+          var promise = dataValuesStore.each(function (item) {
+            //Fetch datavalues
+            if (item.id.indexOf(de) != -1 && item.id.endsWith(getParameterByName("pe") + "-" + getParameterByName("ou"))) {
+              var val = item.value.dataValue.value;
+              if (val && dhis2.validation.isNumber(val)) {
+                sum += new Number(item.value.dataValue.value);
+              }
+            }
+          });
+          promise.done(function (result, event) {
+            defer.resolve(sum,match);
+          })
+
+          promise.fail(function (error, event) {
+            defer.reject(error);
+          });
+          return defer.promise();
+        },
+        getDataElementValue: function (de, coc, dataSet,match) {
+          var defer = $.Deferred();
+          var sum = undefined;
+          var dataValuesStore = $.indexedDB("hisptz").objectStore("dataValues");
+          var promise = dataValuesStore.get(dataSet + "-" + de + "-" + coc + "-" + getParameterByName("pe") + "-" + getParameterByName("ou"));
+          promise.done(function (item, event) {
+            //console.log(JSON.stringify(item));
+
+            if(item){
+              var val = item.value;
+              if (val && dhis2.validation.isNumber(val)) {
+                defer.resolve(new Number(item.value),match);
+              }else{
+                defer.resolve(undefined);
+              }
+            }else{
+              defer.resolve(undefined);
+            }
+
+          })
+
+          promise.fail(function (error, event) {
+            defer.reject(error);
+          });
+          return defer.promise();
+        },
+        getConstantValue: function (constantId, dataSet,match) {
+          var defer = $.Deferred();
+          var dataValuesStore = $.indexedDB("hisptz").objectStore("constants");
+          var promise = dataValuesStore.get(constantId);
+          promise.done(function (constant, event) {
+            if(constant){
+              var val = constant.value;
+              if (val && dhis2.validation.isNumber(val)) {
+                defer.resolve(new Number(constant.value),match);
+              }else{
+                defer.resolve(undefined);
+              }
+            }else{
+              defer.resolve(undefined);
+            }
+
+          })
+
+          promise.fail(function (error, event) {
+            defer.reject(error);
+          });
+          return defer.promise();
+        },
+        generateExpression: function (expression, dataSet) {
+          var defer = $.Deferred();
+          var deferreds = [];
+          var matcher = expression.match(dhis2.de.cst.formulaPattern);
+          var cMatcher = expression.match(dhis2.de.cst.constantPattern);
+          for (k in matcher) {
+            var match = matcher[k];
+
+            // Remove brackets from expression to simplify extraction of identifiers
+
+            var operand = match.replace(/[#\{\}]/g, '');
+
+            var isTotal = !!( operand.indexOf(dhis2.de.cst.separator) == -1 );
+
+            if (isTotal) {
+
+              deferreds.push(dhis2.de.getDataElementTotalValue(operand, dataSet,match).done(function (sum,matchRef) {
+                if(sum && expression){
+                  expression = expression.replace(matchRef, sum);
+                }else{
+                  expression = undefined;
+                }
+              }));
+            }
+            else {
+              var de = operand.substring(0, operand.indexOf(dhis2.de.cst.separator));
+              var coc = operand.substring(operand.indexOf(dhis2.de.cst.separator) + 1, operand.length);
+              deferreds.push(dhis2.de.getDataElementValue(de, coc, dataSet,match).done(function (sum,matchRef) {
+                if(sum && expression){
+                  expression = expression.replace(matchRef, sum);
+                  //console.log(expression);
+                }else{
+                  expression = undefined;
+                }
+              }));
+            }
+
+            // TODO signed numbers
+          }
+          for (k in cMatcher) {
+            var match = cMatcher[k];
+
+            // Remove brackets from expression to simplify extraction of identifiers
+
+            var operand = match.replace(/[C\{\}]/g, '');
+            deferreds.push(dhis2.de.getConstantValue(operand, dataSet, match).done(function (sum, matchRef) {
+              if (sum && expression) {
+                console.log(matchRef);
+                console.log(expression);
+                expression = expression.replace(matchRef, sum);
+                console.log(expression);
+              } else {
+                expression = undefined;
+              }
+            }));
+          }
+          $.when.apply($, deferreds).then(function () {
+
+            defer.resolve(expression);
+          });
+          return defer.promise();
+        },
+        //Get indicators from indexdb by id
+        getIndicators: function (indicatorIds, callback) {
+          var defer = $.Deferred();
+          var indicators = []
+          var indicatorsStore = $.indexedDB("hisptz").objectStore("indicators");
+          //Fetch indicators
+          var deferreds = [];
+          $.each(indicatorIds, function (indicatorIndex, indicatorId) {
+            var indicatorPromise = indicatorsStore.get(indicatorId);
+            deferreds.push(indicatorPromise.done(function (result, event) {
+              indicators.push(result);
+            }));
+
+            indicatorPromise.fail(function (error, event) {
+
+            });
+          });
+          $.when.apply($, deferreds).then(function () {
+            defer.resolve(indicators);
+          });
+          return defer.promise();
+        },
+        getIndicatorDataValues: function (indicatorIds,dataSet) {
+          var defer = $.Deferred();
+          var promises = [];
+          var data = {
+            metaData: {
+              names: {}
+
+            },
+            rows: []
+          }
+          dhis2.de.getIndicators(indicatorIds).done(function (indicators) {
+            $.each(indicators, function (indicatorIndex, indicator) {
+              data.metaData.names[indicator.id] = indicator.name;
+              promises.push(dhis2.de.evaluateDataIndicator(indicator, dataSet).then(function (value) {
+                //console.log("getIndicatorDataValue:"+JSON.stringify([indicator.id,getParameterByName("pe"),value]));
+                if(value){
+                  data.rows.push([indicator.id,getParameterByName("pe"),value]);
+                }
+              }));
+            });
+            $.when.apply($, promises).then(function () {
+              defer.resolve(data);
+            });
+          })
+          return defer.promise();
+        },
+        evaluateDataIndicator: function (indicator, dataSet) {
+          var defer = $.Deferred();
+          var promises = [];
+          var numerator = 0;
+          var denominator = 1;
+          promises.push(dhis2.de.generateExpression(indicator.numerator, dataSet).then(function (numeratorResult) {
+            //console.log("evaluateDataIndicator:"+JSON.stringify(numeratorResult));
+            numerator = numeratorResult;
+          }));
+          promises.push(dhis2.de.generateExpression(indicator.denominator, dataSet).then(function (denominatorResult) {
+            denominator = denominatorResult;
+          }));
+          $.when.apply($, promises).then(function () {
+            defer.resolve(numerator / denominator);
+          });
+          return defer.promise();
+        },
+        cst: {
+          formulaPattern: /#\{.+?\}/g,
+          constantPattern: /C\{.+?\}/g,
+          separator: "."
+        }
+      }
       var reportParams = {
         ou:"",
         pe:""
