@@ -14,7 +14,7 @@ angular.module('dataCapture')
             defer.resolve(results.reports);
           })
           .error(function(){
-            defer.reject('error');
+            defer.reject();
           });
         return defer.promise;
       },

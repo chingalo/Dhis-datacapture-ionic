@@ -34,7 +34,7 @@ angular.module('dataCapture', [
   .controller('mainController', function ($scope,$window,$interval,$state,
                                           userServices,synchronizationServices,
                                           $ionicHistory,$ionicModal, ionicToast,
-                                          indicatorsServices,reportServices,
+                                          indicatorsServices,reportServices,constantsServices,
                                           $localStorage, dataSetsServices,
                                           sectionsServices, $indexedDB) {
 
@@ -161,7 +161,7 @@ angular.module('dataCapture', [
                   $localStorage.loginUser = {'username': $username, 'password': $password};
                   $localStorage.loginUserData = userData;
                   addAssignedOrgUnit($localStorage.loginUserData.organisationUnits,base);
-                  $scope.data.loading = false;
+                  //$scope.data.loading = false;
                   loadDataSets(base);
                   startSyncProcess($localStorage.loginUser);
                   //redirect to landing page for success login
@@ -216,7 +216,6 @@ angular.module('dataCapture', [
                 //error
               });
           });
-          $scope.data.loading = false;
           //loading indicators
           loadIndicators(base);
         }, function () {
@@ -236,7 +235,7 @@ angular.module('dataCapture', [
           indicators.forEach(function(indicator){
             indicatorsServices.saveIndicatorIntoIndexDb(indicator);
           });
-          $scope.data.loading = false;
+          //$scope.data.loading = false;
           //leading reports
           loadReports(base)
         },function(){
@@ -257,12 +256,29 @@ angular.module('dataCapture', [
           reports.forEach(function(report){
             reportServices.saveReportToIndexDb(report);
           });
-          $scope.data.loading = false;
+         // $scope.data.loading = false;
+          //loading all constants
+          loadConstants(base)
         },function(){
           //error
           var message = "Fail to download reports";
           progressTopMessage(message);
           $scope.data.loading = false;
+        });
+    }
+
+    function loadConstants(base){
+      var message = "Downloading available constants for reports";
+      progressTopMessage(message);
+      constantsServices.getAllConstantsFromServer(base)
+        .then(function(constants){
+          constants.forEach(function(constant){
+            constantsServices.saveConstantIntoIndexDb(constant);
+          })
+        },function(){
+          $scope.data.loading = false;
+          var message = "Fail to download constants for reports";
+          progressTopMessage(message);
         });
     }
     /*
@@ -289,7 +305,7 @@ angular.module('dataCapture', [
 
           });
         });
-        $scope.data.loading = false;
+        //$scope.data.loading = false;
         //load all data entry sections forms
         loadDataEntrySections(base);
       }, function () {
@@ -366,7 +382,11 @@ angular.module('dataCapture', [
       .upgradeDatabase(2, function(event, db, tx){
         var dataSets = db.createObjectStore('indicators', {keyPath: 'id'});
         dataSets.createIndex('id_index', 'id', {unique: true});
-      });
+      })
+    .upgradeDatabase(3, function(event, db, tx){
+      var dataSets = db.createObjectStore('constants', {keyPath: 'id'});
+      dataSets.createIndex('id_index', 'id', {unique: true});
+    });
 
     $stateProvider
       .state('login', {
