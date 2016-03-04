@@ -83,7 +83,6 @@ angular.module('dataCapture')
 
     //function to prepare data elements and values to be rendered on form
     function prepareDataElementsValuesFromIndexDb(){
-      alert('call')
       var dataElements = $localStorage.dataEntryData.dataSet.dataElements;
       var ou = $localStorage.dataEntryData.orgUnit;
       var pe = $localStorage.dataEntryData.period;
