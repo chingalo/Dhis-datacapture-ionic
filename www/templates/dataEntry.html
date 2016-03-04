@@ -11,7 +11,7 @@
                 <b>Organisation Unit</b>
                 <multi-select-tree data-input-model="data.orgUnits" multi-select="false"
                                    data-output-model="data.orgUnit"
-                                   data-default-label="Click here to Select Organisation Unit"
+                                   data-default-label="Touch here to Select Organisation Unit"
                                    data-callback = "selectOnly1Or2(item, selectedItems)">
                 </multi-select-tree>
               </div>
@@ -26,7 +26,7 @@
                     <option value="">Choose Form</option>
                   </select>
                   <select ng-if = "data.orgUnit[0].name"   ng-model="data.dataSetId">
-                    <option value="">Choose Form</option>
+                    <option value="">Touch to choose Form</option>
                     <option ng-repeat="dataSet in data.dataSets" value="{{ dataSet.id }}">{{ dataSet.name }}</option>
                   </select>
                 </div>
@@ -38,7 +38,7 @@
               <div class="col col-90">
                 <b>Period</b> :
                 <span ng-if = "data.period"></span>{{ getPeriodDisplayValue(data.period) }}
-                <span ng-if = "! data.period">Click to select Period</span>
+                <span ng-if = "! data.period">Touch to select Period</span>
               </div>
               <div class="col col-10">
                 <i class="icon ion-calendar"></i>
@@ -59,17 +59,20 @@
               </div>
             </div>
 
+
+            <div class="" ng-if="data.formSelectVisibility" >
+              <div class="item item-text-wrap">
+                <h2>{{ data.selectedData.dataSet.name }}</h2>
+                <p>Organisation Unit : {{ data.orgUnit[0].name }}</p>
+                <p>Period : {{ getPeriodDisplayValue(data.period) }}</p>
+                <p>Number Of Questions : {{ data.selectedData.numberOfFields }}</p>
+              </div>
+            </div>
+
           </div>
         </div>
 
-        <div class="card" ng-if="data.formSelectVisibility" >
-          <div class="item item-text-wrap">
-            <h2>{{ data.selectedData.dataSet.name }}</h2>
-            <p>Organisation Unit : {{ data.orgUnit[0].name }}</p>
-            <p>Period : {{ getPeriodDisplayValue(data.period) }}</p>
-            <p>Number Of Questions : {{ data.selectedData.numberOfFields }}</p>
-          </div>
-        </div>
+
 
       </div>
     </div>

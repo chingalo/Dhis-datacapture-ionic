@@ -13,7 +13,7 @@
                   <b>Organisation Unit</b>
                   <multi-select-tree data-input-model="data.orgUnits" multi-select="false"
                                      data-output-model="data.orgUnit"
-                                     data-default-label="Click here to Select Organisation Unit"
+                                     data-default-label="Touch here to Select Organisation Unit"
                                      data-callback = "selectOnly1Or2(item, selectedItems)">
                   </multi-select-tree>
                 </div>
@@ -23,7 +23,7 @@
               <div class="col col-90">
                 <b>Period</b> :
                 <span ng-if = "data.period"></span>{{ getPeriodDisplayValue(data.period) }}
-                <span ng-if = "! data.period">Click to select Period</span>
+                <span ng-if = "! data.period">Touch to select Period</span>
               </div>
               <div class="col col-10">
                 <i class="icon ion-calendar"></i>
