@@ -3,3 +3,12 @@
   font-size: 24px;
   font-family: "Ionicons";
 }
+span.arrow{
+  font-size:250%;
+  margin-right: 5%;
+  padding: 5%;
+}
+.tree-control .tree-view ul .item-details{
+  /*font-size:100%;*/
+  margin-top: -20px;
+}

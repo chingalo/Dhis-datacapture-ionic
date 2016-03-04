@@ -78,7 +78,7 @@ angular.module('multi-select-tree').run(['$templateCache', function($templateCac
     "\n" +
     "         ng-click=\"clickSelectItem(item, $event)\" ng-mouseover=\"onMouseOver(item, $event)\">\r" +
     "\n" +
-    "        <span ng-if=\"showExpand(item)\" class=\"expand\" ng-class=\"{'expand-opened': item.isExpanded}\"\r" +
+    "        <span ng-if=\"showExpand(item)\" class=\"arrow\" ng-class=\"{'ion-arrow-down-b': item.isExpanded,'ion-arrow-right-b':!item.isExpanded}\"\r" +
     "\n" +
     "              ng-click=\"onExpandClicked(item, $event)\"></span>\r" +
     "\n" +
