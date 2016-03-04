@@ -290,7 +290,7 @@ angular.module('dataCapture')
         var sourceDataElementValue= responseValue;
         var scoreDataElementName= dataElementName+'_brn_scoreValue';
         //@todo should return object contains dataelement uid,period,categoryComb from dbIndex
-        var dataValueObject={"de-uid":scoreDataElementId,"co":scoreCategotyOption,"ou":orgUnitsUid,"period":period}
+        /*var dataValueObject={"de-uid":scoreDataElementId,"co":scoreCategotyOption,"ou":orgUnitsUid,"period":period}
         var scoreDataElementId="";
         var correctScoreValue="";
         angular.forEach(this.scoreValues,function(scoreValue){
@@ -311,7 +311,7 @@ angular.module('dataCapture')
           data: dataValue,
           dataType: 'json',
           type: 'post',
-          success: success  } );
+          success: success  } );*/
       },
       events:{onChange:"updateScoreValue"}
 
