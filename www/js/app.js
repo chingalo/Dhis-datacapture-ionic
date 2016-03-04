@@ -64,6 +64,14 @@ angular.module('dataCapture', [
         authenticateUser(username, password);
       }
     }
+
+    if(angular.isUndefined($localStorage.formLabelPreference)){
+      $localStorage.formLabelPreference = {
+        label : 'formName',
+        placeHolder : 'formName'
+      }
+    }
+
     $scope.data.baseUrl = $localStorage.baseUrl;
     $scope.login = function () {
       if ($scope.data.baseUrl) {
@@ -227,7 +235,6 @@ angular.module('dataCapture', [
     }
     function loadIndicators(base){
       $scope.data.loading = true;
-      $scope.data.loading = true;
       var message = "Downloading available indicators for reports";
       progressTopMessage(message);
       indicatorsServices.getAllIndicatorsFromServer(base)
@@ -235,7 +242,6 @@ angular.module('dataCapture', [
           indicators.forEach(function(indicator){
             indicatorsServices.saveIndicatorIntoIndexDb(indicator);
           });
-          //$scope.data.loading = false;
           //leading reports
           loadReports(base)
         },function(){
@@ -305,7 +311,6 @@ angular.module('dataCapture', [
 
           });
         });
-        //$scope.data.loading = false;
         //load all data entry sections forms
         loadDataEntrySections(base);
       }, function () {

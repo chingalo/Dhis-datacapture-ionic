@@ -21,6 +21,8 @@ angular.module('dataCapture')
       }
     };
     $scope.data = $localStorage.appSetting;
+    $scope.data.formLabelPreference = $localStorage.formLabelPreference;
+
     $scope.$watch('data.defaultForm.sorting',function(){
       $localStorage.appSetting = $scope.data;
     });
@@ -35,6 +37,12 @@ angular.module('dataCapture')
       $localStorage.appSetting = $scope.data;
       changeSyncTime();
     });
+
+    //todo handling placeholder options
+    $scope.$watch('data.formLabelPreference.label',function(){
+      $localStorage.formLabelPreference = $scope.data.formLabelPreference;
+    });
+
     function changeSyncTime(){
       var type = $scope.data.synchronization.time.type;
       var value = $scope.data.synchronization.time.value;

@@ -224,6 +224,14 @@ angular.module('dataCapture')
       return allowedDataSet;
     }
 
+    //function to get setting preferences
+
+    $scope.getFormLabelPreferences = function(){
+
+      //console.log('preference',JSON.stringify($localStorage.formLabelPreference))
+      return $localStorage.formLabelPreference.label;
+    }
+
     //function to checking data set is assigned to user
     function isDataSetAllowed(dataSetId){
       var result = false;
