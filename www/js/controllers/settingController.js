@@ -5,7 +5,7 @@ angular.module('dataCapture')
   .controller('settingController',function($scope,ionicToast,$ionicHistory,$state,
                                            $ionicModal,dataSetsServices,
                                            sectionsServices,reportServices,
-                                           userServices,
+                                           userServices,constantsServices,
                                            $localStorage,synchronizationServices){
 
     function progressMessage(message){
@@ -127,7 +127,13 @@ angular.module('dataCapture')
                     .then(function(){
                       userServices.deleteOrgUnitFromIndexDb()
                         .then(function(){
-                          logOutUser();
+                          constantsServices.deleteAllConstants()
+                            .then(function(){
+                              logOutUser();
+                            },function(){
+                            //constants
+                          });
+
                         },function(){
                           //org unit
                         });

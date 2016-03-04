@@ -92,17 +92,19 @@ angular.module('dataCapture', [
       //TODO some logic flow during log out process as reset all data on setting
       $scope.data.loading = true;
       delete $localStorage.loginUser;
-      //delete $localStorage.dataEntryData;
+      delete $localStorage.dataEntryData;
       delete $localStorage.loginUserData;
       delete $localStorage.selectedReport;
       $ionicHistory.clearCache().then(function() {
         $ionicHistory.clearHistory();
-        $ionicHistory.nextViewOptions({ disableBack: true, historyRoot: true });
-        deleteAssignedOrgUnit();
+        $ionicHistory.nextViewOptions({
+          disableBack: true
+        });
         synchronizationServices.stopSyncUserLoginData();
         $scope.data.loading = false;
-        var message = "You have logged out successfully";
+        var message = "All Data has been reset successfully";
         progressMessage(message);
+        //$window.location.reload(true);
         $state.go('login', {}, {location: "replace", reload: true});
       });
     };
