@@ -285,6 +285,7 @@ angular.module('dataCapture')
         {value:"NA",figure:0}
       ],
       updateScoreValue:function (dataElementName,responseValue){
+        console.log(dataElementName,responseValue);
         //var sourceDataElementId = $(this).attr('id');
         var sourceDataElementValue= responseValue;
         var scoreDataElementName= dataElementName+'_brn_scoreValue';
@@ -313,14 +314,20 @@ angular.module('dataCapture')
           success: success  } );
       },
       events:{onChange:"updateScoreValue"}
+
     };
 
     function extendDataElementFunctions(dataElement){
       //var attributeObject = eval(dataElement.dataElement.attributeValues[0].value);
       var attributeObject = eval(attributeValues);
       angular.extend(dataElement,attributeObject);
-      console.log('score value ',dataElement.scoreValues);
-      console.log('events ',dataElement.events);
+      var eventList = getOnchangeEvents(dataElement.events.onChange);
+      eventList.forEach(function(event){
+        dataElement[event]('name','response');
+      });
+    }
+    function getOnchangeEvents(eventsList){
+      return eventsList.split(',')
     }
 
     //@todo modify based on  api on docs
