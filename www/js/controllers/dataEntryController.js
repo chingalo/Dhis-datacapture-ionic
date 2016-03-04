@@ -83,30 +83,28 @@ angular.module('dataCapture')
 
     //function to prepare data elements and values to be rendered on form
     function prepareDataElementsValuesFromIndexDb(){
+      alert('call')
       var dataElements = $localStorage.dataEntryData.dataSet.dataElements;
       var ou = $localStorage.dataEntryData.orgUnit;
       var pe = $localStorage.dataEntryData.period;
       var dataSetId = $localStorage.dataEntryData.dataSet.id;
       $scope.data.loading = true;
-      var counter = 0;
-      dataElements.forEach(function(dataElement){
-        var categoryOptionCombos = dataElement.categoryCombo.categoryOptionCombos;
-        categoryOptionCombos.forEach(function(categoryOptionCombo){
-          var id = dataElement.id + '-' +dataSetId+ '-' +categoryOptionCombo.id+ '-' +pe+ '-' +ou;
+      dataElements.forEach(function(dataElement){;
+        dataElement.categoryCombo.categoryOptionCombos.forEach(function(categoryOptionCombo){
+          var id = dataSetId + '-' + dataElement.id + '-' +categoryOptionCombo.id+ '-' +pe+ '-' +ou;
           dataSetsServices.getDataValueById(id)
             .then(function(returnedDataValue){
-              counter ++;
               if(returnedDataValue != null){
                 if(id == returnedDataValue.id){
-
                   $scope.data.dataValues[dataElement.id+'-'+returnedDataValue.co] = returnedDataValue.value;
                 }
               }
             },function(){
-              counter ++;
+              //error
             });
         });
       });
+      $scope.data.loading = false;
     }
 
     //function to prepare data elements and values from server to be rendered on form
@@ -118,16 +116,14 @@ angular.module('dataCapture')
       var orgUnit = $localStorage.dataEntryData.orgUnit;
       dataValueSetServices.getDataValueSet(dataSet,period,orgUnit)
         .then(function(dataElementsValuesFromServer){
-          if(dataElementsValuesFromServer){
-            progressMessage(dataElementsValuesFromServer.length + " data values has been found from server");
-            dataElementsValuesFromServer.forEach(function(dataElementValues){
-              saveDataValuesFromServerToIndexDb(dataElementValues);
-              var value = isDataElementValueTypeNumber(dataElementValues.dataElement)?parseInt(dataElementValues.value):dataElementValues.value;
-              $scope.data.dataValues[dataElementValues.dataElement+'-'+dataElementValues.categoryOptionCombo] = value;
-            });
-            $scope.data.loading = false;
-            prepareDataElementsValuesFromIndexDb();
-          }
+          progressMessage(dataElementsValuesFromServer.length + " data values has been found from server");
+          dataElementsValuesFromServer.forEach(function(dataElementValues){
+            saveDataValuesFromServerToIndexDb(dataElementValues);
+            var value = isDataElementValueTypeNumber(dataElementValues.dataElement)?parseInt(dataElementValues.value):dataElementValues.value;
+            $scope.data.dataValues[dataElementValues.dataElement+'-'+dataElementValues.categoryOptionCombo] = value;
+          });
+          $scope.data.loading = false;
+          prepareDataElementsValuesFromIndexDb();
         },function(){
           //error
           progressMessage('Fail to retrieve data values form server, it might be due to network connectivity');
@@ -224,13 +220,10 @@ angular.module('dataCapture')
       return allowedDataSet;
     }
 
-    //function to get setting preferences
-
+    //function to get setting preferences on form label
     $scope.getFormLabelPreferences = function(){
-
-      //console.log('preference',JSON.stringify($localStorage.formLabelPreference))
       return $localStorage.formLabelPreference.label;
-    }
+    };
 
     //function to checking data set is assigned to user
     function isDataSetAllowed(dataSetId){
@@ -270,9 +263,10 @@ angular.module('dataCapture')
 
     //function to checking changes on data elements values from data entry form
     $scope.changeDataEntryForm = function(dataElement){
-      if(dataElement.attributeValues.length > 0){
+      /*if(dataElement.attributeValues.length > 0){
         extendDataElementFunctions(dataElement);
-      }
+      }*/
+      extendDataElementFunctions(dataElement);
       for(var key in $scope.data.dataValues){
         if($scope.data.dataValues[key]){
           prepareDataValues(key,$scope.data.dataValues[key]);
@@ -280,15 +274,54 @@ angular.module('dataCapture')
       }
     };
 
-    //@todo complete calling extended function checking for extend atrribute
+    //@todo complete calling extended function checking for extend attrribute
     //function to extend data element functions,
+    var attributeValues = {
+      scoreValues:[
+        {value:"Yes",figure:0},
+        {value:"Partial",figure:0},
+        {value:"No",figure:0},
+        {value:"[No value]",figure:" "},
+        {value:"No value",figure:" "},
+        {value:"NA",figure:0}
+      ],
+      updateScoreValue:function (dataElementName,responseValue){
+        //var sourceDataElementId = $(this).attr('id');
+        var sourceDataElementValue= responseValue;
+        var scoreDataElementName= dataElementName+'_brn_scoreValue';
+        //@todo should return object contains dataelement uid,period,categoryComb from dbIndex
+        var dataValueObject={"de-uid":scoreDataElementId,"co":scoreCategotyOption,"ou":orgUnitsUid,"period":period}
+        var scoreDataElementId="";
+        var correctScoreValue="";
+        angular.forEach(this.scoreValues,function(scoreValue){
+          if(sourceDataElementValue==scoreValue.value){
+            correctScoreValue=scoreValue.figure
+          }
+        });
+        var dataValue = {
+          'de' : dataValueObject.de-uid,
+          'co' : dataValueObject.co,
+          'ou' : scoreCategotyOption.ou,
+          'pe' : dataValueObject.period,
+          'value' : correctScoreValue
+        };
+        //@todo save value for score value
+        $.ajax( {
+          url: '../api/dataValues',
+          data: dataValue,
+          dataType: 'json',
+          type: 'post',
+          success: success  } );
+      },
+      events:{onChange:"updateScoreValue"}
+    };
+
     function extendDataElementFunctions(dataElement){
-      var attributeObject = eval(dataElement.dataElement.attributeValues[0].value);
+      //var attributeObject = eval(dataElement.dataElement.attributeValues[0].value);
+      var attributeObject = eval(attributeValues);
       angular.extend(dataElement,attributeObject);
-      if(dataElement.events){
-        //if(dataElement.events.)
-        //activate ectended functions
-      }
+      console.log('score value ',dataElement.scoreValues);
+      console.log('events ',dataElement.events);
     }
 
     //@todo modify based on  api on docs
