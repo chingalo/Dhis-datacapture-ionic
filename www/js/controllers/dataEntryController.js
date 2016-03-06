@@ -2,7 +2,7 @@
  * Created by joseph on 1/29/16.
  */
 angular.module('dataCapture')
-  .controller('dataEntryController',function($scope,$indexedDB,$filter,
+  .controller('dataEntryController',function($scope,$indexedDB,$filter,$q,
                                              $state,$ionicModal,ionicToast,
                                              $localStorage,userServices,dataSetsServices,
                                              dataValueSetServices,
@@ -57,19 +57,14 @@ angular.module('dataCapture')
       trimOffBRNScoreValues();
       if( $localStorage.dataEntryData.formType == 'SECTION'){
         $scope.data.loading = true;
-        var selectedSections = $localStorage.dataEntryData.dataSet.sections;
-        var counter = 0;
-        selectedSections.forEach(function(selectedSection){
-          counter ++;
+        $localStorage.dataEntryData.dataSet.sections.forEach(function(selectedSection){
           sectionsServices.getAllDataEntryFormSection().then(function(sections){
             sections.forEach(function(section){
               if(selectedSection.id == section.id){
                 $scope.data.sectionsForm.push(section);
-                if(counter == selectedSections.length){
-                  $scope.data.loading = false;
-                }
               }
             });
+            $scope.data.loading = false;
           },function(){
             //error
           })
@@ -115,14 +110,19 @@ angular.module('dataCapture')
       var orgUnit = $localStorage.dataEntryData.orgUnit;
       dataValueSetServices.getDataValueSet(dataSet,period,orgUnit)
         .then(function(dataElementsValuesFromServer){
-          progressMessage(dataElementsValuesFromServer.length + " data values has been found from server");
-          dataElementsValuesFromServer.forEach(function(dataElementValues){
-            saveDataValuesFromServerToIndexDb(dataElementValues);
-            var value = isDataElementValueTypeNumber(dataElementValues.dataElement)?parseInt(dataElementValues.value):dataElementValues.value;
-            $scope.data.dataValues[dataElementValues.dataElement+'-'+dataElementValues.categoryOptionCombo] = value;
-          });
-          $scope.data.loading = false;
-          prepareDataElementsValuesFromIndexDb();
+          if(dataElementsValuesFromServer){
+            progressMessage("There are " + dataElementsValuesFromServer.length + " data values that has been found from server");
+            dataElementsValuesFromServer.forEach(function(dataElementValues){
+              saveDataValuesFromServerToIndexDb(dataElementValues);
+              var value = isDataElementValueTypeNumber(dataElementValues.dataElement)?parseInt(dataElementValues.value):dataElementValues.value;
+              $scope.data.dataValues[dataElementValues.dataElement+'-'+dataElementValues.categoryOptionCombo] = value;
+            });
+            $scope.data.loading = false;
+            prepareDataElementsValuesFromIndexDb();
+          }else{
+            progressMessage('There is no data values that has been found from server')
+          }
+
         },function(){
           //error
           progressMessage('Fail to retrieve data values form server, it might be due to network connectivity');
@@ -261,19 +261,21 @@ angular.module('dataCapture')
     });
 
     //function to checking changes on data elements values from data entry form
+    //todo enable data elements extend functions
     $scope.changeDataEntryForm = function(dataElement){
-      /*if(dataElement.attributeValues.length > 0){
-        extendDataElementFunctions(dataElement);
-      }*/
-      extendDataElementFunctions(dataElement);
       for(var key in $scope.data.dataValues){
         if($scope.data.dataValues[key]){
-          prepareDataValues(key,$scope.data.dataValues[key]);
+          var value = $scope.data.dataValues[key];
+          prepareDataValues(key,value);
+          /*if(dataElement.attributeValues.length > 0){
+           extendDataElementFunctions(dataElement);
+           }*/
+          extendDataElementFunctions(dataElement,value);
         }
       }
     };
 
-    //@todo complete calling extended function checking for extend attrribute
+    //@todo complete calling extended function checking for extend attribute
     //function to extend data element functions,
     var attributeValues = {
       scoreValues:[
@@ -284,52 +286,64 @@ angular.module('dataCapture')
         {value:"No value",figure:" "},
         {value:"NA",figure:0}
       ],
-      updateScoreValue:function (dataElementName,responseValue){
-        console.log(dataElementName,responseValue);
-        //var sourceDataElementId = $(this).attr('id');
-        var sourceDataElementValue= responseValue;
-        var scoreDataElementName= dataElementName+'_brn_scoreValue';
-        //@todo should return object contains dataelement uid,period,categoryComb from dbIndex
-        /*var dataValueObject={"de-uid":scoreDataElementId,"co":scoreCategotyOption,"ou":orgUnitsUid,"period":period}
-        var scoreDataElementId="";
-        var correctScoreValue="";
+      updateScoreValue:function (value){
+        var dataElementName = this.name+'_brn_scoreValue';
+        var correctScoreValue= null;
         angular.forEach(this.scoreValues,function(scoreValue){
-          if(sourceDataElementValue==scoreValue.value){
-            correctScoreValue=scoreValue.figure
+          if(value == scoreValue.value){
+            correctScoreValue=scoreValue.figure;
           }
         });
-        var dataValue = {
-          'de' : dataValueObject.de-uid,
-          'co' : dataValueObject.co,
-          'ou' : scoreCategotyOption.ou,
-          'pe' : dataValueObject.period,
-          'value' : correctScoreValue
-        };
-        //@todo save value for score value
-        $.ajax( {
-          url: '../api/dataValues',
-          data: dataValue,
-          dataType: 'json',
-          type: 'post',
-          success: success  } );*/
+        //@todo find mechanism of identify co-value for data element so far i just pick first category Option Combos as co-value
+        if(correctScoreValue != null){
+          getDataElementByName(dataElementName)
+            .then(function(scoreDataElement){
+              var de = scoreDataElement.id;
+              var co = scoreDataElement.categoryCombo.categoryOptionCombos[0].id;
+              saveValue(de,co,correctScoreValue);
+            },function(){
+              //error on getting data element
+            })
+        }
       },
       events:{onChange:"updateScoreValue"}
-
     };
 
-    function extendDataElementFunctions(dataElement){
+    //@todo extend attribute functions
+    function extendDataElementFunctions(dataElement,value){
       //var attributeObject = eval(dataElement.dataElement.attributeValues[0].value);
       var attributeObject = eval(attributeValues);
       angular.extend(dataElement,attributeObject);
       var eventList = getOnchangeEvents(dataElement.events.onChange);
       eventList.forEach(function(event){
-        dataElement[event]('name','response');
+        dataElement[event](value);
       });
     }
+    //function to split events
     function getOnchangeEvents(eventsList){
       return eventsList.split(',')
     }
 
+    //function to get data elements by name
+    function getDataElementByName(dataElementName){
+      var defer = $q.defer();
+      var returnedDataElement = null;
+      $localStorage.dataSetDataElements.forEach(function(dataElement,index){
+        if(dataElement.name.toLowerCase() == dataElementName.toLowerCase()){
+          returnedDataElement = dataElement;
+          defer.resolve(returnedDataElement);
+        }
+        if(index == $localStorage.dataSetDataElements.length - 1 && returnedDataElement == null){
+          defer.reject();
+        }
+      });
+      return defer.promise;
+    }
+
+    //function to save values from extended function
+    function saveValue(dataElementId,categoryComboId,value){
+      prepareDataValues(dataElementId + "-" + categoryComboId,value);
+    }
     //@todo modify based on  api on docs
     //function to save data values from the form
     function prepareDataValues(key,value){
@@ -414,19 +428,23 @@ angular.module('dataCapture')
     function trimOffBRNScoreValues(){
       $scope.data.loading = true;
       var dataElements = $localStorage.dataEntryData.dataSet.dataElements;
-      var trimmedOffBRNScoreValues = [];
+      var trimmedOffBRNScoreValuesDataElements = [];
+      var scoreValuesDataElements = [];
       var counter = 0;
       dataElements.forEach(function(dataElement){
         counter ++;
         var dataElementNameString = dataElement.name.split('_');
         var length = dataElementNameString.length;
         if(dataElementNameString[length -1] != "scorevalue"){
-          trimmedOffBRNScoreValues.push(dataElement);
+          trimmedOffBRNScoreValuesDataElements.push(dataElement);
+        }else{
+          scoreValuesDataElements.push(dataElement);
         }
         if(counter == dataElements.length){
+          $scope.data.selectedDataEntryForm.dataSet.dataElements = trimmedOffBRNScoreValuesDataElements;
+          $localStorage.dataSetDataElements = dataElements;
+          $localStorage.dataEntryData.dataSet.dataElements = trimmedOffBRNScoreValuesDataElements;
           $scope.data.loading = false;
-          $scope.data.selectedDataEntryForm.dataSet.dataElements = trimmedOffBRNScoreValues;
-          $localStorage.dataEntryData.dataSet.dataElements = trimmedOffBRNScoreValues;
           //$state.go('app.dataEntryForm');
         }
       });
