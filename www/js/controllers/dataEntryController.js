@@ -288,6 +288,7 @@ angular.module('dataCapture')
       ],
       updateScoreValue:function (value){
         var dataElementName = this.name+'_brn_scoreValue';
+        var scoreDataElement = getDataElementByName(dataElementName);
         var correctScoreValue= null;
         angular.forEach(this.scoreValues,function(scoreValue){
           if(value == scoreValue.value){
@@ -295,15 +296,10 @@ angular.module('dataCapture')
           }
         });
         //@todo find mechanism of identify co-value for data element so far i just pick first category Option Combos as co-value
-        if(correctScoreValue != null){
-          getDataElementByName(dataElementName)
-            .then(function(scoreDataElement){
-              var de = scoreDataElement.id;
-              var co = scoreDataElement.categoryCombo.categoryOptionCombos[0].id;
-              saveValue(de,co,correctScoreValue);
-            },function(){
-              //error on getting data element
-            })
+        if(correctScoreValue != null && scoreDataElement != null){
+          var de = scoreDataElement.id;
+          var co = scoreDataElement.categoryCombo.categoryOptionCombos[0].id;
+          saveValue(de,co,correctScoreValue);
         }
       },
       events:{onChange:"updateScoreValue"}
@@ -326,18 +322,13 @@ angular.module('dataCapture')
 
     //function to get data elements by name
     function getDataElementByName(dataElementName){
-      var defer = $q.defer();
       var returnedDataElement = null;
-      $localStorage.dataSetDataElements.forEach(function(dataElement,index){
+      $localStorage.dataSetDataElements.forEach(function(dataElement){
         if(dataElement.name.toLowerCase() == dataElementName.toLowerCase()){
           returnedDataElement = dataElement;
-          defer.resolve(returnedDataElement);
-        }
-        if(index == $localStorage.dataSetDataElements.length - 1 && returnedDataElement == null){
-          defer.reject();
         }
       });
-      return defer.promise;
+      return returnedDataElement;
     }
 
     //function to save values from extended function
