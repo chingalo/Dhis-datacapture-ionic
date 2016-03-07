@@ -104,6 +104,7 @@ angular.module('dataCapture')
     //function to prepare data elements and values from server to be rendered on form
     function prepareDataElementsValuesFromServer(){
       $scope.data.loading = true;
+      prepareDataElementsValuesFromIndexDb();
       progressMessage("Downloading data values from server");
       var dataSet = $localStorage.dataEntryData.dataSet.id;
       var period = $localStorage.dataEntryData.period;
@@ -113,12 +114,11 @@ angular.module('dataCapture')
           if(dataElementsValuesFromServer){
             progressMessage("There are " + dataElementsValuesFromServer.length + " data values that has been found from server");
             dataElementsValuesFromServer.forEach(function(dataElementValues){
-              saveDataValuesFromServerToIndexDb(dataElementValues);
               var value = isDataElementValueTypeNumber(dataElementValues.dataElement)?parseInt(dataElementValues.value):dataElementValues.value;
               $scope.data.dataValues[dataElementValues.dataElement+'-'+dataElementValues.categoryOptionCombo] = value;
+              prepareDataValuesToIndexDb(dataElementValues.dataElement + "-" + dataElementValues.categoryOptionCombo,value);
             });
             $scope.data.loading = false;
-            prepareDataElementsValuesFromIndexDb();
           }else{
             progressMessage('There is no data values that has been found from server')
           }
@@ -127,45 +127,9 @@ angular.module('dataCapture')
           //error
           progressMessage('Fail to retrieve data values form server, it might be due to network connectivity');
           $scope.data.loading = false;
-          prepareDataElementsValuesFromIndexDb();
         });
     }
 
-    //function to save data values to form server to indexDb
-    function saveDataValuesFromServerToIndexDb(dataElementValues){
-      var ou = $localStorage.dataEntryData.orgUnit;
-      var pe = $localStorage.dataEntryData.period;
-      var dataSetId = $localStorage.dataEntryData.dataSet.id;
-      var id = dataSetId + '-' +dataElementValues.dataElement+ '-'+dataElementValues.categoryOptionCombo+'-'+pe+ '-' +ou;
-      dataSetsServices.getDataValueById(id).then(function(returnedDataValue){
-        var dataValue = returnedDataValue;
-        var value = isDataElementValueTypeNumber(dataElementValues.dataElement)?parseInt(dataElementValues.value):dataElementValues.value;
-        var data = null;
-        var canUpdate = false;
-        if(dataValue == null ){
-          canUpdate = true;
-        }else{
-          if(dataValue.value != value){
-            canUpdate = true;
-          }
-        }
-        if(canUpdate){
-          data = {
-            "id":id,
-            "de": dataElementValues.dataElement,
-            "pe": pe,
-            "value": value,
-            "co" : dataElementValues.categoryOptionCombo,
-            "ou" : ou,
-            "cc":$localStorage.dataEntryData.dataSet.categoryCombo.id,
-            "cp":dataElementValues.attributeOptionCombo,
-            "sync":true
-          };
-          dataSetsServices.saveDataSetDataValue(data);
-        }
-      },function(){
-      });
-    }
     function isDataElementValueTypeNumber(dataElementId){
       var result = false;
       var dataElements = $localStorage.dataEntryData.dataSet.dataElements;
@@ -261,22 +225,19 @@ angular.module('dataCapture')
     });
 
     //function to checking changes on data elements values from data entry form
-    //todo enable data elements extend functions
     $scope.changeDataEntryForm = function(dataElement){
       for(var key in $scope.data.dataValues){
         if($scope.data.dataValues[key]){
           var value = $scope.data.dataValues[key];
-          prepareDataValues(key,value);
-          /*if(dataElement.attributeValues.length > 0){
+          prepareDataValuesToIndexDb(key,value);
+          if(dataElement.attributeValues.length > 0){
            extendDataElementFunctions(dataElement);
-           }*/
-          extendDataElementFunctions(dataElement,value);
+           }
         }
       }
     };
 
-    //@todo complete calling extended function checking for extend attribute
-    //function to extend data element functions,
+    //function to extend data element functions sample
     var attributeValues = {
       scoreValues:[
         {value:"Yes",figure:0},
@@ -305,18 +266,23 @@ angular.module('dataCapture')
       events:{onChange:"updateScoreValue"}
     };
 
-    //@todo extend attribute functions
+    //function to extend data elements functionality
     function extendDataElementFunctions(dataElement,value){
-      //var attributeObject = eval(dataElement.dataElement.attributeValues[0].value);
-      var attributeObject = eval(attributeValues);
-      angular.extend(dataElement,attributeObject);
-      var eventList = getOnchangeEvents(dataElement.events.onChange);
-      eventList.forEach(function(event){
-        dataElement[event](value);
+      dataElement.dataElement.attributeValues.forEach(function(attributeValue){
+        if(attributeValue.attribute.name.toLowerCase() == 'extend'){
+          var attributeObject = eval(attributeValue.value);
+          angular.extend(dataElement,attributeObject);
+          var eventList = getAllEvents(dataElement.events.onChange);
+
+          //call all onchange events
+          eventList.forEach(function(event){
+            dataElement[event](value);
+          });
+        }
       });
     }
     //function to split events
-    function getOnchangeEvents(eventsList){
+    function getAllEvents(eventsList){
       return eventsList.split(',')
     }
 
@@ -333,11 +299,11 @@ angular.module('dataCapture')
 
     //function to save values from extended function
     function saveValue(dataElementId,categoryComboId,value){
-      prepareDataValues(dataElementId + "-" + categoryComboId,value);
+      prepareDataValuesToIndexDb(dataElementId + "-" + categoryComboId,value);
     }
     //@todo modify based on  api on docs
-    //function to save data values from the form
-    function prepareDataValues(key,value){
+    //function to save data values from the form to indexed db
+    function prepareDataValuesToIndexDb(key,value){
       var ou = $localStorage.dataEntryData.orgUnit;
       var pe = $localStorage.dataEntryData.period;
       var dataSetId = $localStorage.dataEntryData.dataSet.id;
