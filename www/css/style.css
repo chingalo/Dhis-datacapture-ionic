@@ -12,3 +12,11 @@ span.arrow{
   /*font-size:100%;*/
   margin-top: -20px;
 }
+.appBackground{
+  background-color : #1D5288;
+}
+.slogan{
+  font-style: italic;
+  color:#82b1ff ;
+}
+
