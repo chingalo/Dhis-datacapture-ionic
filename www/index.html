@@ -81,7 +81,7 @@
         });
         promise.done(function (result, event) {
           defer.resolve(sum, match);
-        })
+        });
 
         promise.fail(function (error, event) {
           defer.reject(error);
@@ -94,8 +94,6 @@
         var dataValuesStore = $.indexedDB("hisptz").objectStore("dataValues");
         var promise = dataValuesStore.get(dataSet + "-" + de + "-" + coc + "-" + dhis2.report.period + "-" + dhis2.report.organisationUnit.id);
         promise.done(function (item, event) {
-          //console.log(JSON.stringify(item));
-
           if (item) {
             var val = item.value;
             if (val && dhis2.validation.isNumber(val)) {
@@ -106,9 +104,7 @@
           } else {
             defer.resolve(undefined);
           }
-
-        })
-
+        });
         promise.fail(function (error, event) {
           defer.reject(error);
         });
@@ -167,7 +163,6 @@
             deferreds.push(dhis2.de.getDataElementValue(de, coc, dataSet, match).done(function (sum, matchRef) {
               if (sum && expression) {
                 expression = expression.replace(matchRef, sum);
-                //console.log(expression);
               } else {
                 expression = undefined;
               }
@@ -184,10 +179,7 @@
           var operand = match.replace(/[C\{\}]/g, '');
           deferreds.push(dhis2.de.getConstantValue(operand, dataSet, match).done(function (sum, matchRef) {
             if (sum && expression) {
-              console.log(matchRef);
-              console.log(expression);
               expression = expression.replace(matchRef, sum);
-              console.log(expression);
             } else {
               expression = undefined;
             }
@@ -227,15 +219,13 @@
         var data = {
           metaData: {
             names: {}
-
           },
           rows: []
-        }
+        };
         dhis2.de.getIndicators(indicatorIds).done(function (indicators) {
           $.each(indicators, function (indicatorIndex, indicator) {
             data.metaData.names[indicator.id] = indicator.name;
             promises.push(dhis2.de.evaluateDataIndicator(indicator, dataSet).then(function (value) {
-              //console.log("getIndicatorDataValue:"+JSON.stringify([indicator.id,dhis2.report.period,value]));
               if (value) {
                 data.rows.push([indicator.id, dhis2.report.period, value]);
               }
@@ -253,7 +243,6 @@
         var numerator = 0;
         var denominator = 1;
         promises.push(dhis2.de.generateExpression(indicator.numerator, dataSet).then(function (numeratorResult) {
-          //console.log("evaluateDataIndicator:"+JSON.stringify(numeratorResult));
           numerator = numeratorResult;
         }));
         promises.push(dhis2.de.generateExpression(indicator.denominator, dataSet).then(function (denominatorResult) {
