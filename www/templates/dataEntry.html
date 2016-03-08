@@ -27,7 +27,7 @@
                   </select>
                   <select ng-if = "data.orgUnit[0].name"   ng-model="data.dataSetId">
                     <option value="">Touch to choose Form</option>
-                    <option ng-repeat="dataSet in data.dataSets" value="{{ dataSet.id }}">{{ dataSet.name }}</option>
+                    <option ng-repeat="dataSet in data.dataSets|orderBy:'dataSet.name'" value="{{ dataSet.id }}">{{ dataSet.name }}</option>
                   </select>
                 </div>
               </div>

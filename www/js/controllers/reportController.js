@@ -66,12 +66,14 @@ angular.module('dataCapture')
       $scope.data.loading = true;
       reportServices.getAllReportsFromServer($localStorage.baseUrl)
         .then(function(reports){
-          $scope.data.reports = reports;
-          reportServices.saveReportToIndexDb(reports);
-          reports.forEach(function(report){
-            reportServices.saveReportToIndexDb(report);
-          });
-          progressMessage('There are '+ reports.length + ' report(s) available at the moment');
+          progressMessage('There are '+ reports.length?reports.length : 0  + ' report(s) available at the moment');
+          if(! angular.isUndefined(reports)){
+            $scope.data.reports = reports;
+            reportServices.saveReportToIndexDb(reports);
+            reports.forEach(function(report){
+              reportServices.saveReportToIndexDb(report);
+            });
+          }
           $scope.data.loading = false;
         },function(){
           //error
