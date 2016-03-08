@@ -3,7 +3,7 @@
  */
 angular.module('dataCapture')
   .controller('settingController',function($scope,ionicToast,$ionicHistory,$state,
-                                           $ionicModal,dataSetsServices,
+                                           $ionicModal,dataSetsServices,$indexedDB,
                                            sectionsServices,reportServices,
                                            userServices,constantsServices,
                                            $localStorage,synchronizationServices){
@@ -117,40 +117,9 @@ angular.module('dataCapture')
         })
     }
     function deleteAllData(){
-      dataSetsServices.deleteAllDataValues()
-        .then(function(){
-          dataSetsServices.deleteAllDataSets()
-            .then(function(){
-              sectionsServices.deleteAllSections()
-                .then(function(){
-                  reportServices.deleteAllReports()
-                    .then(function(){
-                      userServices.deleteOrgUnitFromIndexDb()
-                        .then(function(){
-                          constantsServices.deleteAllConstants()
-                            .then(function(){
-                              logOutUser();
-                            },function(){
-                            //constants
-                          });
-
-                        },function(){
-                          //org unit
-                        });
-                    },function(){
-                      //report
-                    });
-                },function(){
-                  //sections
-                });
-            },function(){
-              //data sets
-              $scope.data.loading = false;
-            });
-        },function(){
-          //data values
-          $scope.data.loading = false;
-        });
+      $indexedDB.deleteDatabase().then(function(){
+        logOutUser();
+      });
     }
 
     function logOutUser(){
@@ -168,7 +137,6 @@ angular.module('dataCapture')
         $scope.data.loading = false;
         var message = "All Data has been reset successfully";
         progressMessage(message);
-        //$window.location.reload(true);
         $state.go('login', {}, {location: "replace", reload: true});
       });
     }

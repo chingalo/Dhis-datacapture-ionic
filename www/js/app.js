@@ -104,7 +104,6 @@ angular.module('dataCapture', [
         $scope.data.loading = false;
         var message = "All Data has been reset successfully";
         progressMessage(message);
-        //$window.location.reload(true);
         $state.go('login', {}, {location: "replace", reload: true});
       });
     };
