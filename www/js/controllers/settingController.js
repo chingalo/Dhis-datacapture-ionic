@@ -8,9 +8,7 @@ angular.module('dataCapture')
                                            userServices,constantsServices,
                                            $localStorage,synchronizationServices){
 
-    function progressMessage(message){
-      ionicToast.show(message, 'top', false, 2500);
-    }
+    //initialization of setting configuration variables
     $localStorage.appSetting = {
       synchronization : {
         time : {type : getSyncTime()?$localStorage.syncTimeType:'seconds',value : getSyncTime()?getSyncTime():60},
@@ -23,6 +21,12 @@ angular.module('dataCapture')
     $scope.data = $localStorage.appSetting;
     $scope.data.formLabelPreference = $localStorage.formLabelPreference;
 
+    //function to display progress messages
+    function progressMessage(message){
+      ionicToast.show(message, 'top', false, 2500);
+    }
+
+    //functions to checking changes setting page
     $scope.$watch('data.defaultForm.sorting',function(){
       $localStorage.appSetting = $scope.data;
     });
@@ -43,6 +47,7 @@ angular.module('dataCapture')
       $localStorage.formLabelPreference = $scope.data.formLabelPreference;
     });
 
+    //function to change sync time for an app
     function changeSyncTime(){
       var type = $scope.data.synchronization.time.type;
       var value = $scope.data.synchronization.time.value;
@@ -66,6 +71,8 @@ angular.module('dataCapture')
       synchronizationServices.stopSync();
       synchronizationServices.startSync(newValue);
     }
+
+    //function to get sync time for setting configurations
     function getSyncTime(){
       var newValue = null;
       switch($localStorage.syncTimeType){
@@ -82,6 +89,7 @@ angular.module('dataCapture')
       return newValue;
     }
 
+    //function for pop up on data reset
     $scope.resetDataButtonActionConfirmation = function(type){
       $scope.data.resetDataOption = type;
       $scope.modal.show();
@@ -94,6 +102,8 @@ angular.module('dataCapture')
     $scope.close = function() {
       $scope.modal.hide();
     };
+
+    //function to handle confirmation data reset
     $scope.confirmDataReset = function(){
       $scope.close();
       switch ($scope.data.resetDataOption){
@@ -106,6 +116,7 @@ angular.module('dataCapture')
       }
     };
 
+    //function to delete all data values
     function deleteAllDtaValue(){
       $scope.data.loading = true;
       dataSetsServices.deleteAllDataValues()
@@ -116,12 +127,20 @@ angular.module('dataCapture')
           $scope.data.loading = false;
         })
     }
+
+    //function to delete all data
     function deleteAllData(){
       $indexedDB.deleteDatabase().then(function(){
+        var message = "Offline storage has been reset successfully";
+        progressMessage(message);
         logOutUser();
+      },function(){
+        var message = "Fail to Reset Offline storage";
+        progressMessage(message);
       });
     }
 
+    //function to log out after delete all data
     function logOutUser(){
       $scope.data.loading = true;
       delete $localStorage.loginUser;
@@ -135,8 +154,6 @@ angular.module('dataCapture')
         });
         synchronizationServices.stopSyncUserLoginData();
         $scope.data.loading = false;
-        var message = "All Data has been reset successfully";
-        progressMessage(message);
         $state.go('login', {}, {location: "replace", reload: true});
       });
     }
