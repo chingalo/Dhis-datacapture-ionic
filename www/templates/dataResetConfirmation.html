@@ -12,7 +12,16 @@
     <div class="row">
       <div class="col col-100">
         <div class="item item-text-wrap">
-          <p>Are sure you want to delete all <span ng-if = "data.resetDataOption=='dataEntryValues'">data entry values</span> <span ng-if = "data.resetDataOption=='allData'">all data</span> on this device</p>
+
+          <p ng-if = "data.resetDataOption=='dataEntryValues'" style="color:#f44336;">
+            Are sure you want to delete all data entry values on this device
+          </p>
+          <p>
+            <span ng-if = "data.resetDataOption=='allData'" style="color:#f44336;">
+              Are sure you want to Remove Currently stored Offline data?
+            </span>
+            <span style="color:#2979ff;">Note: Only offline data on device will be removed, make sure you sync any important offline data before resetting</span>
+          </p>
           <div class="row">
             <div class="col col-50">
               <button class="button button-balanced button-full" ng-click="close()">No</button>

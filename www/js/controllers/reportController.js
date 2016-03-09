@@ -66,7 +66,8 @@ angular.module('dataCapture')
       $scope.data.loading = true;
       reportServices.getAllReportsFromServer($localStorage.baseUrl)
         .then(function(reports){
-          progressMessage('There are '+ reports.length?reports.length : 0  + ' report(s) available at the moment');
+          var reportLength = reports.length?reports.length : 0;
+          progressMessage('There are '+ reportLength + ' report(s) available at the moment');
           if(! angular.isUndefined(reports)){
             $scope.data.reports = reports;
             reportServices.saveReportToIndexDb(reports);

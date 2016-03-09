@@ -116,7 +116,7 @@ angular.module('dataCapture')
             dataElementsValuesFromServer.forEach(function(dataElementValues){
               var value = isDataElementValueTypeNumber(dataElementValues.dataElement)?parseInt(dataElementValues.value):dataElementValues.value;
               $scope.data.dataValues[dataElementValues.dataElement+'-'+dataElementValues.categoryOptionCombo] = value;
-              prepareDataValuesToIndexDb(dataElementValues.dataElement + "-" + dataElementValues.categoryOptionCombo,value);
+              prepareDataValuesToIndexDb(dataElementValues.dataElement + "-" + dataElementValues.categoryOptionCombo,value,true);
             });
             $scope.data.loading = false;
           }else{
@@ -229,7 +229,7 @@ angular.module('dataCapture')
       for(var key in $scope.data.dataValues){
         if($scope.data.dataValues[key]){
           var value = $scope.data.dataValues[key];
-          prepareDataValuesToIndexDb(key,value);
+          prepareDataValuesToIndexDb(key,value,false);
           if(dataElement.attributeValues.length > 0){
            extendDataElementFunctions(dataElement);
            }
@@ -299,11 +299,11 @@ angular.module('dataCapture')
 
     //function to save values from extended function
     function saveValue(dataElementId,categoryComboId,value){
-      prepareDataValuesToIndexDb(dataElementId + "-" + categoryComboId,value);
+      prepareDataValuesToIndexDb(dataElementId + "-" + categoryComboId,value,false);
     }
     //@todo modify based on  api on docs
     //function to save data values from the form to indexed db
-    function prepareDataValuesToIndexDb(key,value){
+    function prepareDataValuesToIndexDb(key,value,syncStatus){
       var ou = $localStorage.dataEntryData.orgUnit;
       var pe = $localStorage.dataEntryData.period;
       var dataSetId = $localStorage.dataEntryData.dataSet.id;
@@ -331,7 +331,7 @@ angular.module('dataCapture')
             "ou" : ou,
             "cc":$localStorage.dataEntryData.dataSet.categoryCombo.id,
             "cp":$localStorage.dataEntryData.categoryOptionCombosId,
-            "sync":false
+            "sync":syncStatus
           };
           dataSetsServices.saveDataSetDataValue(data);
         }
