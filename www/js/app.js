@@ -112,7 +112,8 @@ angular.module('dataCapture', [
         $scope.data.loading = false;
         var message = "You have logged out successfully";
         progressMessage(message);
-        $state.go('login', {}, {location: "replace", reload: true});
+        $window.location.reload(true);
+        $state.go('login');
       });
     };
 
@@ -146,12 +147,12 @@ angular.module('dataCapture', [
     //function handle all authentications to DHIS2 server
     //TODO logic for pull all metadata necessary to support offline support
     //@todo add on user services to authenticate user
-    function authenticateUser($username, $password) {
+    function authenticateUser(username, password) {
       $scope.data.loading = true;
       var base = formatBaseUrl($scope.data.baseUrl);
       $localStorage.baseUrl = base;
       if($localStorage.loginUser){
-        if($localStorage.loginUser.password == $password && $localStorage.loginUser.username == $username){
+        if($localStorage.loginUser.password == password && $localStorage.loginUser.username == username){
           $scope.data.loading = false;
 
           //redirect to home page
@@ -163,8 +164,8 @@ angular.module('dataCapture', [
           callbackKey: 'callback',
           method: 'POST',
           params: {
-            j_username: $username,
-            j_password: $password
+            j_username: username,
+            j_password: password
           },
           withCredentials: true,
           useDefaultXhrHeader: false,
@@ -176,8 +177,8 @@ angular.module('dataCapture', [
               callbackKey: 'callback',
               method: 'GET',
               params: {
-                j_username: $username,
-                j_password: $password
+                j_username: username,
+                j_password: password
               },
               withCredentials: true,
               useDefaultXhrHeader: false,
@@ -185,7 +186,7 @@ angular.module('dataCapture', [
                 $scope.data.password = null;
                 try {
                   var userData = JSON.parse(response.responseText);
-                  $localStorage.loginUser = {'username': $username, 'password': $password};
+                  $localStorage.loginUser = {'username': username, 'password': password};
                   $localStorage.loginUserData = userData;
                   addAssignedOrgUnit($localStorage.loginUserData.organisationUnits,base);
                   loadDataSets(base);
@@ -429,6 +430,16 @@ angular.module('dataCapture', [
         url: '/app',
         abstract: true,
         templateUrl: 'templates/menu.html'
+      })
+
+      .state('app.help', {
+        url: '/help',
+        views: {
+          'menuContent': {
+            templateUrl: 'templates/help.html',
+            controller: 'helpController'
+          }
+        }
       })
 
       .state('app.dataEntry', {

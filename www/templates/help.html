@@ -1,10 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<ion-view view-title="Help">
+  <ion-content>
+    <ion-list>
+      <div class="row">
+        <div class="col col-100">
 
-</body>
-</html>
+          <div class="item item-divider">
+            <h2 align="center">Welcome to the Mobile Help Center</h2>
+          </div>
+          <div class="item item-text-wrap">
+            <div ng-repeat="group in groups">
+              <ion-item class="item-stable" ng-click="toggleGroup(group)" ng-class="{active: isGroupShown(group)}">
+                <i class="icon" ng-class="isGroupShown(group) ? 'ion-arrow-down-a' : 'ion-arrow-right-a'"></i>
+                &nbsp; &nbsp;
+                {{group.name}}
+              </ion-item>
+              <ion-item class="item-accordion" ng-show="isGroupShown(group)">
+                <div ng-if="group.type == 'dataEntry'"> dataEntry help coming soon!</div>
+                <div ng-if="group.type == 'reports'"> reports help coming soon!</div>
+              </ion-item>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </ion-list>
+  </ion-content>
+</ion-view>
