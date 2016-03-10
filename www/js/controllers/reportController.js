@@ -20,7 +20,6 @@ angular.module('dataCapture')
     //function to handle pagination on report list
     $scope.numberOfPages=function(){
       if($scope.data.reports){
-
         return Math.ceil($scope.data.reports.length/$scope.pageSize);
       }else{
         return 0;
@@ -35,12 +34,15 @@ angular.module('dataCapture')
       loadReportsFromIndexDb();
     }else{
       $scope.data.selectedReport = $localStorage.selectedReport;
-      loadReportsFromIndexDb();
     }
 
     //function for toaster messages
     function progressMessage(message){
       ionicToast.show(message, 'bottom', false, 2500);
+    }
+
+    function  topProgressMessage(message){
+      ionicToast.show(message, 'top', false, 1500);
     }
 
     //function to reload report form server
@@ -52,12 +54,14 @@ angular.module('dataCapture')
     function loadReportsFromIndexDb(){
       reportServices.getAllReportsFromIndexDb()
         .then(function(reports){
+          var reportLength = angular.isUndefined(reports.length)? 0: reports.length;
+          progressMessage('There are '+ reportLength + ' report(s) available at the moment on Offline storage');
           $scope.data.reports =reports;
           $scope.data.loading = false;
         },function(){
           //error
-          updateReports();
-          $scope.data.loading = false;
+          var message = "Fail to load reports from Offline storage ";
+          progressMessage(message);
         });
     }
 
@@ -66,8 +70,8 @@ angular.module('dataCapture')
       $scope.data.loading = true;
       reportServices.getAllReportsFromServer($localStorage.baseUrl)
         .then(function(reports){
-          var reportLength = reports.length?reports.length : 0;
-          progressMessage('There are '+ reportLength + ' report(s) available at the moment');
+          var reportLength = angular.isUndefined(reports.length)? 0: reports.length;
+          progressMessage('There are '+ reportLength + ' report(s) available at the moment from server');
           if(! angular.isUndefined(reports)){
             $scope.data.reports = reports;
             reportServices.saveReportToIndexDb(reports);
@@ -78,6 +82,8 @@ angular.module('dataCapture')
           $scope.data.loading = false;
         },function(){
           //error
+          var message = "Fail to load reports from server";
+          progressMessage(message);
           $scope.data.loading = false;
         });
     }
@@ -85,6 +91,8 @@ angular.module('dataCapture')
     //function to handle selected report
     $scope.selectReport = function(reportId){
       delete $localStorage.selectedReport;
+      var message = "Please waiting for report's details are being loaded";
+      progressMessage(message);
       getReportDetails(reportId);
     };
 
@@ -200,6 +208,7 @@ angular.module('dataCapture')
 
     //function for generate view for parameter
     $scope.generateReport = function(type){
+      var message = "";
       if(type == 'withParameter'){
         if(isParameterMeet()){
           var selectedOrUnit = {
@@ -215,13 +224,17 @@ angular.module('dataCapture')
               period :$scope.data.period
             }
           };
+          message = "Please waiting to load report data";
+          topProgressMessage(message);
           $state.go('app.generatedReport');
         }else{
-          var message = "Please select report parameter(s) first";
-          ionicToast.show(message, 'top', false, 1500);
+          message = "Please select report parameter(s) first";
+          topProgressMessage(message);
         }
       }
       else{
+        message = "Please waiting to load report data";
+        topProgressMessage(message);
         $state.go('app.generatedReport');
       }
     };
