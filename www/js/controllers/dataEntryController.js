@@ -27,6 +27,7 @@ angular.module('dataCapture')
     $scope.pageSizeDefault = 5;
     $scope.pageSizeSection = 1;
 
+
     //function to control pagination on data entry sections
     $scope.numberOfPagesSection=function(){
       var numberOfSections = $localStorage.dataEntryData.dataSet.sections;
@@ -156,10 +157,11 @@ angular.module('dataCapture')
       $scope.data.period = null;
       $scope.data.hasCategoryComboOptions = false;
       if($scope.data.orgUnit.length > 0){
+        var message = "Loading assigned data entry forms in " + $scope.data.orgUnit[0].name;
+        progressMessage(message);
         $scope.data.loading = true;
-        var orgUnitId = $scope.data.orgUnit[0].id;
         dataSetsServices.getAllDataSets().then(function(dataSets){
-          var allDataSetsByOrgUnit = dataSetsServices.getDataSetsByOrgUnitId(orgUnitId,dataSets);
+          var allDataSetsByOrgUnit = dataSetsServices.getDataSetsByOrgUnitId($scope.data.orgUnit[0].id,dataSets);
           $scope.data.dataSets = getAllowedDataSet(allDataSetsByOrgUnit);
           var message = $scope.data.dataSets.length + ' Data entry form has been found';
           progressMessage(message);
@@ -203,7 +205,7 @@ angular.module('dataCapture')
 
     //checking changes on data entry form
     $scope.$watch('data.dataSetId', function() {
-      $scope.data.loading = true;
+      //$scope.data.loading = true;
       $scope.data.formSelectVisibility = false;
       $scope.data.selectedData = null;
       $scope.data.period = null;
@@ -511,7 +513,13 @@ angular.module('dataCapture')
     //function to open the pop p modal
     $scope.openModal = function(modalType){
       $scope.data.modalType = modalType;
-      $scope.modal.show();
+      if($scope.data.orgUnit.length > 0 && $scope.data.dataSetId != null){
+        $scope.modal.show();
+      }else{
+        var message = "Please choose both Organisation Unit or Data Entry Form first";
+        progressMessage(message);
+      }
+
     };
 
     //function to get all user assigned orgUnit for tree
