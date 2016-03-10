@@ -15,6 +15,10 @@ angular.module('dataCapture')
       {
         name : 'Html Report Generation',
         type : 'reports'
+      },
+      {
+        name : 'Setting',
+        type : 'setting'
       }
     );
 
