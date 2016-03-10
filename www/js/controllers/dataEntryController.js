@@ -231,8 +231,8 @@ angular.module('dataCapture')
           var value = $scope.data.dataValues[key];
           prepareDataValuesToIndexDb(key,value,false);
           if(dataElement.attributeValues.length > 0){
-           extendDataElementFunctions(dataElement);
-           }
+            extendDataElementFunctions(dataElement,value);
+          }
         }
       }
     };
@@ -248,7 +248,7 @@ angular.module('dataCapture')
         {value:"NA",figure:0}
       ],
       updateScoreValue:function (value){
-        var dataElementName = this.name+'_brn_scoreValue';
+        var dataElementName = this.name+"_brn_scoreValue";
         var scoreDataElement = getDataElementByName(dataElementName);
         var correctScoreValue= null;
         angular.forEach(this.scoreValues,function(scoreValue){
@@ -268,22 +268,16 @@ angular.module('dataCapture')
 
     //function to extend data elements functionality
     function extendDataElementFunctions(dataElement,value){
-      dataElement.dataElement.attributeValues.forEach(function(attributeValue){
-        if(attributeValue.attribute.name.toLowerCase() == 'extend'){
-          var attributeObject = eval(attributeValue.value);
+      dataElement.attributeValues.forEach(function(attributeValue){
+        if(attributeValue.attribute.name == 'extend'){
+          var attributeObject = eval("(" + attributeValue.value + ")");
           angular.extend(dataElement,attributeObject);
-          var eventList = getAllEvents(dataElement.events.onChange);
-
-          //call all onchange events
-          eventList.forEach(function(event){
-            dataElement[event](value);
-          });
+          var dataElementValue = angular.isUndefined(value.name)? value:value.name;
+          if(dataElement.events.onChange){
+            dataElement[dataElement.events.onChange](dataElementValue)
+          }
         }
       });
-    }
-    //function to split events
-    function getAllEvents(eventsList){
-      return eventsList.split(',')
     }
 
     //function to get data elements by name
@@ -304,6 +298,7 @@ angular.module('dataCapture')
     //@todo modify based on  api on docs
     //function to save data values from the form to indexed db
     function prepareDataValuesToIndexDb(key,value,syncStatus){
+      var valueToBeStored = angular.isUndefined(value.name)? value:value.name;
       var ou = $localStorage.dataEntryData.orgUnit;
       var pe = $localStorage.dataEntryData.period;
       var dataSetId = $localStorage.dataEntryData.dataSet.id;
@@ -317,7 +312,7 @@ angular.module('dataCapture')
         if(dataValue == null ){
           canUpdate = true;
         }else{
-          if(dataValue.value != value){
+          if(dataValue.value != valueToBeStored){
             canUpdate = true;
           }
         }
@@ -326,7 +321,7 @@ angular.module('dataCapture')
             "id":id,
             "de": modelValue[0],
             "pe": pe,
-            "value": isDatElementHasDateValueDate(modelValue[0]) ? formatDate(value):value,
+            "value": isDatElementHasDateValueDate(modelValue[0]) ? formatDate(valueToBeStored):valueToBeStored,
             "co" : modelValue[1],
             "ou" : ou,
             "cc":$localStorage.dataEntryData.dataSet.categoryCombo.id,
@@ -353,7 +348,7 @@ angular.module('dataCapture')
       return result;
     }
 
-    //function to format date as supported on dhis
+    //function to format date as supported on dhis 2
     function formatDate(dateValue){
       var m,d = (new Date(dateValue));
       m = d.getMonth() + 1;

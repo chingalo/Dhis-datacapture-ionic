@@ -110,7 +110,7 @@ angular.module('dataCapture', [
         });
         synchronizationServices.stopSyncUserLoginData();
         $scope.data.loading = false;
-        var message = "All Data has been reset successfully";
+        var message = "You have logged out successfully";
         progressMessage(message);
         $state.go('login', {}, {location: "replace", reload: true});
       });
