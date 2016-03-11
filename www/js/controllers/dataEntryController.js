@@ -114,7 +114,10 @@ angular.module('dataCapture')
         .then(function(dataElementsValuesFromServer){
           if(dataElementsValuesFromServer){
             progressMessage("There are " + dataElementsValuesFromServer.length + " data values that has been found from server");
-            dataElementsValuesFromServer.forEach(function(dataElementValues){
+            dataElementsValuesFromServer.forEach(function(dataElementValues,index){
+              if(index === dataElementValues.length){
+                console.log('complete saving');
+              }
               var value = isDataElementValueTypeNumber(dataElementValues.dataElement)?parseInt(dataElementValues.value):dataElementValues.value;
               $scope.data.dataValues[dataElementValues.dataElement+'-'+dataElementValues.categoryOptionCombo] = value;
               prepareDataValuesToIndexDb(dataElementValues.dataElement + "-" + dataElementValues.categoryOptionCombo,value,true);
