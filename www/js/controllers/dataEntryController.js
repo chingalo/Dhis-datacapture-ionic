@@ -91,7 +91,7 @@ angular.module('dataCapture')
             .then(function(returnedDataValue){
               if(returnedDataValue != null){
                 if(id == returnedDataValue.id){
-                  $scope.data.dataValues[dataElement.id+'-'+returnedDataValue.co] = returnedDataValue.value;
+                  $scope.data.dataValues[dataElement.id+'-'+returnedDataValue.co] = isDataElementHasDropDown(dataElement.id)?{name :returnedDataValue.value,id:''}:returnedDataValue.value;
                 }
               }
             },function(){
@@ -115,12 +115,15 @@ angular.module('dataCapture')
           if(dataElementsValuesFromServer){
             progressMessage("There are " + dataElementsValuesFromServer.length + " data values that has been found from server");
             dataElementsValuesFromServer.forEach(function(dataElementValues,index){
-              if(index === dataElementValues.length){
-                console.log('complete saving');
-              }
+
               var value = isDataElementValueTypeNumber(dataElementValues.dataElement)?parseInt(dataElementValues.value):dataElementValues.value;
-              $scope.data.dataValues[dataElementValues.dataElement+'-'+dataElementValues.categoryOptionCombo] = value;
+              $scope.data.dataValues[dataElementValues.dataElement+'-'+dataElementValues.categoryOptionCombo] = isDataElementHasDropDown(dataElementValues.dataElement)?{name :value,id : ''} : value;
               prepareDataValuesToIndexDb(dataElementValues.dataElement + "-" + dataElementValues.categoryOptionCombo,value,true);
+              if(index < dataElementsValuesFromServer.length){
+                progressMessage("Waiting while saving data to local storage");
+              }else{
+                progressMessage("All data has been saved to local storage");
+              }
             });
             $scope.data.loading = false;
           }else{
@@ -346,6 +349,20 @@ angular.module('dataCapture')
       dataElements.forEach(function(dataElement){
         if(dataElement.id == dataElementId){
           if($scope.isDate(dataElement.valueType)){
+            result = true;
+          }
+        }
+      });
+      return result;
+    }
+
+    //function to handle formatting of data value for the form with drop down option set
+    function isDataElementHasDropDown(dataElementId){
+      var result = false;
+      var dataElements = $scope.data.selectedDataEntryForm.dataSet.dataElements;
+      dataElements.forEach(function(dataElement){
+        if(dataElement.id == dataElementId){
+          if($scope.hasDataSets(dataElement) && !($scope.isInteger(dataElement.valueType)) && !($scope.isIntegerZeroOrPositive(dataElement.valueType))){
             result = true;
           }
         }

@@ -22,7 +22,6 @@
                 <div ng-repeat="dataElement in data.selectedDataEntryForm.dataSet.dataElements | paginationFilter:currentPage*pageSizeDefault | limitTo:pageSizeDefault" >
 
                   <div ng-repeat="categoryOptionCombos in dataElement.categoryCombo.categoryOptionCombos ">
-
                     <div ng-if="isInteger(dataElement.valueType)">
                       <b>{{ dataElement[getFormLabelPreferences()] }}<span ng-if = "dataElement.categoryCombo.name != 'default'" >&nbsp;&nbsp;{{ categoryOptionCombos.name}}</span>&nbsp;&nbsp;<i class="icon ion-ios-help-outline tooltip" title="{{ dataElement.description }}" ng-show="dataElement.description" animation="fade"></i></b>
                       <br>
@@ -58,12 +57,12 @@
                     <div ng-if="hasDataSets(dataElement) && !isInteger(dataElement.valueType) && !isIntegerZeroOrPositive(dataElement.valueType)">
                       <b>{{ dataElement[getFormLabelPreferences()] }}<span ng-if = "dataElement.categoryCombo.name != 'default'" >&nbsp;&nbsp;{{ categoryOptionCombos.name}}</span>&nbsp;&nbsp;<i class="icon ion-ios-help-outline tooltip"  title="{{ dataElement.description }}" ng-show="dataElement.description" animation="fade"></i></b>
                       <br>
+
                       <div class="item item-input item-select" >
                         <div class="input-label" >
                         </div>
-                        <select ng-change='changeDataEntryForm(dataElement)' ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]" >
+                        <select ng-change='changeDataEntryForm(dataElement)' ng-options="item.name for item in getOptionSets(dataElement) track by item.name" ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]" >
                           <option value="">Choose option</option>
-                          <option ng-repeat="item in getOptionSets(dataElement)" value="{{item.name}}">{{ item.name }}</option>
                         </select>
                       </div>
                     </div>
@@ -172,9 +171,8 @@
                         <div class="item item-input item-select" >
                           <div class="input-label" >
                           </div>
-                          <select ng-change='changeDataEntryForm(dataElement)' ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]" >
+                          <select ng-change='changeDataEntryForm(dataElement)' ng-options="item.name for item in getOptionSets(dataElement) track by item.name" ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]" >
                             <option value="">Choose option</option>
-                            <option ng-repeat="item in getOptionSets(dataElement)" value="{{item.name}}">{{ item.name }}</option>
                           </select>
                         </div>
                       </div>
