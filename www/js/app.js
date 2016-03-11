@@ -125,6 +125,7 @@ angular.module('dataCapture', [
     }
 
     //function to format url
+    //todo append http or https if not included at begin
     function formatBaseUrl(baseUrl){
       var formattedBaseUrl = "";
       var newArray = [];
@@ -154,7 +155,6 @@ angular.module('dataCapture', [
       if($localStorage.loginUser){
         if($localStorage.loginUser.password == password && $localStorage.loginUser.username == username){
           $scope.data.loading = false;
-
           //redirect to home page
           directToLandingPage();
         }
@@ -193,7 +193,6 @@ angular.module('dataCapture', [
                 } catch (e) {
                   var message = 'Fail to login, please check your username or password';
                   progressMessage(message);
-                  $scope.data.password = null;
                   $scope.data.loading = false;
                   synchronizationServices.stopSyncUserLoginData();
                 }
@@ -205,6 +204,7 @@ angular.module('dataCapture', [
                 progressMessage(message);
                 $scope.data.loading = false;
                 synchronizationServices.stopSyncUserLoginData();
+                $scope.$apply();
               }
             });
           },
@@ -215,6 +215,7 @@ angular.module('dataCapture', [
             progressMessage(message);
             $scope.data.loading = false;
             synchronizationServices.stopSyncUserLoginData();
+            $scope.$apply();
           }
         });
       }
