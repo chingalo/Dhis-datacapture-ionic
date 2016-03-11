@@ -122,8 +122,9 @@ angular.module('dataCapture')
       dataSetsServices.deleteAllDataValues()
         .then(function(){
           $scope.data.loading = false;
-          progressMessage("Data Entry values has been reset successfully")
+          progressMessage("Data Entry values has been reset successfully");
         },function(){
+          progressMessage("Data Entry values has been failed to reset successfully");
           $scope.data.loading = false;
         })
     }

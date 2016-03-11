@@ -47,7 +47,7 @@ angular.module('dataCapture', [
       ionicToast.show(message, 'bottom', false, 2500);
     }
     function progressTopMessage(message) {
-      ionicToast.show(message, 'top', false, 2000);
+      ionicToast.show(message, 'top', false, 3500);
     }
 
     //initialization of base url for an app to access as well as auto login for logged in user
@@ -224,7 +224,7 @@ angular.module('dataCapture', [
     //function to fetching date entry sections
     function loadDataEntrySections(base) {
       $scope.data.loading = true;
-      var message = "Downloading available form sections";
+      var message = "Downloading available form sections, please wait";
       progressTopMessage(message);
       sectionsServices.getAllSectionsFromServer(base)
         .then(function (sections) {
@@ -258,7 +258,7 @@ angular.module('dataCapture', [
     //function to fetching indicators
     function loadIndicators(base){
       $scope.data.loading = true;
-      var message = "Downloading available indicators for reports";
+      var message = "Downloading available indicators for reports, please wait";
       progressTopMessage(message);
       indicatorsServices.getAllIndicatorsFromServer(base)
         .then(function(indicators){
@@ -281,7 +281,7 @@ angular.module('dataCapture', [
     //function to fetching reports from the server
     function loadReports(base){
       $scope.data.loading = true;
-      var message = "Downloading available reports for offline support";
+      var message = "Downloading available reports for offline support, please wait";
       progressTopMessage(message);
       reportServices.getAllReportsFromServer(base)
         .then(function(reports){
@@ -305,7 +305,7 @@ angular.module('dataCapture', [
 
     //function to fetching all constants from the server
     function loadConstants(base){
-      var message = "Downloading available constants for reports";
+      var message = "Downloading available constants for reports, please wait";
       progressTopMessage(message);
       constantsServices.getAllConstantsFromServer(base)
         .then(function(constants){
@@ -327,7 +327,7 @@ angular.module('dataCapture', [
     function loadDataSets(base) {
       $localStorage.baseUrl = base;
       $scope.data.loading = true;
-      var message = "Downloading available data entry forms";
+      var message = "Downloading available data entry forms, please wait";
       progressTopMessage(message);
       dataSetsServices.getAllDataSetsFromServer(base).then(function (dataSets) {
         dataSets.forEach(function (dataSet) {
