@@ -1,53 +1,65 @@
 <ion-view view-title="Reports">
   <ion-content>
-
-    <div class="row" ng-if = "data.loading" style="text-align: center;font-size: 14px;">
+    <div class="row">
       <div class="col col-100">
-        <ion-spinner icon="ios"></ion-spinner>
-      </div>
-    </div>
-    <div ng-if = "!data.loading">
 
-      <div class="row">
-        <div class="col col-100">
-          <button class="button button-full button-clear" ng-click="reloadReports()">
-            <i class="icon ion-loop"></i>
-          </button>
+        <div class="item item-divider">
+          <h2 align="center">Report List</h2>
         </div>
-      </div>
 
-      <div class="row">
-        <div class="col col-100">
-          <div class="list" ng-if = "data.reports">
-            <div class="item" ng-repeat="report in data.reports | paginationFilter:currentPage*pageSize | limitTo:pageSize|orderBy : 'report.name'" ng-click="selectReport(report.id)">
-              <h2>{{ report.name }}</h2>
-              <p>Created : {{report.created  | date:'d MMMM yyyy'}}</p>
+        <div class="item item-text-wrap">
+
+          <div class="row" ng-if = "data.loading" style="text-align: center;font-size: 14px;">
+            <div class="col col-100">
+              <ion-spinner icon="ios"></ion-spinner>
             </div>
           </div>
-        </div>
-      </div>
+          <div ng-if = "!data.loading">
 
-      <div class="row" ng-if = "data.reports.length > 0">
-        <div class="col col-45">
-          <button class="button button-full button-positive" ng-disabled="currentPage == 0" ng-click="currentPage=currentPage-1">
-            Previous
-          </button>
-        </div>
-        <div class="col col 10">
-          <button class="button button-full button-clear">
+            <div class="row">
+              <div class="col col-100">
+                <button class="button button-full button-clear" ng-click="reloadReports()">
+                  <i class="icon ion-loop"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col col-100">
+                <div class="list" ng-if = "data.reports">
+                  <div class="item" ng-repeat="report in data.reports | paginationFilter:currentPage*pageSize | limitTo:pageSize|orderBy : 'report.name'" ng-click="selectReport(report.id)">
+                    <h2>{{ report.name }}</h2>
+                    <p>Created : {{report.created  | date:'d MMMM yyyy'}}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row" ng-if = "data.reports.length > 0">
+              <div class="col col-45">
+                <button class="button button-full button-positive" ng-disabled="currentPage == 0" ng-click="currentPage=currentPage-1">
+                  Previous
+                </button>
+              </div>
+              <div class="col col 10">
+                <button class="button button-full button-clear">
           <span>
             <b>{{currentPage+1}}/{{numberOfPages()}}</b>
           </span>
-          </button>
+                </button>
+              </div>
+              <div class="col col-45">
+                <button class="button button-full button-positive" ng-disabled="currentPage >= data.reports.length/pageSize - 1" ng-click="currentPage=currentPage+1">
+                  Next
+                </button>
+              </div>
+            </div>
+
+          </div>
+
         </div>
-        <div class="col col-45">
-          <button class="button button-full button-positive" ng-disabled="currentPage >= data.reports.length/pageSize - 1" ng-click="currentPage=currentPage+1">
-            Next
-          </button>
-        </div>
+
       </div>
-
     </div>
-
   </ion-content>
 </ion-view>

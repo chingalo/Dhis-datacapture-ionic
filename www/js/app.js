@@ -38,8 +38,10 @@ angular.module('dataCapture', [
                                           $localStorage, dataSetsServices,
                                           sectionsServices, $indexedDB) {
 
+    //initial variables
     $scope.data = {};
     var url = 'http://41.217.202.50:8080/dhis';
+
     //function for toaster messages
     function progressMessage(message) {
       ionicToast.show(message, 'bottom', false, 2500);
@@ -47,6 +49,8 @@ angular.module('dataCapture', [
     function progressTopMessage(message) {
       ionicToast.show(message, 'top', false, 2000);
     }
+
+    //initialization of base url for an app to access as well as auto login for logged in user
     if (!$localStorage.baseUrl) {
       $localStorage.baseUrl = url;
     }
@@ -64,7 +68,9 @@ angular.module('dataCapture', [
         authenticateUser(username, password);
       }
     }
+    $scope.data.baseUrl = $localStorage.baseUrl;
 
+    //initialization of form label preference
     if(angular.isUndefined($localStorage.formLabelPreference)){
       $localStorage.formLabelPreference = {
         label : 'formName',
@@ -72,7 +78,8 @@ angular.module('dataCapture', [
       }
     }
 
-    $scope.data.baseUrl = $localStorage.baseUrl;
+
+    //function for login into the app
     $scope.login = function () {
       if ($scope.data.baseUrl) {
         formatBaseUrl($scope.data.baseUrl);
@@ -88,6 +95,7 @@ angular.module('dataCapture', [
       }
     };
 
+    //function for log out from the system
     $scope.logOut = function () {
       //TODO some logic flow during log out process as reset all data on setting
       $scope.data.loading = true;
@@ -102,12 +110,22 @@ angular.module('dataCapture', [
         });
         synchronizationServices.stopSyncUserLoginData();
         $scope.data.loading = false;
-        var message = "All Data has been reset successfully";
+        var message = "You have logged out successfully";
         progressMessage(message);
-        $state.go('login', {}, {location: "replace", reload: true});
+        $window.location.reload(true);
+        $state.go('login');
       });
     };
 
+    //function redirect the landing page f the app
+    function directToLandingPage(){
+      progressTopMessage("It's ready, kindly enjoy the offline support");
+      startSyncProcess($localStorage.loginUser);
+      $state.go('app.dataEntry', {}, {location: "replace", reload: true});
+    }
+
+    //function to format url
+    //todo append http or https if not included at begin
     function formatBaseUrl(baseUrl){
       var formattedBaseUrl = "";
       var newArray = [];
@@ -130,14 +148,15 @@ angular.module('dataCapture', [
     //function handle all authentications to DHIS2 server
     //TODO logic for pull all metadata necessary to support offline support
     //@todo add on user services to authenticate user
-    function authenticateUser($username, $password) {
+    function authenticateUser(username, password) {
       $scope.data.loading = true;
       var base = formatBaseUrl($scope.data.baseUrl);
       $localStorage.baseUrl = base;
       if($localStorage.loginUser){
-        if($localStorage.loginUser.password == $password && $localStorage.loginUser.username == $username){
+        if($localStorage.loginUser.password == password && $localStorage.loginUser.username == username){
           $scope.data.loading = false;
-          $state.go('app.dataEntry')
+          //redirect to home page
+          directToLandingPage();
         }
       }else{
         Ext.Ajax.request({
@@ -145,8 +164,8 @@ angular.module('dataCapture', [
           callbackKey: 'callback',
           method: 'POST',
           params: {
-            j_username: $username,
-            j_password: $password
+            j_username: username,
+            j_password: password
           },
           withCredentials: true,
           useDefaultXhrHeader: false,
@@ -158,8 +177,8 @@ angular.module('dataCapture', [
               callbackKey: 'callback',
               method: 'GET',
               params: {
-                j_username: $username,
-                j_password: $password
+                j_username: username,
+                j_password: password
               },
               withCredentials: true,
               useDefaultXhrHeader: false,
@@ -167,18 +186,13 @@ angular.module('dataCapture', [
                 $scope.data.password = null;
                 try {
                   var userData = JSON.parse(response.responseText);
-                  $localStorage.loginUser = {'username': $username, 'password': $password};
+                  $localStorage.loginUser = {'username': username, 'password': password};
                   $localStorage.loginUserData = userData;
                   addAssignedOrgUnit($localStorage.loginUserData.organisationUnits,base);
-                  //$scope.data.loading = false;
                   loadDataSets(base);
-                  startSyncProcess($localStorage.loginUser);
-                  //redirect to landing page for success login
-                  $state.go('app.dataEntry', {}, {location: "replace", reload: true});
                 } catch (e) {
                   var message = 'Fail to login, please check your username or password';
                   progressMessage(message);
-                  $scope.data.password = null;
                   $scope.data.loading = false;
                   synchronizationServices.stopSyncUserLoginData();
                 }
@@ -190,6 +204,7 @@ angular.module('dataCapture', [
                 progressMessage(message);
                 $scope.data.loading = false;
                 synchronizationServices.stopSyncUserLoginData();
+                $scope.$apply();
               }
             });
           },
@@ -200,11 +215,13 @@ angular.module('dataCapture', [
             progressMessage(message);
             $scope.data.loading = false;
             synchronizationServices.stopSyncUserLoginData();
+            $scope.$apply();
           }
         });
       }
     }
 
+    //function to fetching date entry sections
     function loadDataEntrySections(base) {
       $scope.data.loading = true;
       var message = "Downloading available form sections";
@@ -225,6 +242,9 @@ angular.module('dataCapture', [
                 //error
               });
           });
+          //saving data entry form sections
+          var message = "Complete Saving data entry form sections";
+          progressTopMessage(message);
           //loading indicators
           loadIndicators(base);
         }, function () {
@@ -234,6 +254,8 @@ angular.module('dataCapture', [
           $scope.data.loading = false;
         });
     }
+
+    //function to fetching indicators
     function loadIndicators(base){
       $scope.data.loading = true;
       var message = "Downloading available indicators for reports";
@@ -243,6 +265,9 @@ angular.module('dataCapture', [
           indicators.forEach(function(indicator){
             indicatorsServices.saveIndicatorIntoIndexDb(indicator);
           });
+
+          var message = "Complete Saving available indicators for report";
+          progressTopMessage(message);
           //leading reports
           loadReports(base)
         },function(){
@@ -252,6 +277,8 @@ angular.module('dataCapture', [
           $scope.data.loading = false;
         });
     }
+
+    //function to fetching reports from the server
     function loadReports(base){
       $scope.data.loading = true;
       var message = "Downloading available reports for offline support";
@@ -263,7 +290,9 @@ angular.module('dataCapture', [
           reports.forEach(function(report){
             reportServices.saveReportToIndexDb(report);
           });
-         // $scope.data.loading = false;
+
+          var message = "Complete saving available reports for offline support";
+          progressTopMessage(message);
           //loading all constants
           loadConstants(base)
         },function(){
@@ -274,6 +303,7 @@ angular.module('dataCapture', [
         });
     }
 
+    //function to fetching all constants from the server
     function loadConstants(base){
       var message = "Downloading available constants for reports";
       progressTopMessage(message);
@@ -281,20 +311,22 @@ angular.module('dataCapture', [
         .then(function(constants){
           constants.forEach(function(constant){
             constantsServices.saveConstantIntoIndexDb(constant);
-          })
+          });
+          var message = "Complete saving available constants for reports";
+          progressTopMessage(message);
+          //redirect to th landing page
+          directToLandingPage();
         },function(){
           $scope.data.loading = false;
           var message = "Fail to download constants for reports";
           progressTopMessage(message);
         });
     }
-    /*
-     *function to fetching all forms
-     */
+
+    //function to fetching all forms from the server
     function loadDataSets(base) {
       $localStorage.baseUrl = base;
       $scope.data.loading = true;
-      $scope.$apply();
       var message = "Downloading available data entry forms";
       progressTopMessage(message);
       dataSetsServices.getAllDataSetsFromServer(base).then(function (dataSets) {
@@ -312,6 +344,8 @@ angular.module('dataCapture', [
 
           });
         });
+        var message = "Complete saving available data entry forms";
+        progressTopMessage(message);
         //load all data entry sections forms
         loadDataEntrySections(base);
       }, function () {
@@ -321,8 +355,10 @@ angular.module('dataCapture', [
         $scope.data.loading = false;
       });
     }
+
+    //function to fetch all orgUnits assigned to the user from server
     function addAssignedOrgUnit(orgUnits,baseUrl) {
-      var message = 'Please wait to sync facility';
+      var message = 'fetching all assigned organisation units';
       ionicToast.show(message, 'top', false, 2500);
       orgUnits.forEach(function (orgUnit) {
         userServices.getAssignedOrgUnitChildrenFromServer(orgUnit.id,baseUrl).then(function(OrgUnitChildrenData){
@@ -338,18 +374,8 @@ angular.module('dataCapture', [
 
       });
     }
-    function deleteAssignedOrgUnit() {
-      $indexedDB.openStore('orgUnits', function (orgUnits) {
-        orgUnits.clear().then(function () {
-          //success
-        }, function () {
-          //error
-        })
-      })
-    }
-    /*
-     Synchronization processing
-     */
+
+    //Synchronization processing
     function startSyncProcess(user){
       var time = null;
       if($localStorage.syncTime){
@@ -405,6 +431,16 @@ angular.module('dataCapture', [
         url: '/app',
         abstract: true,
         templateUrl: 'templates/menu.html'
+      })
+
+      .state('app.help', {
+        url: '/help',
+        views: {
+          'menuContent': {
+            templateUrl: 'templates/help.html',
+            controller: 'helpController'
+          }
+        }
       })
 
       .state('app.dataEntry', {

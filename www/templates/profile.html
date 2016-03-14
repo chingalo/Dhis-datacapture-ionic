@@ -2,23 +2,22 @@
   <ion-content>
     <div class="row">
       <div class="col col-100">
-        <div class="card">
-          <div class="item item-divider">
-            <h2 align="center">My Profile</h2>
-          </div>
-          <div class="item item-text-wrap">
-            <div class="row">
-              <div class="col col-100">
-                <div class="list">
-                  <div style="text-transform: capitalize;" class="item" ng-repeat="(key,value) in data.user" ng-if="key == 'name'|| key =='birthday'|| key =='education'|| key =='jobTitle'|| key =='employer'|| key =='employer'|| key =='languages'|| key =='phoneNumber'|| key =='nationality' ">
-                    <h2>{{ key }}</h2>
-                    <p ng-if="key == 'birthday'">
-                      {{ data.user[key] | date:'d MMMM yyyy'}}
-                    </p>
-                    <p ng-if="key != 'birthday'">
-                      {{ data.user[key] }}
-                    </p>
-                  </div>
+        <div class="item item-divider">
+          <h2 align="center">My Profile</h2>
+        </div>
+        <div class="item item-text-wrap">
+          <div class="row">
+            <div class="col col-100">
+              <div class="list">
+                <div style="text-transform: capitalize;" class="item" ng-repeat="(key,value) in data.user"
+                     ng-if="key == 'name'|| key =='birthday'|| key =='education'|| key =='jobTitle'|| key =='employer'|| key =='employer'|| key =='languages'|| key =='phoneNumber'|| key =='nationality' ">
+                  <h2>{{ key }}</h2>
+                  <p ng-if="key == 'birthday'">
+                    {{ data.user[key] | date:'d MMMM yyyy'}}
+                  </p>
+                  <p ng-if="key != 'birthday'">
+                    {{ data.user[key] }}
+                  </p>
                 </div>
               </div>
             </div>

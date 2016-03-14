@@ -27,6 +27,7 @@ angular.module('dataCapture')
     $scope.pageSizeDefault = 5;
     $scope.pageSizeSection = 1;
 
+
     //function to control pagination on data entry sections
     $scope.numberOfPagesSection=function(){
       var numberOfSections = $localStorage.dataEntryData.dataSet.sections;
@@ -116,7 +117,7 @@ angular.module('dataCapture')
             dataElementsValuesFromServer.forEach(function(dataElementValues){
               var value = isDataElementValueTypeNumber(dataElementValues.dataElement)?parseInt(dataElementValues.value):dataElementValues.value;
               $scope.data.dataValues[dataElementValues.dataElement+'-'+dataElementValues.categoryOptionCombo] = value;
-              prepareDataValuesToIndexDb(dataElementValues.dataElement + "-" + dataElementValues.categoryOptionCombo,value);
+              prepareDataValuesToIndexDb(dataElementValues.dataElement + "-" + dataElementValues.categoryOptionCombo,value,true);
             });
             $scope.data.loading = false;
           }else{
@@ -156,10 +157,11 @@ angular.module('dataCapture')
       $scope.data.period = null;
       $scope.data.hasCategoryComboOptions = false;
       if($scope.data.orgUnit.length > 0){
+        var message = "Loading assigned data entry forms in " + $scope.data.orgUnit[0].name;
+        progressMessage(message);
         $scope.data.loading = true;
-        var orgUnitId = $scope.data.orgUnit[0].id;
         dataSetsServices.getAllDataSets().then(function(dataSets){
-          var allDataSetsByOrgUnit = dataSetsServices.getDataSetsByOrgUnitId(orgUnitId,dataSets);
+          var allDataSetsByOrgUnit = dataSetsServices.getDataSetsByOrgUnitId($scope.data.orgUnit[0].id,dataSets);
           $scope.data.dataSets = getAllowedDataSet(allDataSetsByOrgUnit);
           var message = $scope.data.dataSets.length + ' Data entry form has been found';
           progressMessage(message);
@@ -203,7 +205,7 @@ angular.module('dataCapture')
 
     //checking changes on data entry form
     $scope.$watch('data.dataSetId', function() {
-      $scope.data.loading = true;
+      //$scope.data.loading = true;
       $scope.data.formSelectVisibility = false;
       $scope.data.selectedData = null;
       $scope.data.period = null;
@@ -229,10 +231,10 @@ angular.module('dataCapture')
       for(var key in $scope.data.dataValues){
         if($scope.data.dataValues[key]){
           var value = $scope.data.dataValues[key];
-          prepareDataValuesToIndexDb(key,value);
+          prepareDataValuesToIndexDb(key,value,false);
           if(dataElement.attributeValues.length > 0){
-           extendDataElementFunctions(dataElement);
-           }
+            extendDataElementFunctions(dataElement,value);
+          }
         }
       }
     };
@@ -248,7 +250,7 @@ angular.module('dataCapture')
         {value:"NA",figure:0}
       ],
       updateScoreValue:function (value){
-        var dataElementName = this.name+'_brn_scoreValue';
+        var dataElementName = this.name+"_brn_scoreValue";
         var scoreDataElement = getDataElementByName(dataElementName);
         var correctScoreValue= null;
         angular.forEach(this.scoreValues,function(scoreValue){
@@ -268,22 +270,16 @@ angular.module('dataCapture')
 
     //function to extend data elements functionality
     function extendDataElementFunctions(dataElement,value){
-      dataElement.dataElement.attributeValues.forEach(function(attributeValue){
-        if(attributeValue.attribute.name.toLowerCase() == 'extend'){
-          var attributeObject = eval(attributeValue.value);
+      dataElement.attributeValues.forEach(function(attributeValue){
+        if(attributeValue.attribute.name == 'extend'){
+          var attributeObject = eval("(" + attributeValue.value + ")");
           angular.extend(dataElement,attributeObject);
-          var eventList = getAllEvents(dataElement.events.onChange);
-
-          //call all onchange events
-          eventList.forEach(function(event){
-            dataElement[event](value);
-          });
+          var dataElementValue = angular.isUndefined(value.name)? value:value.name;
+          if(dataElement.events.onChange){
+            dataElement[dataElement.events.onChange](dataElementValue)
+          }
         }
       });
-    }
-    //function to split events
-    function getAllEvents(eventsList){
-      return eventsList.split(',')
     }
 
     //function to get data elements by name
@@ -299,11 +295,12 @@ angular.module('dataCapture')
 
     //function to save values from extended function
     function saveValue(dataElementId,categoryComboId,value){
-      prepareDataValuesToIndexDb(dataElementId + "-" + categoryComboId,value);
+      prepareDataValuesToIndexDb(dataElementId + "-" + categoryComboId,value,false);
     }
     //@todo modify based on  api on docs
     //function to save data values from the form to indexed db
-    function prepareDataValuesToIndexDb(key,value){
+    function prepareDataValuesToIndexDb(key,value,syncStatus){
+      var valueToBeStored = angular.isUndefined(value.name)? value:value.name;
       var ou = $localStorage.dataEntryData.orgUnit;
       var pe = $localStorage.dataEntryData.period;
       var dataSetId = $localStorage.dataEntryData.dataSet.id;
@@ -317,7 +314,7 @@ angular.module('dataCapture')
         if(dataValue == null ){
           canUpdate = true;
         }else{
-          if(dataValue.value != value){
+          if(dataValue.value != valueToBeStored){
             canUpdate = true;
           }
         }
@@ -326,12 +323,12 @@ angular.module('dataCapture')
             "id":id,
             "de": modelValue[0],
             "pe": pe,
-            "value": isDatElementHasDateValueDate(modelValue[0]) ? formatDate(value):value,
+            "value": isDatElementHasDateValueDate(modelValue[0]) ? formatDate(valueToBeStored):valueToBeStored,
             "co" : modelValue[1],
             "ou" : ou,
             "cc":$localStorage.dataEntryData.dataSet.categoryCombo.id,
             "cp":$localStorage.dataEntryData.categoryOptionCombosId,
-            "sync":false
+            "sync":syncStatus
           };
           dataSetsServices.saveDataSetDataValue(data);
         }
@@ -353,7 +350,7 @@ angular.module('dataCapture')
       return result;
     }
 
-    //function to format date as supported on dhis
+    //function to format date as supported on dhis 2
     function formatDate(dateValue){
       var m,d = (new Date(dateValue));
       m = d.getMonth() + 1;
@@ -516,7 +513,13 @@ angular.module('dataCapture')
     //function to open the pop p modal
     $scope.openModal = function(modalType){
       $scope.data.modalType = modalType;
-      $scope.modal.show();
+      if($scope.data.orgUnit.length > 0 && $scope.data.dataSetId != null){
+        $scope.modal.show();
+      }else{
+        var message = "Please choose both Organisation Unit or Data Entry Form first";
+        progressMessage(message);
+      }
+
     };
 
     //function to get all user assigned orgUnit for tree
