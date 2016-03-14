@@ -260,7 +260,7 @@
           denominator = denominatorResult;
         }));
         $.when.apply($, promises).then(function () {
-          defer.resolve(numerator / denominator);
+          defer.resolve((numerator / denominator) * indicator.indicatorType.factor);
         });
         return defer.promise();
       },
