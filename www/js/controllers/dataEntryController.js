@@ -115,7 +115,6 @@ angular.module('dataCapture')
           if(dataElementsValuesFromServer){
             progressMessage("There are " + dataElementsValuesFromServer.length + " data values that has been found from server");
             dataElementsValuesFromServer.forEach(function(dataElementValues,index){
-
               var value = isDataElementValueTypeNumber(dataElementValues.dataElement)?parseInt(dataElementValues.value):dataElementValues.value;
               $scope.data.dataValues[dataElementValues.dataElement+'-'+dataElementValues.categoryOptionCombo] = isDataElementHasDropDown(dataElementValues.dataElement)?{name :value,id : ''} : value;
               prepareDataValuesToIndexDb(dataElementValues.dataElement + "-" + dataElementValues.categoryOptionCombo,value,true);
