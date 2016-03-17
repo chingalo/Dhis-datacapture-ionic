@@ -15,9 +15,27 @@
                 {{group.name}}
               </ion-item>
               <ion-item class="item-accordion" ng-show="isGroupShown(group)">
-                <div ng-if="group.type == 'dataEntry'"> dataEntry help coming soon!</div>
-                <div ng-if="group.type == 'reports'"> reports help coming soon!</div>
-                <div ng-if="group.type == 'setting'"> setting help coming soon!</div>
+                <div ng-if="group.type == 'dataEntry'">
+                  <div class="row">
+                    <div class="col col-100">
+                      data entry coming soon!
+                    </div>
+                  </div>
+                </div>
+                <div ng-if="group.type == 'reports'">
+                  <div class="row">
+                    <div class="col col-100">
+                      reports help coming soon!
+                    </div>
+                  </div>
+                  </div>
+                <div ng-if="group.type == 'setting'">
+                  <div class="row">
+                    <div class="col col-100">
+                      setting help coming soon!
+                    </div>
+                  </div>
+                </div>
               </ion-item>
             </div>
           </div>

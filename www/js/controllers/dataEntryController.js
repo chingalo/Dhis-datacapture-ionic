@@ -55,7 +55,7 @@ angular.module('dataCapture')
       $scope.data.selectedDataEntryForm = $localStorage.dataEntryData;
       $scope.data.loading = false;
       prepareDataElementsValuesFromServer();
-      trimOffBRNScoreValues();
+      //trimOffBRNScoreValues();
       if( $localStorage.dataEntryData.formType == 'SECTION'){
         $scope.data.loading = true;
         $localStorage.dataEntryData.dataSet.sections.forEach(function(selectedSection){
@@ -84,7 +84,7 @@ angular.module('dataCapture')
       var pe = $localStorage.dataEntryData.period;
       var dataSetId = $localStorage.dataEntryData.dataSet.id;
       $scope.data.loading = true;
-      dataElements.forEach(function(dataElement){;
+      dataElements.forEach(function(dataElement){
         dataElement.categoryCombo.categoryOptionCombos.forEach(function(categoryOptionCombo){
           var id = dataSetId + '-' + dataElement.id + '-' +categoryOptionCombo.id+ '-' +pe+ '-' +ou;
           dataSetsServices.getDataValueById(id)
@@ -122,7 +122,9 @@ angular.module('dataCapture')
               if(index < dataElementsValuesFromServer.length){
                 progressMessage("Waiting while saving data to local storage");
               }else{
-                progressMessage("All data has been saved to local storage");
+                if(index == dataElementsValuesFromServer.length -1 ){
+                  progressMessage("All data has been saved to local storage");
+                }
               }
             });
             $scope.data.loading = false;
