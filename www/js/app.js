@@ -455,6 +455,15 @@ angular.module('dataCapture', [
           }
         }
       })
+      .state('app.about', {
+        url: '/about',
+        views: {
+          'menuContent': {
+            templateUrl: 'templates/about.html',
+            controller: 'aboutController'
+          }
+        }
+      })
 
       .state('app.dataEntry', {
         url: '/data-entry',

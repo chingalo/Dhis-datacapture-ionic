@@ -1,0 +1,23 @@
+<ion-view view-title="About">
+  <ion-content>
+    <ion-list>
+      <div class="row">
+        <div class="col col-100">
+          <div class="item item-divider">
+            <h2 align="center">App Information</h2>
+          </div>
+          <div class="item item-text-wrap">
+            {{ data.appInfo |json}}
+          </div>
+          <div class="item item-divider">
+            <h2 align="center">Server Information</h2>
+          </div>
+          <div class="item item-text-wrap">
+            {{ data.systemInfo |json}}
+          </div>
+
+        </div>
+      </div>
+    </ion-list>
+  </ion-content>
+</ion-view>
