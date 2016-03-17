@@ -226,7 +226,6 @@ angular.module('dataCapture', [
 
     //function to load system info
     function loadSystemInfo(base) {
-      console.log(base);
       userServices.getSystemInfo(base).then(function(systemInfo){
         $localStorage.systemInfo = systemInfo;
       },function(){
