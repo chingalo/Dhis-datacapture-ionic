@@ -55,7 +55,7 @@ angular.module('dataCapture')
       $scope.data.selectedDataEntryForm = $localStorage.dataEntryData;
       $scope.data.loading = false;
       prepareDataElementsValuesFromServer();
-      //trimOffBRNScoreValues();
+      trimOffBRNScoreValues();
       if( $localStorage.dataEntryData.formType == 'SECTION'){
         $scope.data.loading = true;
         $localStorage.dataEntryData.dataSet.sections.forEach(function(selectedSection){
@@ -421,7 +421,6 @@ angular.module('dataCapture')
           $localStorage.dataSetDataElements = dataElements;
           $localStorage.dataEntryData.dataSet.dataElements = trimmedOffBRNScoreValuesDataElements;
           $scope.data.loading = false;
-          //$state.go('app.dataEntryForm');
         }
       });
     }

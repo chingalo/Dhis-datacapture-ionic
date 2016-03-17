@@ -15,24 +15,68 @@
                 {{group.name}}
               </ion-item>
               <ion-item class="item-accordion" ng-show="isGroupShown(group)">
-                <div ng-if="group.type == 'dataEntry'">
-                  <div class="row">
-                    <div class="col col-100">
-                      data entry coming soon!
+                <div style="text-align: justify">
+                  <div ng-if="group.type == 'dataEntry'">
+                    <div class="row">
+                      <div class="col col-100">
+                        <h3>Data Entry form preparation</h3>
+                        <p>
+                          To entry access data entry, select <b>Data entry</b> from menu.
+                          To be able to enter data, first you must fill data entry preparation form.
+                          This including selection of organisation unit, data entry form and period.
+                        </p>
+                        <h3>Types of Data Entry form</h3>
+                        <p>
+                          Basically two types are supported default and section. Default data entry form
+                          is just list of all data elements as questions. Section is customized data entry
+                          form contains grouped related data elements, it is set on DHIS 2 server.
+                        </p>
+                        <h3>Data Entry form form  configurations</h3>
+                        <p>
+                          It including setting label for data entry form. It can be either DHIS 2
+                          form name or DHIS 2 display name.To configure, select <b>Setting</b> from menu,
+                          go to "Form Label or Question title setting" sections and select appropriate
+                          label you prefer.
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div ng-if="group.type == 'reports'">
-                  <div class="row">
-                    <div class="col col-100">
-                      reports help coming soon!
+                  <div ng-if="group.type == 'reports'">
+                    <div class="row">
+                      <div class="col col-100">
+                        <h3>Report Generation process</h3>
+                        <p>
+                          To generate reports on mobile devices, select <b>Html Reports</b> from menu, select report form list of reports,
+                          fill all report parameter if present.
+                        </p>
+                        <h3>Supported reports</h3>
+                        <p>
+                          So far it support html reports designed to use data values saved on offline storage on mobile device
+                          using date entry form of this app.
+                        </p>
+                      </div>
                     </div>
                   </div>
-                  </div>
-                <div ng-if="group.type == 'setting'">
-                  <div class="row">
-                    <div class="col col-100">
-                      setting help coming soon!
+                  <div ng-if="group.type == 'setting'">
+                    <div class="row">
+                      <div class="col col-100">
+                        <p>To access setting, select <b>Setting</b> from menu</p>
+                        <h3>Synchronizations</h3>
+                        <p>
+                          Synchronization time is time to take for an app to check data values in offline storage on mobile
+                          device to be sent to login server when you have network connections. To set Synchronization time, first enter value and then select
+                          time type(seconds, minutes or hours) based on your need
+                        </p>
+                        <h3>Form label and questions title</h3>
+                        <p>
+                          This part allow you to select label or question  title for data entry form. It can can be either DHIS 2
+                          form name or DHIS 2 display name based on your preference.
+                        </p>
+                        <h3>data reset</h3>
+                        <p>App gives you two option buttons to reset or clear data stored on local/offline storage, Reset Data Entry
+                          values and Clear/Reset Offline storage.Reset Data Entry values is for clear all data values entered and clear
+                          data stored on local/offline storage option for clear or delete all data stores in the mobile device for an app</p>
+                      </div>
                     </div>
                   </div>
                 </div>
