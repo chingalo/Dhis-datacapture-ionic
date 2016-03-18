@@ -279,7 +279,7 @@ angular.module('dataCapture')
     //function to extend data elements functionality
     function extendDataElementFunctions(dataElement,value){
       dataElement.attributeValues.forEach(function(attributeValue){
-        if(attributeValue.attribute.name == 'extend'){
+        if(attributeValue.attribute.name == 'extendFunction'){
           var attributeObject = eval("(" + attributeValue.value + ")");
           angular.extend(dataElement,attributeObject);
           var dataElementValue = angular.isUndefined(value.name)? value:value.name;
