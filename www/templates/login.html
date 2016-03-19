@@ -15,7 +15,7 @@
       </div>
 
 
-      <div class="row">
+      <div class="row" ng-if = "! data.loading" >
         <div class="col col-12">
           <form ng-submit="login()">
             <label class="item item-input">
@@ -37,9 +37,9 @@
         </div>
       </div>
 
-      <div class="row" ng-if = "data.loading" style="text-align: center;font-size: 14px;">
+      <div class="row" ng-if = "data.loading" style="text-align:  center;">
         <div class="col col-100">
-          <ion-spinner icon="ios"></ion-spinner>
+          <ion-spinner class="loginLoader" icon="ios" style="font-size: 40px;"></ion-spinner>
         </div>
       </div>
 

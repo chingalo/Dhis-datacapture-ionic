@@ -31,10 +31,10 @@ angular.module('dataCapture', [
     });
   })
 
-  .controller('mainController', function ($scope,$window,$interval,$state,
-                                          userServices,synchronizationServices,
-                                          $ionicHistory,$ionicModal, ionicToast,
-                                          indicatorsServices,reportServices,constantsServices,
+  .controller('mainController', function ($scope, $window, $interval, $state,
+                                          userServices, synchronizationServices,
+                                          $ionicHistory, $ionicModal, ionicToast,
+                                          indicatorsServices, reportServices, constantsServices,
                                           $localStorage, dataSetsServices,
                                           sectionsServices, $indexedDB) {
 
@@ -46,6 +46,7 @@ angular.module('dataCapture', [
     function progressMessage(message) {
       ionicToast.show(message, 'bottom', false, 2500);
     }
+
     function progressTopMessage(message) {
       ionicToast.show(message, 'top', false, 3500);
     }
@@ -71,10 +72,10 @@ angular.module('dataCapture', [
     $scope.data.baseUrl = $localStorage.baseUrl;
 
     //initialization of form label preference
-    if(angular.isUndefined($localStorage.formLabelPreference)){
+    if (angular.isUndefined($localStorage.formLabelPreference)) {
       $localStorage.formLabelPreference = {
-        label : 'formName',
-        placeHolder : 'formName'
+        label: 'formName',
+        placeHolder: 'formName'
       }
     }
 
@@ -82,15 +83,16 @@ angular.module('dataCapture', [
     //function for login into the app
     $scope.login = function () {
       if ($scope.data.baseUrl) {
+        var message = "";
         formatBaseUrl($scope.data.baseUrl);
         if ($scope.data.username && $scope.data.password) {
           authenticateUser($scope.data.username, $scope.data.password);
         } else {
-          var message = 'Please Enter both username and password.';
+          message = 'Please Enter both username and password.';
           progressMessage(message);
         }
       } else {
-        var message = 'Please Enter server URL.';
+        message = 'Please Enter server URL.';
         progressMessage(message);
       }
     };
@@ -103,7 +105,7 @@ angular.module('dataCapture', [
       delete $localStorage.dataEntryData;
       delete $localStorage.loginUserData;
       delete $localStorage.selectedReport;
-      $ionicHistory.clearCache().then(function() {
+      $ionicHistory.clearCache().then(function () {
         $ionicHistory.clearHistory();
         $ionicHistory.nextViewOptions({
           disableBack: true
@@ -118,7 +120,7 @@ angular.module('dataCapture', [
     };
 
     //function redirect the landing page f the app
-    function directToLandingPage(){
+    function directToLandingPage() {
       progressTopMessage("It's ready, kindly enjoy the offline support");
       startSyncProcess($localStorage.loginUser);
       $state.go('app.dataEntry', {}, {location: "replace", reload: true});
@@ -126,20 +128,20 @@ angular.module('dataCapture', [
 
     //function to format url
     //todo append http or https if not included at begin
-    function formatBaseUrl(baseUrl){
+    function formatBaseUrl(baseUrl) {
       var formattedBaseUrl = "";
       var newArray = [];
       var baseUrlString = baseUrl.split('/');
       var length = baseUrlString.length;
-      for(var i=0;i < length; i++){
-        if(baseUrlString[i]){
+      for (var i = 0; i < length; i++) {
+        if (baseUrlString[i]) {
           newArray.push(baseUrlString[i]);
         }
       }
       formattedBaseUrl = newArray[0] + '/';
-      for(var j =0 ; j< newArray.length; j ++){
-        if(j != 0){
-          formattedBaseUrl = formattedBaseUrl + '/'+newArray[j];
+      for (var j = 0; j < newArray.length; j++) {
+        if (j != 0) {
+          formattedBaseUrl = formattedBaseUrl + '/' + newArray[j];
         }
       }
       return formattedBaseUrl;
@@ -152,13 +154,13 @@ angular.module('dataCapture', [
       $scope.data.loading = true;
       var base = formatBaseUrl($scope.data.baseUrl);
       $localStorage.baseUrl = base;
-      if($localStorage.loginUser){
-        if($localStorage.loginUser.password == password && $localStorage.loginUser.username == username){
+      if ($localStorage.loginUser) {
+        if ($localStorage.loginUser.password == password && $localStorage.loginUser.username == username) {
           $scope.data.loading = false;
           //redirect to home page
           directToLandingPage();
         }
-      }else{
+      } else {
         Ext.Ajax.request({
           url: base + '/dhis-web-commons-security/login.action?failed=false',
           callbackKey: 'callback',
@@ -173,7 +175,7 @@ angular.module('dataCapture', [
             var fields = "fields=[:all],userCredentials[userRoles[dataSets[id,name]]";
             //call checking if user is available
             Ext.Ajax.request({
-              url: base + '/api/me.json?'+fields,
+              url: base + '/api/me.json?' + fields,
               callbackKey: 'callback',
               method: 'GET',
               params: {
@@ -188,8 +190,9 @@ angular.module('dataCapture', [
                   var userData = JSON.parse(response.responseText);
                   $localStorage.loginUser = {'username': username, 'password': password};
                   $localStorage.loginUserData = userData;
-                  addAssignedOrgUnit($localStorage.loginUserData.organisationUnits,base);
+                  addAssignedOrgUnit($localStorage.loginUserData.organisationUnits, base);
                   loadDataSets(base);
+                  loadSystemInfo(base);
                 } catch (e) {
                   var message = 'Fail to login, please check your username or password';
                   progressMessage(message);
@@ -221,6 +224,15 @@ angular.module('dataCapture', [
       }
     }
 
+    //function to load system info
+    function loadSystemInfo(base) {
+      userServices.getSystemInfo(base).then(function(systemInfo){
+        $localStorage.systemInfo = systemInfo;
+      },function(){
+        //error getting system info
+      });
+    }
+
     //function to fetching date entry sections
     function loadDataEntrySections(base) {
       $scope.data.loading = true;
@@ -229,7 +241,7 @@ angular.module('dataCapture', [
       sectionsServices.getAllSectionsFromServer(base)
         .then(function (sections) {
           sections.forEach(function (section) {
-            sectionsServices.getIndividualSectionFromServer(section.id,base)
+            sectionsServices.getIndividualSectionFromServer(section.id, base)
               .then(function (data) {
                 $indexedDB.openStore('sections', function (dataSetData) {
                   dataSetData.upsert(data).then(function () {
@@ -256,13 +268,13 @@ angular.module('dataCapture', [
     }
 
     //function to fetching indicators
-    function loadIndicators(base){
+    function loadIndicators(base) {
       $scope.data.loading = true;
       var message = "Downloading available indicators for reports, please wait";
       progressTopMessage(message);
       indicatorsServices.getAllIndicatorsFromServer(base)
-        .then(function(indicators){
-          indicators.forEach(function(indicator){
+        .then(function (indicators) {
+          indicators.forEach(function (indicator) {
             indicatorsServices.saveIndicatorIntoIndexDb(indicator);
           });
 
@@ -270,7 +282,7 @@ angular.module('dataCapture', [
           progressTopMessage(message);
           //leading reports
           loadReports(base)
-        },function(){
+        }, function () {
           //error
           var message = "Fail to download indicators";
           progressTopMessage(message);
@@ -279,15 +291,15 @@ angular.module('dataCapture', [
     }
 
     //function to fetching reports from the server
-    function loadReports(base){
+    function loadReports(base) {
       $scope.data.loading = true;
       var message = "Downloading available reports for offline support, please wait";
       progressTopMessage(message);
       reportServices.getAllReportsFromServer(base)
-        .then(function(reports){
+        .then(function (reports) {
           $scope.data.reports = reports;
           reportServices.saveReportToIndexDb(reports);
-          reports.forEach(function(report){
+          reports.forEach(function (report) {
             reportServices.saveReportToIndexDb(report);
           });
 
@@ -295,7 +307,7 @@ angular.module('dataCapture', [
           progressTopMessage(message);
           //loading all constants
           loadConstants(base)
-        },function(){
+        }, function () {
           //error
           var message = "Fail to download reports";
           progressTopMessage(message);
@@ -304,19 +316,19 @@ angular.module('dataCapture', [
     }
 
     //function to fetching all constants from the server
-    function loadConstants(base){
+    function loadConstants(base) {
       var message = "Downloading available constants for reports, please wait";
       progressTopMessage(message);
       constantsServices.getAllConstantsFromServer(base)
-        .then(function(constants){
-          constants.forEach(function(constant){
+        .then(function (constants) {
+          constants.forEach(function (constant) {
             constantsServices.saveConstantIntoIndexDb(constant);
           });
           var message = "Complete saving available constants for reports";
           progressTopMessage(message);
           //redirect to th landing page
           directToLandingPage();
-        },function(){
+        }, function () {
           $scope.data.loading = false;
           var message = "Fail to download constants for reports";
           progressTopMessage(message);
@@ -331,7 +343,7 @@ angular.module('dataCapture', [
       progressTopMessage(message);
       dataSetsServices.getAllDataSetsFromServer(base).then(function (dataSets) {
         dataSets.forEach(function (dataSet) {
-          dataSetsServices.getIndividualDataSetFromServer(dataSet.id,base).then(function (data) {
+          dataSetsServices.getIndividualDataSetFromServer(dataSet.id, base).then(function (data) {
             $indexedDB.openStore('dataSets', function (dataSetData) {
               dataSetData.upsert(data).then(function () {
                 //success
@@ -357,11 +369,11 @@ angular.module('dataCapture', [
     }
 
     //function to fetch all orgUnits assigned to the user from server
-    function addAssignedOrgUnit(orgUnits,baseUrl) {
+    function addAssignedOrgUnit(orgUnits, baseUrl) {
       var message = 'fetching all assigned organisation units';
       ionicToast.show(message, 'top', false, 2500);
       orgUnits.forEach(function (orgUnit) {
-        userServices.getAssignedOrgUnitChildrenFromServer(orgUnit.id,baseUrl).then(function(OrgUnitChildrenData){
+        userServices.getAssignedOrgUnitChildrenFromServer(orgUnit.id, baseUrl).then(function (OrgUnitChildrenData) {
           $indexedDB.openStore('orgUnits', function (orgUnitsData) {
             orgUnitsData.upsert(OrgUnitChildrenData).then(function () {
               //success
@@ -369,16 +381,16 @@ angular.module('dataCapture', [
               //error
             });
           })
-        },function(){
+        }, function () {
         });
 
       });
     }
 
     //Synchronization processing
-    function startSyncProcess(user){
+    function startSyncProcess(user) {
       var time = null;
-      if($localStorage.syncTime){
+      if ($localStorage.syncTime) {
         time = $localStorage.syncTime;
       }
       synchronizationServices.startSync(time);
@@ -386,7 +398,7 @@ angular.module('dataCapture', [
     }
   })
 
-  .config(function ($stateProvider, $urlRouterProvider, $indexedDBProvider,$ionicConfigProvider) {
+  .config(function ($stateProvider, $urlRouterProvider, $indexedDBProvider, $ionicConfigProvider) {
     $ionicConfigProvider.scrolling.jsScrolling(false);
     $indexedDBProvider
       .connection('hisptz')
@@ -411,14 +423,14 @@ angular.module('dataCapture', [
         dataSets.createIndex('id_index', 'id', {unique: true});
 
       })
-      .upgradeDatabase(2, function(event, db, tx){
+      .upgradeDatabase(2, function (event, db, tx) {
         var dataSets = db.createObjectStore('indicators', {keyPath: 'id'});
         dataSets.createIndex('id_index', 'id', {unique: true});
       })
-    .upgradeDatabase(3, function(event, db, tx){
-      var dataSets = db.createObjectStore('constants', {keyPath: 'id'});
-      dataSets.createIndex('id_index', 'id', {unique: true});
-    });
+      .upgradeDatabase(3, function (event, db, tx) {
+        var dataSets = db.createObjectStore('constants', {keyPath: 'id'});
+        dataSets.createIndex('id_index', 'id', {unique: true});
+      });
 
     $stateProvider
       .state('login', {
@@ -439,6 +451,15 @@ angular.module('dataCapture', [
           'menuContent': {
             templateUrl: 'templates/help.html',
             controller: 'helpController'
+          }
+        }
+      })
+      .state('app.about', {
+        url: '/about',
+        views: {
+          'menuContent': {
+            templateUrl: 'templates/about.html',
+            controller: 'aboutController'
           }
         }
       })
@@ -512,14 +533,14 @@ angular.module('dataCapture', [
     // if none of the above states are matched, use this as the fallback
     $urlRouterProvider.otherwise('/login');
   })
-  .filter('paginationFilter', function() {
-    return function(input, start) {
+  .filter('paginationFilter', function () {
+    return function (input, start) {
       start = +start; //parse to int
       return input.slice(start);
     }
   })
-  .filter('to_trusted_html', ['$sce', function($sce){
-    return function(text) {
+  .filter('to_trusted_html', ['$sce', function ($sce) {
+    return function (text) {
       return $sce.trustAsHtml(text);
     };
   }])

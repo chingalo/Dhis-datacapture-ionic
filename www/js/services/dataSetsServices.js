@@ -81,7 +81,7 @@ angular.module('dataCapture')
       saveDataSetDataValue:function(data){
         $indexedDB.openStore('dataValues',function(dataValuesData){
           dataValuesData.upsert(data).then(function(){
-            console.log(data.value);
+            //success saving data values
           },function(){
             //error
           });

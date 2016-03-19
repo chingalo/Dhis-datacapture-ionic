@@ -84,7 +84,7 @@ angular.module('dataCapture')
       var pe = $localStorage.dataEntryData.period;
       var dataSetId = $localStorage.dataEntryData.dataSet.id;
       $scope.data.loading = true;
-      dataElements.forEach(function(dataElement){;
+      dataElements.forEach(function(dataElement){
         dataElement.categoryCombo.categoryOptionCombos.forEach(function(categoryOptionCombo){
           var id = dataSetId + '-' + dataElement.id + '-' +categoryOptionCombo.id+ '-' +pe+ '-' +ou;
           dataSetsServices.getDataValueById(id)
@@ -116,12 +116,15 @@ angular.module('dataCapture')
             progressMessage("There are " + dataElementsValuesFromServer.length + " data values that has been found from server");
             dataElementsValuesFromServer.forEach(function(dataElementValues,index){
               var value = isDataElementValueTypeNumber(dataElementValues.dataElement)?parseInt(dataElementValues.value):dataElementValues.value;
-              $scope.data.dataValues[dataElementValues.dataElement+'-'+dataElementValues.categoryOptionCombo] = isDataElementHasDropDown(dataElementValues.dataElement)?{name :value,id : ''} : value;
-              prepareDataValuesToIndexDb(dataElementValues.dataElement + "-" + dataElementValues.categoryOptionCombo,value,true);
+              var storedValue = isDataElementHasDropDown(dataElementValues.dataElement)?{name :value,id : ''} : value;
+              $scope.data.dataValues[dataElementValues.dataElement+'-'+dataElementValues.categoryOptionCombo] = storedValue;
+              prepareDataValuesToIndexDb(dataElementValues.dataElement + "-" + dataElementValues.categoryOptionCombo,storedValue,true);
               if(index < dataElementsValuesFromServer.length){
                 progressMessage("Waiting while saving data to local storage");
               }else{
-                progressMessage("All data has been saved to local storage");
+                if(index == dataElementsValuesFromServer.length -1 ){
+                  progressMessage("All data has been saved to local storage");
+                }
               }
             });
             $scope.data.loading = false;
@@ -276,7 +279,7 @@ angular.module('dataCapture')
     //function to extend data elements functionality
     function extendDataElementFunctions(dataElement,value){
       dataElement.attributeValues.forEach(function(attributeValue){
-        if(attributeValue.attribute.name == 'extend'){
+        if(attributeValue.attribute.name == 'extendFunction'){
           var attributeObject = eval("(" + attributeValue.value + ")");
           angular.extend(dataElement,attributeObject);
           var dataElementValue = angular.isUndefined(value.name)? value:value.name;
@@ -418,7 +421,6 @@ angular.module('dataCapture')
           $localStorage.dataSetDataElements = dataElements;
           $localStorage.dataEntryData.dataSet.dataElements = trimmedOffBRNScoreValuesDataElements;
           $scope.data.loading = false;
-          //$state.go('app.dataEntryForm');
         }
       });
     }
