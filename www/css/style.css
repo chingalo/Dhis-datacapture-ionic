@@ -37,3 +37,10 @@ span.arrow{
 .list .item.item-accordion.ng-hide-remove {
   display: block !important;
 }
+.loginLoader svg{
+  width: 80%;
+  height: 200px;
+  background: white;
+  border-radius: 5px;
+  padding:2%;
+}

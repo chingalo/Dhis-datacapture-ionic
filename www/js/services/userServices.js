@@ -138,6 +138,17 @@ angular.module('dataCapture')
           });
         return defer.promise;
       },
+      getSystemInfo : function(baseUrl){
+        var defer = $q.defer();
+        $http.get(baseUrl + '/api/system/info')
+          .success(function(results){
+            defer.resolve(results);
+          })
+          .error(function(){
+            defer.reject();
+          });
+        return defer.promise;
+      },
       deleteOrgUnitFromIndexDb:function(){
         var defer = $q.defer();
         $indexedDB.openStore('orgUnits', function (orgUnits) {
