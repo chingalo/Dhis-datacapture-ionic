@@ -92,7 +92,6 @@
       },
       getDataElementValue: function (de, coc, dataSet, match) {
         var defer = $.Deferred();
-        var sum = undefined;
         var dataValuesStore = $.indexedDB("hisptz").objectStore("dataValues");
         var promise = dataValuesStore.get(dataSet + "-" + de + "-" + coc + "-" + dhis2.report.period + "-" + dhis2.report.organisationUnit.id);
         promise.done(function (item, event) {
@@ -101,10 +100,10 @@
             if (val && dhis2.validation.isNumber(val)) {
               defer.resolve(new Number(item.value), match);
             } else {
-              defer.resolve(undefined);
+              defer.resolve(new Number("0"), match);
             }
           } else {
-            defer.resolve(undefined);
+            defer.resolve(new Number("0"), match);
           }
         });
         promise.fail(function (error, event) {
@@ -122,10 +121,10 @@
             if (val && dhis2.validation.isNumber(val)) {
               defer.resolve(new Number(constant.value), match);
             } else {
-              defer.resolve(undefined);
+              defer.resolve(new Number(0), match);
             }
           } else {
-            defer.resolve(undefined);
+            defer.resolve(new Number(0), match);
           }
 
         })
@@ -150,24 +149,15 @@
           var isTotal = !!( operand.indexOf(dhis2.de.cst.separator) == -1 );
 
           if (isTotal) {
-
             deferreds.push(dhis2.de.getDataElementTotalValue(operand, dataSet, match).done(function (sum, matchRef) {
-              if (sum && expression) {
-                expression = expression.replace(matchRef, sum);
-              } else {
-                expression = undefined;
-              }
+              expression = expression.replace(matchRef, sum);
             }));
           }
           else {
             var de = operand.substring(0, operand.indexOf(dhis2.de.cst.separator));
             var coc = operand.substring(operand.indexOf(dhis2.de.cst.separator) + 1, operand.length);
             deferreds.push(dhis2.de.getDataElementValue(de, coc, dataSet, match).done(function (sum, matchRef) {
-              if (sum && expression) {
-                expression = expression.replace(matchRef, sum);
-              } else {
-                expression = undefined;
-              }
+              expression = expression.replace(matchRef, sum);
             }));
           }
 
@@ -180,16 +170,15 @@
 
           var operand = match.replace(/[C\{\}]/g, '');
           deferreds.push(dhis2.de.getConstantValue(operand, dataSet, match).done(function (sum, matchRef) {
-            if (sum && expression) {
-              expression = expression.replace(matchRef, sum);
-            } else {
-              expression = undefined;
-            }
+            expression = expression.replace(matchRef, sum);
           }));
         }
         $.when.apply($, deferreds).then(function () {
+          if(expression == "0"){
+            expression = 0;
+          }
 
-          defer.resolve(expression);
+          defer.resolve(eval('(' + expression + ')'));
         });
         return defer.promise();
       },
@@ -251,7 +240,8 @@
           denominator = denominatorResult;
         }));
         $.when.apply($, promises).then(function () {
-          defer.resolve((numerator / denominator) * indicator.indicatorType.factor);
+          var returnValue = (numerator / denominator) * indicator.indicatorType.factor;
+          defer.resolve(returnValue);
         });
         return defer.promise();
       },
