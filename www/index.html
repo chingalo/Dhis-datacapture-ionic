@@ -6,7 +6,6 @@
   <meta http-equiv="Content-Security-Policy"
         content="default-src *; style-src &apos;self&apos; &apos;unsafe-inline&apos;; script-src &apos;self&apos; &apos;unsafe-inline&apos; &apos;unsafe-eval&apos;">
   <title></title>
-
   <link href="lib/ionic/css/ionic.css" rel="stylesheet">
   <link rel="stylesheet" href="library/jquery-ui/jqueryui-1.11.4/themes/base/jquery-ui.css">
   <link rel="stylesheet" href="library/angular-multi-select-tree/angular-multi-select-tree-0.1.0.css">
@@ -34,6 +33,9 @@
   <script src="js/controllers/settingController.js"></script>
   <script src="js/controllers/helpController.js"></script>
   <script src="js/controllers/aboutController.js"></script>
+  <script src="js/controllers/eventCaptureController.js"></script>
+  <script src="js/controllers/dashboardController.js"></script>
+  <script src="js/controllers/trackerCaptureController.js"></script>
 
   <!-- services -->
   <script src="js/services/dataSetsServices.js"></script>
@@ -66,7 +68,7 @@
         }
       },
       report: {}
-    }
+    };
     dhis2.de = {
       getDataElementTotalValue: function (de, dataSet, match) {
         var defer = $.Deferred();
@@ -84,7 +86,6 @@
         promise.done(function (result, event) {
           defer.resolve(sum, match);
         });
-
         promise.fail(function (error, event) {
           defer.reject(error);
         });
@@ -126,9 +127,7 @@
           } else {
             defer.resolve(new Number(0), match);
           }
-
-        })
-
+        });
         promise.fail(function (error, event) {
           defer.reject(error);
         });
@@ -141,13 +140,9 @@
         var cMatcher = expression.match(dhis2.de.cst.constantPattern);
         for (k in matcher) {
           var match = matcher[k];
-
           // Remove brackets from expression to simplify extraction of identifiers
-
           var operand = match.replace(/[#\{\}]/g, '');
-
           var isTotal = !!( operand.indexOf(dhis2.de.cst.separator) == -1 );
-
           if (isTotal) {
             deferreds.push(dhis2.de.getDataElementTotalValue(operand, dataSet, match).done(function (sum, matchRef) {
               expression = expression.replace(matchRef, sum);
@@ -160,14 +155,11 @@
               expression = expression.replace(matchRef, sum);
             }));
           }
-
           // TODO signed numbers
         }
         for (k in cMatcher) {
           var match = cMatcher[k];
-
           // Remove brackets from expression to simplify extraction of identifiers
-
           var operand = match.replace(/[C\{\}]/g, '');
           deferreds.push(dhis2.de.getConstantValue(operand, dataSet, match).done(function (sum, matchRef) {
             expression = expression.replace(matchRef, sum);
@@ -177,7 +169,6 @@
           if(expression == "0"){
             expression = 0;
           }
-
           defer.resolve(eval('(' + expression + ')'));
         });
         return defer.promise();
@@ -194,7 +185,6 @@
           deferreds.push(indicatorPromise.done(function (result, event) {
             indicators.push(result);
           }));
-
           indicatorPromise.fail(function (error, event) {
 
           });
@@ -225,7 +215,7 @@
           $.when.apply($, promises).then(function () {
             defer.resolve(data);
           });
-        })
+        });
         return defer.promise();
       },
       evaluateDataIndicator: function (indicator, dataSet) {
@@ -250,7 +240,7 @@
         constantPattern: /C\{.+?\}/g,
         separator: "."
       }
-    }
+    };
     var reportParams = {
       ou: "",
       pe: ""
@@ -263,9 +253,6 @@
 </head>
 
 <body ng-app="dataCapture" ng-controller="mainController">
-<!--<ion-nav-bar class="appBackground">-->
-  <!--<ion-nav-back-button class="button-icon icon ion-ios-arrow-back">Back</ion-nav-back-button>-->
-<!--</ion-nav-bar>-->
 <ion-nav-view></ion-nav-view>
 </body>
 </html>

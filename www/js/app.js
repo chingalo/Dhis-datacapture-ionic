@@ -454,12 +454,43 @@ angular.module('dataCapture', [
           }
         }
       })
+
       .state('app.about', {
         url: '/about',
         views: {
           'menuContent': {
             templateUrl: 'templates/about.html',
             controller: 'aboutController'
+          }
+        }
+      })
+
+      .state('app.dashboard', {
+        url: '/dashboard',
+        views: {
+          'menuContent': {
+            templateUrl: 'templates/dashboardHome.html',
+            controller: 'dashboardController'
+          }
+        }
+      })
+
+      .state('app.eventCapture', {
+        url: '/event-capture',
+        views: {
+          'menuContent': {
+            templateUrl: 'templates/eventCaptureHome.html',
+            controller: 'eventCaptureController'
+          }
+        }
+      })
+
+      .state('app.trackerCapture', {
+        url: '/tracker-capture',
+        views: {
+          'menuContent': {
+            templateUrl: 'templates/trackerCaptureHome.html',
+            controller: 'trackerCaptureController'
           }
         }
       })
