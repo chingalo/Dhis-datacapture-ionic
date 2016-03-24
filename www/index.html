@@ -92,7 +92,6 @@
       },
       getDataElementValue: function (de, coc, dataSet, match) {
         var defer = $.Deferred();
-        var sum = undefined;
         var dataValuesStore = $.indexedDB("hisptz").objectStore("dataValues");
         var promise = dataValuesStore.get(dataSet + "-" + de + "-" + coc + "-" + dhis2.report.period + "-" + dhis2.report.organisationUnit.id);
         promise.done(function (item, event) {
@@ -136,9 +135,6 @@
         return defer.promise();
       },
       generateExpression: function (expression, dataSet) {
-        if(expression == undefined){
-          console.log("Undefined Indicator:",expression)
-        }
         var defer = $.Deferred();
         var deferreds = [];
         var matcher = expression.match(dhis2.de.cst.formulaPattern);
@@ -153,25 +149,15 @@
           var isTotal = !!( operand.indexOf(dhis2.de.cst.separator) == -1 );
 
           if (isTotal) {
-            console.log("Not supposed to be reached.");
             deferreds.push(dhis2.de.getDataElementTotalValue(operand, dataSet, match).done(function (sum, matchRef) {
-              if (sum && expression) {
-                expression = expression.replace(matchRef, sum);
-              } else {
-                expression = expression.replace(matchRef, "0");
-              }
+              expression = expression.replace(matchRef, sum);
             }));
           }
           else {
             var de = operand.substring(0, operand.indexOf(dhis2.de.cst.separator));
             var coc = operand.substring(operand.indexOf(dhis2.de.cst.separator) + 1, operand.length);
             deferreds.push(dhis2.de.getDataElementValue(de, coc, dataSet, match).done(function (sum, matchRef) {
-
-              if (expression) {
-                expression = expression.replace(matchRef, sum);
-              } else {
-                console.log(expression);
-              }
+              expression = expression.replace(matchRef, sum);
             }));
           }
 
@@ -188,6 +174,9 @@
           }));
         }
         $.when.apply($, deferreds).then(function () {
+          if(expression == "0"){
+            expression = 0;
+          }
 
           defer.resolve(eval('(' + expression + ')'));
         });
@@ -252,12 +241,6 @@
         }));
         $.when.apply($, promises).then(function () {
           var returnValue = (numerator / denominator) * indicator.indicatorType.factor;
-          if (returnValue) {
-            console.log("Value Evaluated:",numerator,denominator);
-            //data.rows.push([indicator.id, dhis2.report.period, value]);
-          }else{
-            console.log("Value Missevaluated:",numerator,denominator);//JSON.stringify(indicator));
-          }
           defer.resolve(returnValue);
         });
         return defer.promise();
