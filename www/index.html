@@ -100,10 +100,10 @@
             if (val && dhis2.validation.isNumber(val)) {
               defer.resolve(new Number(item.value), match);
             } else {
-              defer.resolve(undefined);
+              defer.resolve(new Number("0"), match);
             }
           } else {
-            defer.resolve(undefined);
+            defer.resolve(new Number("0"), match);
           }
         });
         promise.fail(function (error, event) {
@@ -121,10 +121,10 @@
             if (val && dhis2.validation.isNumber(val)) {
               defer.resolve(new Number(constant.value), match);
             } else {
-              defer.resolve(undefined);
+              defer.resolve(new Number(0), match);
             }
           } else {
-            defer.resolve(undefined);
+            defer.resolve(new Number(0), match);
           }
 
         })
@@ -135,6 +135,9 @@
         return defer.promise();
       },
       generateExpression: function (expression, dataSet) {
+        if(expression == undefined){
+          console.log("Undefined Indicator:",expression)
+        }
         var defer = $.Deferred();
         var deferreds = [];
         var matcher = expression.match(dhis2.de.cst.formulaPattern);
@@ -149,12 +152,12 @@
           var isTotal = !!( operand.indexOf(dhis2.de.cst.separator) == -1 );
 
           if (isTotal) {
-
+            console.log("Not supposed to be reached.");
             deferreds.push(dhis2.de.getDataElementTotalValue(operand, dataSet, match).done(function (sum, matchRef) {
               if (sum && expression) {
                 expression = expression.replace(matchRef, sum);
               } else {
-                expression = undefined;
+                expression = expression.replace(matchRef, "0");
               }
             }));
           }
@@ -162,10 +165,11 @@
             var de = operand.substring(0, operand.indexOf(dhis2.de.cst.separator));
             var coc = operand.substring(operand.indexOf(dhis2.de.cst.separator) + 1, operand.length);
             deferreds.push(dhis2.de.getDataElementValue(de, coc, dataSet, match).done(function (sum, matchRef) {
-              if (sum && expression) {
+
+              if (expression) {
                 expression = expression.replace(matchRef, sum);
               } else {
-                expression = undefined;
+                console.log(expression);
               }
             }));
           }
@@ -179,16 +183,12 @@
 
           var operand = match.replace(/[C\{\}]/g, '');
           deferreds.push(dhis2.de.getConstantValue(operand, dataSet, match).done(function (sum, matchRef) {
-            if (sum && expression) {
-              expression = expression.replace(matchRef, sum);
-            } else {
-              expression = undefined;
-            }
+            expression = expression.replace(matchRef, sum);
           }));
         }
         $.when.apply($, deferreds).then(function () {
 
-          defer.resolve(expression);
+          defer.resolve(eval('(' + expression + ')'));
         });
         return defer.promise();
       },
@@ -250,7 +250,14 @@
           denominator = denominatorResult;
         }));
         $.when.apply($, promises).then(function () {
-          defer.resolve((numerator / denominator) * indicator.indicatorType.factor);
+          var returnValue = (numerator / denominator) * indicator.indicatorType.factor;
+          if (returnValue) {
+            console.log("Value Evaluated:",numerator,denominator);
+            //data.rows.push([indicator.id, dhis2.report.period, value]);
+          }else{
+            console.log("Value Missevaluated:",numerator,denominator);//JSON.stringify(indicator));
+          }
+          defer.resolve(returnValue);
         });
         return defer.promise();
       },
