@@ -45,6 +45,6 @@ span.arrow{
   border-radius: 5px;
   padding:2%;
 }
-.tooltip {
-  padding: 5%;
+.tooltipSize {
+  padding: 10px;
 }
