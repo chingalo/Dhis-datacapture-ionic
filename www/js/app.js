@@ -12,7 +12,8 @@ angular.module('dataCapture', [
     'ngSanitize',
     'ui.date',
     'multi-select-tree',
-    'ngSanitize'
+    'ngSanitize',
+    'angular-spinkit'
   ])
 
   .run(function ($ionicPlatform) {
@@ -226,9 +227,9 @@ angular.module('dataCapture', [
 
     //function to load system info
     function loadSystemInfo(base) {
-      userServices.getSystemInfo(base).then(function(systemInfo){
+      userServices.getSystemInfo(base).then(function (systemInfo) {
         $localStorage.systemInfo = systemInfo;
-      },function(){
+      }, function () {
         //error getting system info
       });
     }
