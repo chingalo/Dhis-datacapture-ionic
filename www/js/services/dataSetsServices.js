@@ -8,21 +8,10 @@ angular.module('dataCapture')
 
       getAllDataSetsFromServer :function(baseUrl){
         var defer = $q.defer();
-        $http.get(baseUrl + '/api/dataSets.json?paging=false&fields=id')
+        var field = "fields=id,name,timelyDays,formType,version,periodType,openFuturePeriods,expiryDays,dataEntryForm,dataElements[id,name,displayName,description,formName,attributeValues[value,attribute[name]],valueType,optionSet[name,options[name,id]],categoryCombo[id,name,categoryOptionCombos[id,name]]],organisationUnits[id,name],sections[id,name],indicators[id,name,indicatorType[factor],denominatorDescription,numeratorDescription,numerator,denominator],categoryCombo[id,name,displayName,categoryOptionCombos[id,name]]";
+        $http.get(baseUrl + '/api/dataSets.json?paging=false&' + field)
           .success(function(results){
             defer.resolve(results.dataSets);
-          })
-          .error(function(){
-            defer.reject('error');
-          });
-        return defer.promise;
-      },
-      getIndividualDataSetFromServer : function(dataSetId,baseUrl){
-        var defer = $q.defer();
-        var field = "fields=id,name,timelyDays,formType,version,periodType,openFuturePeriods,expiryDays,dataEntryForm,dataElements[id,name,displayName,description,formName,attributeValues[value,attribute[name]],valueType,optionSet[name,options[name,id]],categoryCombo[id,name,categoryOptionCombos[id,name]]],organisationUnits[id,name],sections[id,name],indicators[id,name,indicatorType[factor],denominatorDescription,numeratorDescription,numerator,denominator],categoryCombo[id,name,displayName,categoryOptionCombos[id,name]]"
-        $http.get(baseUrl + '/api/dataSets/'+dataSetId+'.json?'+field)
-          .success(function(results){
-            defer.resolve(results);
           })
           .error(function(){
             defer.reject('error');

@@ -8,21 +8,10 @@ angular.module('dataCapture')
     var sectionsServices = {
       getAllSectionsFromServer : function(baseUrl){
         var defer = $q.defer();
-        $http.get(baseUrl + '/api/sections.json?paging=false&fields=id')
+        var field = "fields=dataSet,id,name,indicators[id,name,indicatorType[factor],denominatorDescription,numeratorDescription,numerator,denominator],dataElements[id,name,formName,attributeValues[value,attribute[name]],categoryCombo[id,name,categoryOptionCombos[id,name]],displayName,description,valueType,optionSet[name,options[name,id]]";
+        $http.get(baseUrl + '/api/sections.json?paging=false&' + field)
           .success(function(results){
             defer.resolve(results.sections);
-          })
-          .error(function(){
-            defer.reject('error');
-          });
-        return defer.promise;
-      },
-      getIndividualSectionFromServer : function(sectionId,baseUrl){
-        var defer = $q.defer();
-        var field = "fields=dataSet,id,name,indicators[id,name,indicatorType[factor],denominatorDescription,numeratorDescription,numerator,denominator],dataElements[id,name,formName,attributeValues[value,attribute[name]],categoryCombo[id,name,categoryOptionCombos[id,name]],displayName,description,valueType,optionSet[name,options[name,id]]";
-        $http.get(baseUrl + '/api/sections/'+sectionId+'.json?'+field)
-          .success(function(results){
-            defer.resolve(results);
           })
           .error(function(){
             defer.reject('error');

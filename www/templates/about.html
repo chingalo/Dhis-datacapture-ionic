@@ -19,7 +19,7 @@
             <div ng-repeat="(key,value) in data.systemInfo" ng-if = "key != 'userAgent'">
               <h2>{{ key }}</h2>
               <div ng-if = "key == 'databaseInfo'">
-                <p ng-repeat = "(k,v) in data.systemInfo[key]">{{ k  }} : {{ data.systemInfo[key][k]}}</p>
+                <p ng-repeat = "(k,v) in data.systemInfo[key]">{{ k  }} : {{ v }}</p>
               </div>
               <p ng-if = "key != 'databaseInfo'">{{ value }}</p>
             </div>

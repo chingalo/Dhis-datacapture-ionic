@@ -241,19 +241,15 @@ angular.module('dataCapture', [
       progressTopMessage(message);
       sectionsServices.getAllSectionsFromServer(base)
         .then(function (sections) {
-          sections.forEach(function (section) {
-            sectionsServices.getIndividualSectionFromServer(section.id, base)
-              .then(function (data) {
-                $indexedDB.openStore('sections', function (dataSetData) {
-                  dataSetData.upsert(data).then(function () {
-                    //success
-                  }, function () {
-                    //error
-                  });
-                });
+          sections.forEach(function (section,index) {
+            console.log('section : '  + index + 1);
+            $indexedDB.openStore('sections', function (dataSetData) {
+              dataSetData.upsert(section).then(function () {
+                //success
               }, function () {
                 //error
               });
+            });
           });
           //saving data entry form sections
           var message = "Complete Saving data entry form sections";
@@ -344,18 +340,13 @@ angular.module('dataCapture', [
       progressTopMessage(message);
       dataSetsServices.getAllDataSetsFromServer(base).then(function (dataSets) {
         dataSets.forEach(function (dataSet) {
-          dataSetsServices.getIndividualDataSetFromServer(dataSet.id, base).then(function (data) {
-            $indexedDB.openStore('dataSets', function (dataSetData) {
-              dataSetData.upsert(data).then(function () {
-                //success
-              }, function () {
-                //error getting individual data set
-              });
-            })
-          }, function () {
-            //error
-
-          });
+          $indexedDB.openStore('dataSets', function (dataSetData) {
+            dataSetData.upsert(dataSet).then(function () {
+              //success
+            }, function () {
+              //error getting individual data set
+            });
+          })
         });
         var message = "Complete saving available data entry forms";
         progressTopMessage(message);
