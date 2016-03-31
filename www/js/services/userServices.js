@@ -87,69 +87,39 @@ angular.module('dataCapture')
 
     /* jshint ignore:end */
   })
-  .factory('userServices',function($http,$q,$localStorage,$indexedDB,Base64){
+  .factory('userServices', function ($http, $q, $localStorage, $indexedDB, Base64) {
 
     var userServices = {
-      authenticateUser : function(username,password){
-        var base = $localStorage.baseUrl ;
-        if(base){
+      authenticateUser: function (username, password) {
+        var base = $localStorage.baseUrl;
+        if (base) {
           $http.defaults.headers.common.Authorization = 'Basic ' + Base64.encode(username + ':' + password);
-          /*Ext.Ajax.request({
-            url: base + '/dhis-web-commons-security/login.action?failed=false',
-            callbackKey: 'callback',
-            method: 'POST',
-            params: {
-              j_username: username,
-              j_password: password
-            },
-            withCredentials: true,
-            useDefaultXhrHeader: false,
-            success: function () {
-              Ext.Ajax.request({
-                url: base + '/api/me.json',
-                callbackKey: 'callback',
-                method: 'GET',
-                params: {
-                  j_username: username,
-                  j_password: password
-                },
-                withCredentials: true,
-                useDefaultXhrHeader: false,
-                success: function (response) {
-                },
-                failure: function () {
-                }
-              });
-            },
-            failure: function () {
-            }
-          });*/
         }
       },
-      getAssignedOrgUnitChildrenFromServer : function(orgUnitId,baseUrl){
+      getAssignedOrgUnitChildrenFromServer: function (orgUnitId, baseUrl) {
         var defer = $q.defer();
         var fields = "fields=id,name,code,ancestors[id,name],children[id,name,code,ancestors[id,name],children[id,name,code,ancestors[id,name],children[id,name,code,ancestors[id,name],children[id,name,code,ancestors[id,name],children[id,name,code,ancestors[id,name]]]]]]";
-        $http.get(baseUrl + '/api/organisationUnits/'+orgUnitId+'.json?'+fields)
-          .success(function(results){
+        $http.get(baseUrl + '/api/organisationUnits/' + orgUnitId + '.json?' + fields)
+          .success(function (results) {
             defer.resolve(results);
           })
-          .error(function(){
+          .error(function () {
             defer.reject();
           });
         return defer.promise;
       },
-      getSystemInfo : function(baseUrl){
+      getSystemInfo: function (baseUrl) {
         var defer = $q.defer();
         $http.get(baseUrl + '/api/system/info')
-          .success(function(results){
+          .success(function (results) {
             defer.resolve(results);
           })
-          .error(function(){
+          .error(function () {
             defer.reject();
           });
         return defer.promise;
       },
-      deleteOrgUnitFromIndexDb:function(){
+      deleteOrgUnitFromIndexDb: function () {
         var defer = $q.defer();
         $indexedDB.openStore('orgUnits', function (orgUnits) {
           orgUnits.clear().then(function () {
@@ -162,23 +132,23 @@ angular.module('dataCapture')
         })
         return defer.promise;
       },
-      getAssignedOrgUnitFromIndexDb : function(){
+      getAssignedOrgUnitFromIndexDb: function () {
         var defer = $q.defer();
-        $indexedDB.openStore('orgUnits',function(orgUnitData){
-          orgUnitData.getAll().then(function(data){
+        $indexedDB.openStore('orgUnits', function (orgUnitData) {
+          orgUnitData.getAll().then(function (data) {
             defer.resolve(data);
-          },function(){
+          }, function () {
             defer.reject('error');
           });
         });
 
         return defer.promise;
       },
-      updateAssignedOrgUnits : function(){
+      updateAssignedOrgUnits: function () {
         var base = $localStorage.baseUrl;
         var orgUnits = $localStorage.loginUserData.organisationUnits;
-        orgUnits.forEach(function(orgUnit){
-          this.getAssignedOrgUnitChildrenFromServer(orgUnit.id,base).then(function(data){
+        orgUnits.forEach(function (orgUnit) {
+          this.getAssignedOrgUnitChildrenFromServer(orgUnit.id, base).then(function (data) {
             $indexedDB.openStore('dataSets', function (dataSetData) {
               dataSetData.upsert(data).then(function () {
                 //success
