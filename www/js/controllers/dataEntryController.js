@@ -21,6 +21,10 @@ angular.module('dataCapture')
     $scope.data.orgUnits = [];
     $scope.data.orgUnit = [];
     $scope.data.selectedDataEntryForm = null;
+    $scope.data.dataValue = {
+      local : 0,
+      online : 0
+    }
 
     //pagination variables
     $scope.currentPage = 0;
@@ -93,6 +97,8 @@ angular.module('dataCapture')
       var pe = $localStorage.dataEntryData.period;
       var dataSetId = $localStorage.dataEntryData.dataSet.id;
       $scope.data.loading = true;
+      $localStorage.localStorageValues = 0;
+      var counter = 0;
       dataElements.forEach(function(dataElement,index){
         dataElement.categoryCombo.categoryOptionCombos.forEach(function(categoryOptionCombo){
           var id = dataSetId + '-' + dataElement.id + '-' +categoryOptionCombo.id+ '-' +pe+ '-' +ou;
@@ -100,8 +106,11 @@ angular.module('dataCapture')
             .then(function(returnedDataValue){
               if(index + 1 == dataElements.length){
                 unBlockUi();
+                $scope.data.dataValue.local = $localStorage.localStorageValues;
               }
               if(returnedDataValue != null){
+                counter ++;
+                $localStorage.localStorageValues = counter;
                 if(id == returnedDataValue.id){
                   $scope.data.dataValues[dataElement.id+'-'+returnedDataValue.co] = isDataElementHasDropDown(dataElement.id)?{name :returnedDataValue.value,id:''}:returnedDataValue.value;
                 }
@@ -126,6 +135,7 @@ angular.module('dataCapture')
       dataValueSetServices.getDataValueSet(dataSet,period,orgUnit)
         .then(function(dataElementsValuesFromServer){
           if(dataElementsValuesFromServer){
+            $scope.data.dataValue.online = dataElementsValuesFromServer.length;
             progressMessage("There are " + dataElementsValuesFromServer.length + " data values that has been found from server");
             dataElementsValuesFromServer.forEach(function(dataElementValues,index){
               var value = isDataElementValueTypeNumber(dataElementValues.dataElement)?parseInt(dataElementValues.value):dataElementValues.value;
