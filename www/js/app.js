@@ -80,6 +80,13 @@ angular.module('dataCapture', [
       }
     }
 
+    //initialize data downloading on login process
+    if(angular.isUndefined($localStorage.DataDownLoadingMessage)){
+      $localStorage.DataDownLoadingMessage = [];
+    }
+    if(angular.isUndefined($localStorage.DataDownLoadingStatus)){
+      $localStorage.DataDownLoadingStatus = false;
+    }
 
     //function for login into the app
     $scope.login = function () {
@@ -87,6 +94,10 @@ angular.module('dataCapture', [
         var message = "";
         formatBaseUrl($scope.data.baseUrl);
         if ($scope.data.username && $scope.data.password) {
+          $localStorage.DataDownLoadingMessage = [];
+          $localStorage.DataDownLoadingStatus = false;
+          $localStorage.DataDownLoadingMessage.push('Authenticating user');
+          $scope.data.DataDownLoadingMessage = $localStorage.DataDownLoadingMessage;
           authenticateUser($scope.data.username, $scope.data.password);
         } else {
           message = 'Please Enter both username and password.';
@@ -155,7 +166,7 @@ angular.module('dataCapture', [
       $scope.data.loading = true;
       var base = formatBaseUrl($scope.data.baseUrl);
       $localStorage.baseUrl = base;
-      if ($localStorage.loginUser) {
+      if ($localStorage.loginUser && $localStorage.DataDownLoadingStatus) {
         if ($localStorage.loginUser.password == password && $localStorage.loginUser.username == username) {
           $scope.data.loading = false;
           //redirect to home page
@@ -227,6 +238,8 @@ angular.module('dataCapture', [
 
     //function to load system info
     function loadSystemInfo(base) {
+      $localStorage.DataDownLoadingMessage.push('Load system information');
+      $scope.data.DataDownLoadingMessage = $localStorage.DataDownLoadingMessage;
       userServices.getSystemInfo(base).then(function (systemInfo) {
         $localStorage.systemInfo = systemInfo;
       }, function () {
@@ -236,13 +249,12 @@ angular.module('dataCapture', [
 
     //function to fetching date entry sections
     function loadDataEntrySections(base) {
+      $localStorage.DataDownLoadingMessage.push('Download form sections');
+      $scope.data.DataDownLoadingMessage = $localStorage.DataDownLoadingMessage;
       $scope.data.loading = true;
-      var message = "Downloading available form sections, please wait";
-      progressTopMessage(message);
       sectionsServices.getAllSectionsFromServer(base)
         .then(function (sections) {
           sections.forEach(function (section,index) {
-            console.log('section : '  + index + 1);
             $indexedDB.openStore('sections', function (dataSetData) {
               dataSetData.upsert(section).then(function () {
                 //success
@@ -251,9 +263,6 @@ angular.module('dataCapture', [
               });
             });
           });
-          //saving data entry form sections
-          var message = "Complete Saving data entry form sections";
-          progressTopMessage(message);
           //loading indicators
           loadIndicators(base);
         }, function () {
@@ -267,17 +276,14 @@ angular.module('dataCapture', [
     //function to fetching indicators
     function loadIndicators(base) {
       $scope.data.loading = true;
-      var message = "Downloading available indicators for reports, please wait";
-      progressTopMessage(message);
+      $localStorage.DataDownLoadingMessage.push('Download indicators');
+      $scope.data.DataDownLoadingMessage = $localStorage.DataDownLoadingMessage;
       indicatorsServices.getAllIndicatorsFromServer(base)
         .then(function (indicators) {
           indicators.forEach(function (indicator) {
             indicatorsServices.saveIndicatorIntoIndexDb(indicator);
           });
-
-          var message = "Complete Saving available indicators for report";
-          progressTopMessage(message);
-          //leading reports
+          //loading reports
           loadReports(base)
         }, function () {
           //error
@@ -290,8 +296,8 @@ angular.module('dataCapture', [
     //function to fetching reports from the server
     function loadReports(base) {
       $scope.data.loading = true;
-      var message = "Downloading available reports for offline support, please wait";
-      progressTopMessage(message);
+      $localStorage.DataDownLoadingMessage.push('Download reports');
+      $scope.data.DataDownLoadingMessage = $localStorage.DataDownLoadingMessage;
       reportServices.getAllReportsFromServer(base)
         .then(function (reports) {
           $scope.data.reports = reports;
@@ -299,9 +305,6 @@ angular.module('dataCapture', [
           reports.forEach(function (report) {
             reportServices.saveReportToIndexDb(report);
           });
-
-          var message = "Complete saving available reports for offline support";
-          progressTopMessage(message);
           //loading all constants
           loadConstants(base)
         }, function () {
@@ -314,17 +317,19 @@ angular.module('dataCapture', [
 
     //function to fetching all constants from the server
     function loadConstants(base) {
-      var message = "Downloading available constants for reports, please wait";
-      progressTopMessage(message);
+      $localStorage.DataDownLoadingMessage.push('Download constants for reports');
+      $scope.data.DataDownLoadingMessage = $localStorage.DataDownLoadingMessage;
       constantsServices.getAllConstantsFromServer(base)
         .then(function (constants) {
           constants.forEach(function (constant) {
             constantsServices.saveConstantIntoIndexDb(constant);
           });
-          var message = "Complete saving available constants for reports";
-          progressTopMessage(message);
+          $localStorage.DataDownLoadingMessage.push('');
+          $scope.data.DataDownLoadingMessage = $localStorage.DataDownLoadingMessage;
+          $localStorage.DataDownLoadingStatus = true;
+
           //redirect to th landing page
-          directToLandingPage();
+          //directToLandingPage();
         }, function () {
           $scope.data.loading = false;
           var message = "Fail to download constants for reports";
@@ -336,8 +341,8 @@ angular.module('dataCapture', [
     function loadDataSets(base) {
       $localStorage.baseUrl = base;
       $scope.data.loading = true;
-      var message = "Downloading available data entry forms, please wait";
-      progressTopMessage(message);
+      $localStorage.DataDownLoadingMessage.push('Download data entry forms');
+      $scope.data.DataDownLoadingMessage = $localStorage.DataDownLoadingMessage;
       dataSetsServices.getAllDataSetsFromServer(base).then(function (dataSets) {
         dataSets.forEach(function (dataSet) {
           $indexedDB.openStore('dataSets', function (dataSetData) {
@@ -348,8 +353,6 @@ angular.module('dataCapture', [
             });
           })
         });
-        var message = "Complete saving available data entry forms";
-        progressTopMessage(message);
         //load all data entry sections forms
         loadDataEntrySections(base);
       }, function () {
@@ -362,8 +365,8 @@ angular.module('dataCapture', [
 
     //function to fetch all orgUnits assigned to the user from server
     function addAssignedOrgUnit(orgUnits, baseUrl) {
-      var message = 'fetching all assigned organisation units';
-      ionicToast.show(message, 'top', false, 2500);
+      $localStorage.DataDownLoadingMessage.push('Fetch assigned Organisation ');
+      $scope.data.DataDownLoadingMessage = $localStorage.DataDownLoadingMessage;
       orgUnits.forEach(function (orgUnit) {
         userServices.getAssignedOrgUnitChildrenFromServer(orgUnit.id, baseUrl).then(function (OrgUnitChildrenData) {
           $indexedDB.openStore('orgUnits', function (orgUnitsData) {

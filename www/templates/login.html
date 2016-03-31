@@ -40,7 +40,17 @@
       <div class="row" ng-if = "data.loading" style="text-align:  center;">
         <div class="col col-100">
           <div class="loginLoader">
-            <three-bounce-spinner></three-bounce-spinner>
+            <div style ="text-align: justify" ng-repeat="downLoadingMessage in data.DataDownLoadingMessage ">
+              <div class="row">
+                <div class="col col-90">{{ downLoadingMessage}}</div>
+                <div class="col col-10">
+                  <span ng-if = "($index + 1) < data.DataDownLoadingMessage.length " class="icon ion-android-done-all"></span>
+                </div>
+              </div>
+            </div>
+            <div style="margin-bottom:10px;">
+              <three-bounce-spinner></three-bounce-spinner>
+            </div>
           </div>
         </div>
       </div>

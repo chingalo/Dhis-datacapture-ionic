@@ -40,10 +40,13 @@ span.arrow{
 .loginLoader{
   width: 80%;
   margin:auto;
-  height: 200px;
+  min-height: 200px;
   background: white;
   border-radius: 5px;
   padding:2%;
+}
+.three-bounce-spinner{
+  margin: 20px auto 0;
 }
 .tooltipSize {
   padding: 10px;
