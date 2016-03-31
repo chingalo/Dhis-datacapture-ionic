@@ -5,7 +5,7 @@ angular.module('dataCapture')
   .controller('dataEntryController',function($scope,$indexedDB,$filter,$q,
                                              $state,$ionicModal,ionicToast,
                                              $localStorage,userServices,dataSetsServices,
-                                             dataValueSetServices,
+                                             dataValueSetServices,$ionicLoading,
                                              periodSelectionServices,sectionsServices){
 
 
@@ -27,6 +27,14 @@ angular.module('dataCapture')
     $scope.pageSizeDefault = 5;
     $scope.pageSizeSection = 1;
 
+    function blockAppUi(){
+      $ionicLoading.show({
+        template: 'Please waiting ...'
+      });
+    }
+    function unBlockUi(){
+      $ionicLoading.hide();
+    }
 
     //function to control pagination on data entry sections
     $scope.numberOfPagesSection=function(){
@@ -79,16 +87,20 @@ angular.module('dataCapture')
 
     //function to prepare data elements and values to be rendered on form
     function prepareDataElementsValuesFromIndexDb(){
+      blockAppUi();
       var dataElements = $localStorage.dataEntryData.dataSet.dataElements;
       var ou = $localStorage.dataEntryData.orgUnit;
       var pe = $localStorage.dataEntryData.period;
       var dataSetId = $localStorage.dataEntryData.dataSet.id;
       $scope.data.loading = true;
-      dataElements.forEach(function(dataElement){
+      dataElements.forEach(function(dataElement,index){
         dataElement.categoryCombo.categoryOptionCombos.forEach(function(categoryOptionCombo){
           var id = dataSetId + '-' + dataElement.id + '-' +categoryOptionCombo.id+ '-' +pe+ '-' +ou;
           dataSetsServices.getDataValueById(id)
             .then(function(returnedDataValue){
+              if(index + 1 == dataElements.length){
+                unBlockUi();
+              }
               if(returnedDataValue != null){
                 if(id == returnedDataValue.id){
                   $scope.data.dataValues[dataElement.id+'-'+returnedDataValue.co] = isDataElementHasDropDown(dataElement.id)?{name :returnedDataValue.value,id:''}:returnedDataValue.value;
@@ -106,6 +118,7 @@ angular.module('dataCapture')
     function prepareDataElementsValuesFromServer(){
       $scope.data.loading = true;
       prepareDataElementsValuesFromIndexDb();
+      blockAppUi();
       progressMessage("Downloading data values from server");
       var dataSet = $localStorage.dataEntryData.dataSet.id;
       var period = $localStorage.dataEntryData.period;
@@ -123,13 +136,14 @@ angular.module('dataCapture')
                 progressMessage("Waiting while saving data to local storage");
               }else{
                 if(index == dataElementsValuesFromServer.length -1 ){
+                  unBlockUi();
                   progressMessage("All data has been saved to local storage");
                 }
               }
             });
             $scope.data.loading = false;
           }else{
-            progressMessage('There is no data values that has been found from server')
+            progressMessage('There is no data values that has been found from server');
           }
 
         },function(){
