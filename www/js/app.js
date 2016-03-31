@@ -81,8 +81,8 @@ angular.module('dataCapture', [
     }
 
     //initialize data downloading on login process
-    if(angular.isUndefined($localStorage.DataDownLoadingMessage)){
-      $localStorage.DataDownLoadingMessage = [];
+    if(angular.isUndefined($scope.data.DataDownLoadingMessage)){
+      $scope.data.DataDownLoadingMessage = [];
     }
     if(angular.isUndefined($localStorage.DataDownLoadingStatus)){
       $localStorage.DataDownLoadingStatus = false;
@@ -94,10 +94,10 @@ angular.module('dataCapture', [
         var message = "";
         formatBaseUrl($scope.data.baseUrl);
         if ($scope.data.username && $scope.data.password) {
-          $localStorage.DataDownLoadingMessage = [];
+          $scope.data.DataDownLoadingMessage = [];
           $localStorage.DataDownLoadingStatus = false;
-          $localStorage.DataDownLoadingMessage.push('Authenticating user');
-          $scope.data.DataDownLoadingMessage = $localStorage.DataDownLoadingMessage;
+          $scope.data.DataDownLoadingMessage.push('Authenticating user');
+
           authenticateUser($scope.data.username, $scope.data.password);
         } else {
           message = 'Please Enter both username and password.';
@@ -117,17 +117,14 @@ angular.module('dataCapture', [
       delete $localStorage.dataEntryData;
       delete $localStorage.loginUserData;
       delete $localStorage.selectedReport;
-      $ionicHistory.clearCache().then(function () {
+      delete $localStorage.DataDownLoadingStatus;
+      $ionicHistory.clearCache().then(function() {
         $ionicHistory.clearHistory();
-        $ionicHistory.nextViewOptions({
-          disableBack: true
-        });
-        synchronizationServices.stopSyncUserLoginData();
-        $scope.data.loading = false;
-        var message = "You have logged out successfully";
-        progressMessage(message);
-        $window.location.reload(true);
+        $ionicHistory.nextViewOptions({ disableBack: true, historyRoot: true });
         $state.go('login');
+        $window.location.reload(true);
+        $scope.data.loading = false;
+        progressMessage("You have logged out successfully");
       });
     };
 
@@ -203,8 +200,8 @@ angular.module('dataCapture', [
                   $localStorage.loginUser = {'username': username, 'password': password};
                   $localStorage.loginUserData = userData;
                   addAssignedOrgUnit($localStorage.loginUserData.organisationUnits, base);
-                  loadDataSets(base);
                   loadSystemInfo(base);
+                  loadDataSets(base);
                 } catch (e) {
                   var message = 'Fail to login, please check your username or password';
                   progressMessage(message);
@@ -238,8 +235,7 @@ angular.module('dataCapture', [
 
     //function to load system info
     function loadSystemInfo(base) {
-      $localStorage.DataDownLoadingMessage.push('Load system information');
-      $scope.data.DataDownLoadingMessage = $localStorage.DataDownLoadingMessage;
+      $scope.data.DataDownLoadingMessage.push('Load system information');
       userServices.getSystemInfo(base).then(function (systemInfo) {
         $localStorage.systemInfo = systemInfo;
       }, function () {
@@ -249,8 +245,7 @@ angular.module('dataCapture', [
 
     //function to fetching date entry sections
     function loadDataEntrySections(base) {
-      $localStorage.DataDownLoadingMessage.push('Download form sections');
-      $scope.data.DataDownLoadingMessage = $localStorage.DataDownLoadingMessage;
+      $scope.data.DataDownLoadingMessage.push('Download form sections');
       $scope.data.loading = true;
       sectionsServices.getAllSectionsFromServer(base)
         .then(function (sections) {
@@ -276,8 +271,7 @@ angular.module('dataCapture', [
     //function to fetching indicators
     function loadIndicators(base) {
       $scope.data.loading = true;
-      $localStorage.DataDownLoadingMessage.push('Download indicators');
-      $scope.data.DataDownLoadingMessage = $localStorage.DataDownLoadingMessage;
+      $scope.data.DataDownLoadingMessage.push('Download indicators');
       indicatorsServices.getAllIndicatorsFromServer(base)
         .then(function (indicators) {
           indicators.forEach(function (indicator) {
@@ -296,8 +290,7 @@ angular.module('dataCapture', [
     //function to fetching reports from the server
     function loadReports(base) {
       $scope.data.loading = true;
-      $localStorage.DataDownLoadingMessage.push('Download reports');
-      $scope.data.DataDownLoadingMessage = $localStorage.DataDownLoadingMessage;
+      $scope.data.DataDownLoadingMessage.push('Download reports');
       reportServices.getAllReportsFromServer(base)
         .then(function (reports) {
           $scope.data.reports = reports;
@@ -317,19 +310,16 @@ angular.module('dataCapture', [
 
     //function to fetching all constants from the server
     function loadConstants(base) {
-      $localStorage.DataDownLoadingMessage.push('Download constants for reports');
-      $scope.data.DataDownLoadingMessage = $localStorage.DataDownLoadingMessage;
+      $scope.data.DataDownLoadingMessage.push('Download constants for reports');
       constantsServices.getAllConstantsFromServer(base)
         .then(function (constants) {
           constants.forEach(function (constant) {
             constantsServices.saveConstantIntoIndexDb(constant);
           });
-          $localStorage.DataDownLoadingMessage.push('');
-          $scope.data.DataDownLoadingMessage = $localStorage.DataDownLoadingMessage;
+          $scope.data.DataDownLoadingMessage.push('');
           $localStorage.DataDownLoadingStatus = true;
-
           //redirect to th landing page
-          //directToLandingPage();
+          directToLandingPage();
         }, function () {
           $scope.data.loading = false;
           var message = "Fail to download constants for reports";
@@ -341,8 +331,7 @@ angular.module('dataCapture', [
     function loadDataSets(base) {
       $localStorage.baseUrl = base;
       $scope.data.loading = true;
-      $localStorage.DataDownLoadingMessage.push('Download data entry forms');
-      $scope.data.DataDownLoadingMessage = $localStorage.DataDownLoadingMessage;
+      $scope.data.DataDownLoadingMessage.push('Download data entry forms');
       dataSetsServices.getAllDataSetsFromServer(base).then(function (dataSets) {
         dataSets.forEach(function (dataSet) {
           $indexedDB.openStore('dataSets', function (dataSetData) {
@@ -365,8 +354,7 @@ angular.module('dataCapture', [
 
     //function to fetch all orgUnits assigned to the user from server
     function addAssignedOrgUnit(orgUnits, baseUrl) {
-      $localStorage.DataDownLoadingMessage.push('Fetch assigned Organisation ');
-      $scope.data.DataDownLoadingMessage = $localStorage.DataDownLoadingMessage;
+      $scope.data.DataDownLoadingMessage.push('Fetch assigned Organisation ');
       orgUnits.forEach(function (orgUnit) {
         userServices.getAssignedOrgUnitChildrenFromServer(orgUnit.id, baseUrl).then(function (OrgUnitChildrenData) {
           $indexedDB.openStore('orgUnits', function (orgUnitsData) {
