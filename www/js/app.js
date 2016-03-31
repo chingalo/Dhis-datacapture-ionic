@@ -388,6 +388,66 @@ angular.module('dataCapture', [
       synchronizationServices.startSync(time);
       synchronizationServices.syncUserLoginData(user);
     }
+
+    //flexibility for form
+    $scope.isInteger = function(key){
+      if(key == "NUMBER" || key == "INTEGER"){
+        return true;
+      }else{
+        return false;
+      }
+    };
+    $scope.isTrueOnly = function(key){
+      if(key == "TRUE_ONLY"){
+        return true;
+      }else{
+        return false;
+      }
+    };
+    $scope.isIntegerZeroOrPositive = function(key){
+      if(key == "INTEGER_ZERO_OR_POSITIVE"){
+        return true;
+      }else{
+        return false;
+      }
+    };
+    $scope.isDate = function(key){
+      if(key == "DATE"){
+        return true;
+      }else{
+        return false;
+      }
+    };
+    $scope.isString = function(key){
+      if(key == "TEXT" || key == "LONG_TEXT"){
+        return true;
+      }else{
+        return false;
+      }
+    };
+    $scope.isBoolean = function(key){
+      if(key == "BOOLEAN"){
+        return true;
+      }else{
+        return false;
+      }
+    };
+    $scope.hasDataSets = function(dataElement){
+
+      if(dataElement.optionSet != undefined){
+        return true;
+      }else{
+        return false;
+      }
+    };
+    $scope.getOptionSets = function(dataElement){
+      if(dataElement.optionSet){
+        return dataElement.optionSet.options;
+      }else{
+        return false;
+      }
+    };
+
   })
 
   .config(function ($stateProvider, $urlRouterProvider, $indexedDBProvider, $ionicConfigProvider) {
