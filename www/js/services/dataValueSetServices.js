@@ -10,7 +10,7 @@ angular.module('dataCapture')
         var parameter = 'dataSet='+dataSet+'&period='+period+'&orgUnit='+orgUnit;
         $http.get(baseUrl + '/api/dataValueSets.json?'+parameter)
           .success(function(results){
-            defer.resolve(results.dataValues);
+            defer.resolve(results);
           })
           .error(function(){
             defer.reject();

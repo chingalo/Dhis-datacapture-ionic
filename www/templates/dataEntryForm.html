@@ -21,7 +21,7 @@
           <div class="row">
             <div class = "col col-100">
               <div class="item item-text-wrap">
-                <div ng-repeat="dataElement in data.selectedDataEntryForm.dataSet.dataElements | paginationFilter:currentPage*pageSizeDefault | limitTo:pageSizeDefault" >
+                <div class="paginationScroll" ng-repeat="dataElement in data.selectedDataEntryForm.dataSet.dataElements | paginationFilter:currentPage*pageSizeDefault | limitTo:pageSizeDefault" >
 
                   <div ng-repeat="categoryOptionCombos in dataElement.categoryCombo.categoryOptionCombos ">
                     <div ng-if="isInteger(dataElement.valueType)">
@@ -64,7 +64,7 @@
                         <div class="input-label" >
                         </div>
                         <select ng-change='changeDataEntryForm(dataElement)' ng-options="item.name for item in getOptionSets(dataElement) track by item.name" ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]" >
-                          <option value="">Choose option</option>
+                          <option value="">Touch to choose option</option>
                         </select>
                       </div>
                     </div>
@@ -76,7 +76,7 @@
                         <div class="input-label" >
                         </div>
                         <select ng-change='changeDataEntryForm(dataElement)' ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
-                          <option value="">Choose option</option>
+                          <option value="">Touch to choose option</option>
                           <option value="true">Yes</option>
                           <option value="false">No</option>
                         </select>
@@ -90,7 +90,7 @@
                         <div class="input-label" >
                         </div>
                         <select ng-change='changeDataEntryForm(dataElement)' ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
-                          <option value="">Choose option</option>
+                          <option value="">Touch to choose option</option>
                           <option value="true">Yes</option>
                         </select>
                       </div>
@@ -104,7 +104,7 @@
           <!-- pagination for default data entry form, 5 per data elements -->
           <div class="row">
             <div class="col col-45">
-              <button class="button button-full button-positive" ng-disabled="currentPage == 0" ng-click="currentPage=currentPage-1">
+              <button class="button button-full button-positive" ng-disabled="currentPage == 0" ng-click="navigateToNewPage(currentPage-1,'')">
                 Previous
               </button>
             </div>
@@ -116,7 +116,7 @@
               </button>
             </div>
             <div class="col col-45">
-              <button class="button button-full button-positive" ng-disabled="currentPage >= data.selectedDataEntryForm.dataSet.dataElements.length/pageSizeDefault - 1" ng-click="currentPage=currentPage+1">
+              <button class="button button-full button-positive" ng-disabled="currentPage >= data.selectedDataEntryForm.dataSet.dataElements.length/pageSizeDefault - 1" ng-click="navigateToNewPage(currentPage+1,'')">
                 Next
               </button>
             </div>
@@ -125,7 +125,7 @@
 
 
         <div ng-if = "data.selectedDataEntryForm.formType == 'SECTION' ">
-          <div ng-repeat="section in data.sectionsForm | paginationFilter:currentPage*pageSizeSection | limitTo:pageSizeSection ">
+          <div class="paginationScroll" ng-repeat="section in data.sectionsForm | paginationFilter:currentPage*pageSizeSection | limitTo:pageSizeSection ">
             <div class="row">
               <div class="col col-100">
                 <div class="item item-divider">
@@ -174,7 +174,7 @@
                           <div class="input-label" >
                           </div>
                           <select ng-change='changeDataEntryForm(dataElement)' ng-options="item.name for item in getOptionSets(dataElement) track by item.name" ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]" >
-                            <option value="">Choose option</option>
+                            <option value="">Touch to choose option</option>
                           </select>
                         </div>
                       </div>
@@ -186,7 +186,7 @@
                           <div class="input-label" >
                           </div>
                           <select ng-change='changeDataEntryForm(dataElement)' ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
-                            <option value="">Choose option</option>
+                            <option value="">Touch to choose option</option>
                             <option value="true">Yes</option>
                             <option value="false">No</option>
                           </select>
@@ -200,7 +200,7 @@
                           <div class="input-label" >
                           </div>
                           <select ng-change='changeDataEntryForm(dataElement)' ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
-                            <option value="">Choose option</option>
+                            <option value="">Touch to choose option</option>
                             <option value="true">Yes</option>
                           </select>
                         </div>
@@ -215,7 +215,7 @@
           <!-- pagination for section data entry one per section-->
           <div class="row">
             <div class="col col-45">
-              <button class="button button-full button-positive" ng-disabled="currentPage == 0" ng-click="currentPage=currentPage-1">
+              <button class="button button-full button-positive" ng-disabled="currentPage == 0" ng-click="navigateToNewPage(currentPage-1,'')">
                 Previous
               </button>
             </div>
@@ -227,7 +227,7 @@
               </button>
             </div>
             <div class="col col-45">
-              <button class="button button-full button-positive" ng-disabled="currentPage >= data.selectedDataEntryForm.dataSet.sections.length/pageSizeSection - 1" ng-click="currentPage=currentPage+1">
+              <button class="button button-full button-positive" ng-disabled="currentPage >= data.selectedDataEntryForm.dataSet.sections.length/pageSizeSection - 1" ng-click="navigateToNewPage(currentPage+1,'')">
                 Next
               </button>
             </div>
@@ -250,13 +250,18 @@
           <div class="col col-50">
             <button class="button button-full button-positive" ng-click="completeDataEntryForm()">Complete</button>
           </div>
-          <div class="col col-50">
-            <button class="button button-full button-assertive" ng-click="unCompleteDataEntryForm()">Undo Complete</button>
+          <!--<div class="col col-50">-->
+            <!--<button class="button button-full button-assertive" ng-click="unCompleteDataEntryForm()">Undo Complete</button>-->
+          <!--</div>-->
+          <div class="col col-25">
+            <button class="button button-full button-positive" ng-click="navigateToNewPage(0,'')">First</button>
+          </div>
+          <div class="col col-25">
+            <button class="button button-full button-positive" ng-click="navigateToNewPage(0,'last')">Last</button>
           </div>
         </div>
 
       </div>
-    </div>
     </div>
 
     <div class="row" ng-if = "data.loading" style="text-align: center;font-size: 14px;">

@@ -5,7 +5,7 @@
         <div class="item item-divider">
           <h2 align="center">{{ data.selectedReport.name }} Report</h2>
         </div>
-        <div class="item item-text-wrap" style="overflow-x: auto;overflow-y: auto;">
+        <div class="item item-text-wrap" style="overflow: auto;">
           <link rel="stylesheet" href="css/bootstrap.css" media="all">
           <div ng-bind-html="data.selectedReport.designContent | to_trusted_html"></div>
         </div>

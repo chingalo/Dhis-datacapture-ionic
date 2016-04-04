@@ -52,6 +52,9 @@ angular.module('dataCapture', [
       ionicToast.show(message, 'top', false, 3500);
     }
 
+    $scope.deleteLocalStorageData = function (){
+      delete $localStorage.allowDataEntrySync;
+    };
     //initialization of base url for an app to access as well as auto login for logged in user
     if (!$localStorage.baseUrl) {
       $localStorage.baseUrl = url;
@@ -59,6 +62,7 @@ angular.module('dataCapture', [
     else {
       //authenticate using local storage data of login user
       if ($localStorage.loginUser) {
+        $scope.deleteLocalStorageData();
         var username = $localStorage.loginUser.username;
         var password = $localStorage.loginUser.password;
         $scope.data.baseUrl = $localStorage.baseUrl;

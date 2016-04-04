@@ -51,3 +51,7 @@ span.arrow{
 .tooltipSize {
   padding: 10px;
 }
+.paginationScroll{
+  height:370px;
+  overflow:auto;
+}

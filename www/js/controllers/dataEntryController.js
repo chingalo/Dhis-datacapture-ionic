@@ -24,13 +24,12 @@ angular.module('dataCapture')
     $scope.data.dataValue = {
       local : 0,
       online : 0
-    }
+    };
 
     //pagination variables
     $scope.currentPage = 0;
     $scope.pageSizeDefault = 5;
     $scope.pageSizeSection = 1;
-
     function blockAppUi(){
       $ionicLoading.show({
         template: 'Please waiting ...'
@@ -39,6 +38,17 @@ angular.module('dataCapture')
     function unBlockUi(){
       $ionicLoading.hide();
     }
+    $scope.navigateToNewPage = function(pageNumber,type){
+      if(type == 'last'){
+        if($localStorage.dataEntryData.formType == 'SECTION'){
+          $scope.currentPage = $scope.data.selectedDataEntryForm.dataSet.sections.length - 1;
+        }else{
+          $scope.currentPage = $scope.data.selectedDataEntryForm.dataSet.dataElements.length - 1;
+        }
+      }else{
+        $scope.currentPage = pageNumber;
+      }
+    };
 
     //function to control pagination on data entry sections
     $scope.numberOfPagesSection=function(){
@@ -66,7 +76,9 @@ angular.module('dataCapture')
       $scope.data.selectedData = $localStorage.dataEntryData;
       $scope.data.selectedDataEntryForm = $localStorage.dataEntryData;
       $scope.data.loading = false;
-      prepareDataElementsValuesFromServer();
+      if($localStorage.allowDataEntrySync){
+        prepareDataElementsValuesFromServer();
+      }
       trimOffBRNScoreValues();
       if( $localStorage.dataEntryData.formType == 'SECTION'){
         $scope.data.loading = true;
@@ -133,19 +145,19 @@ angular.module('dataCapture')
       var period = $localStorage.dataEntryData.period;
       var orgUnit = $localStorage.dataEntryData.orgUnit;
       dataValueSetServices.getDataValueSet(dataSet,period,orgUnit)
-        .then(function(dataElementsValuesFromServer){
-          if(dataElementsValuesFromServer){
-            $scope.data.dataValue.online = dataElementsValuesFromServer.length;
-            progressMessage("There are " + dataElementsValuesFromServer.length + " data values that has been found from server");
-            dataElementsValuesFromServer.forEach(function(dataElementValues,index){
+        .then(function(dataValueSets){
+          checkDataSetCompleteness(dataValueSets);
+          if(dataValueSets.dataValues){
+            $scope.data.dataValue.online = dataValueSets.dataValues.length;
+            dataValueSets.dataValues.forEach(function(dataElementValues,index){
               var value = isDataElementValueTypeNumber(dataElementValues.dataElement)?parseInt(dataElementValues.value):dataElementValues.value;
               var storedValue = isDataElementHasDropDown(dataElementValues.dataElement)?{name :value,id : ''} : value;
               $scope.data.dataValues[dataElementValues.dataElement+'-'+dataElementValues.categoryOptionCombo] = storedValue;
               prepareDataValuesToIndexDb(dataElementValues.dataElement + "-" + dataElementValues.categoryOptionCombo,storedValue,true);
-              if(index < dataElementsValuesFromServer.length){
+              if(index < dataValueSets.length){
                 progressMessage("Waiting while saving data to local storage");
               }else{
-                if(index == dataElementsValuesFromServer.length -1 ){
+                if(index == dataValueSets.dataValues.length -1 ){
                   unBlockUi();
                   progressMessage("All data has been saved to local storage");
                 }
@@ -237,7 +249,8 @@ angular.module('dataCapture')
 
     //checking changes on data entry form
     $scope.$watch('data.dataSetId', function() {
-      //$scope.data.loading = true;
+      $localStorage.allowDataEntrySync = true;
+      $scope.data.loading = true;
       $scope.data.formSelectVisibility = false;
       $scope.data.selectedData = null;
       $scope.data.period = null;
@@ -652,6 +665,13 @@ angular.module('dataCapture')
         progressMessage('Data entry form  has not been uncompleted, it might be due to network connectivity');
       });
     };
+
+    //function to check data set completeness
+    function checkDataSetCompleteness(dataSetValues){
+      if(dataSetValues.completeDate){
+        console.log(dataSetValues.completeDate);
+      }
+    }
 
     //function to get all data set completeness parameters
     function getDatSetCompletenessParameter(){

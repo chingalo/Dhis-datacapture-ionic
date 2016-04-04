@@ -8454,8 +8454,9 @@ input:checked + .checkbox-icon:after {
   border-right: 5px solid transparent;
   border-left: 5px solid transparent;
   color: #999;
-  content: "";
-  pointer-events: none; }
+  /*content: "";*/
+  /*pointer-events: none; */
+}
 .item-select.item-light select {
   background: #fff;
   color: #444; }
