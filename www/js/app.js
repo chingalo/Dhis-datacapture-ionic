@@ -126,6 +126,7 @@ angular.module('dataCapture', [
       delete $localStorage.selectedReport;
       delete $localStorage.dataDownLoadingStatus;
       delete $localStorage.dataDownLoadingTracker;
+      delete $localStorage.allowDataEntrySync;
       $ionicHistory.clearCache().then(function() {
         $ionicHistory.clearHistory();
         $ionicHistory.nextViewOptions({ disableBack: true, historyRoot: true });

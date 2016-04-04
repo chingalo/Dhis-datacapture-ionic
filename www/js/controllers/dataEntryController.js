@@ -26,6 +26,10 @@ angular.module('dataCapture')
       online : 0
     };
 
+    if(angular.isUndefined($scope.data.isDataSetCompleted)){
+      $scope.data.isDataSetCompleted = false;
+    }
+
     //pagination variables
     $scope.currentPage = 0;
     $scope.pageSizeDefault = 5;
@@ -43,7 +47,7 @@ angular.module('dataCapture')
         if($localStorage.dataEntryData.formType == 'SECTION'){
           $scope.currentPage = $scope.data.selectedDataEntryForm.dataSet.sections.length - 1;
         }else{
-          $scope.currentPage = $scope.data.selectedDataEntryForm.dataSet.dataElements.length - 1;
+          $scope.currentPage = parseInt($scope.data.selectedDataEntryForm.dataSet.dataElements.length/$scope.pageSizeDefault);
         }
       }else{
         $scope.currentPage = pageNumber;
@@ -139,7 +143,6 @@ angular.module('dataCapture')
     function prepareDataElementsValuesFromServer(){
       $scope.data.loading = true;
       prepareDataElementsValuesFromIndexDb();
-      blockAppUi();
       progressMessage("Downloading data values from server");
       var dataSet = $localStorage.dataEntryData.dataSet.id;
       var period = $localStorage.dataEntryData.period;
@@ -158,7 +161,6 @@ angular.module('dataCapture')
                 progressMessage("Waiting while saving data to local storage");
               }else{
                 if(index == dataValueSets.dataValues.length -1 ){
-                  unBlockUi();
                   progressMessage("All data has been saved to local storage");
                 }
               }
@@ -647,6 +649,7 @@ angular.module('dataCapture')
       var parameter = getDatSetCompletenessParameter();
       dataValueSetServices.completeOnDataSetRegistrations(parameter).then(function(){
         //success on complete form
+        $scope.data.isDataSetCompleted = true;
         progressMessage('Data entry form has been completed successfully');
       },function(){
         //error on complete form
@@ -659,6 +662,7 @@ angular.module('dataCapture')
       var parameter = getDatSetCompletenessParameter();
       dataValueSetServices.inCompleteOnDataSetRegistrations(parameter).then(function(){
         //success on incomplete form
+        $scope.data.isDataSetCompleted = false;
         progressMessage('Data entry form has been uncompleted successfully');
       },function(){
         //error on incomplete form
@@ -666,10 +670,20 @@ angular.module('dataCapture')
       });
     };
 
+    $scope.isDataSetCompleted = function(){
+      var result = false;
+      if($scope.data.isDataSetCompleted){
+        result = true;
+      }
+      return result;
+    };
     //function to check data set completeness
     function checkDataSetCompleteness(dataSetValues){
       if(dataSetValues.completeDate){
         console.log(dataSetValues.completeDate);
+        $scope.data.isDataSetCompleted = true;
+      }else{
+        $scope.data.isDataSetCompleted = false;
       }
     }
 

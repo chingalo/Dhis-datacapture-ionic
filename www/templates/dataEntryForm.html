@@ -21,7 +21,7 @@
           <div class="row">
             <div class = "col col-100">
               <div class="item item-text-wrap">
-                <div class="paginationScroll" ng-repeat="dataElement in data.selectedDataEntryForm.dataSet.dataElements | paginationFilter:currentPage*pageSizeDefault | limitTo:pageSizeDefault" >
+                <div class="" ng-repeat="dataElement in data.selectedDataEntryForm.dataSet.dataElements | paginationFilter:currentPage*pageSizeDefault | limitTo:pageSizeDefault" >
 
                   <div ng-repeat="categoryOptionCombos in dataElement.categoryCombo.categoryOptionCombos ">
                     <div ng-if="isInteger(dataElement.valueType)">
@@ -247,12 +247,12 @@
 
         <!--complete and incomplete buttons-->
         <div class="row" style="margin-top: 2%;">
-          <div class="col col-50">
+          <div class="col col-50" ng-if = "!isDataSetCompleted()">
             <button class="button button-full button-positive" ng-click="completeDataEntryForm()">Complete</button>
           </div>
-          <!--<div class="col col-50">-->
-            <!--<button class="button button-full button-assertive" ng-click="unCompleteDataEntryForm()">Undo Complete</button>-->
-          <!--</div>-->
+          <div class="col col-50" ng-if = "isDataSetCompleted()">
+            <button class="button button-full button-assertive" ng-click="unCompleteDataEntryForm()">Undo Complete</button>
+          </div>
           <div class="col col-25">
             <button class="button button-full button-positive" ng-click="navigateToNewPage(0,'')">First</button>
           </div>
