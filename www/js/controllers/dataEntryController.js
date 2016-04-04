@@ -34,9 +34,9 @@ angular.module('dataCapture')
     $scope.currentPage = 0;
     $scope.pageSizeDefault = 5;
     $scope.pageSizeSection = 1;
-    function blockAppUi(){
+    function blockAppUi(message){
       $ionicLoading.show({
-        template: 'Please waiting ...'
+        template: message
       });
     }
     function unBlockUi(){
@@ -107,7 +107,7 @@ angular.module('dataCapture')
 
     //function to prepare data elements and values to be rendered on form
     function prepareDataElementsValuesFromIndexDb(){
-      blockAppUi();
+      blockAppUi("Please waiting while, we are checking for available data values from local storage");
       var dataElements = $localStorage.dataEntryData.dataSet.dataElements;
       var ou = $localStorage.dataEntryData.orgUnit;
       var pe = $localStorage.dataEntryData.period;
@@ -680,7 +680,6 @@ angular.module('dataCapture')
     //function to check data set completeness
     function checkDataSetCompleteness(dataSetValues){
       if(dataSetValues.completeDate){
-        console.log(dataSetValues.completeDate);
         $scope.data.isDataSetCompleted = true;
       }else{
         $scope.data.isDataSetCompleted = false;
