@@ -21,7 +21,7 @@
           <div class="row">
             <div class = "col col-100">
               <div class="item item-text-wrap">
-                <div class="" ng-repeat="dataElement in data.selectedDataEntryForm.dataSet.dataElements | paginationFilter:currentPage*pageSizeDefault | limitTo:pageSizeDefault" >
+                <div class="paginationScroll" ng-repeat="dataElement in data.selectedDataEntryForm.dataSet.dataElements | paginationFilter:currentPage*pageSizeDefault | limitTo:pageSizeDefault" >
 
                   <div ng-repeat="categoryOptionCombos in dataElement.categoryCombo.categoryOptionCombos ">
                     <div ng-if="isInteger(dataElement.valueType)">
