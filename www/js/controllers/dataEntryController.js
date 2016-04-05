@@ -35,9 +35,9 @@ angular.module('dataCapture')
     $scope.pageSizeDefault = 5;
     $scope.pageSizeSection = 1;
     function blockAppUi(message){
-      $scope.blockingMessage = message;
       $ionicLoading.show({
-        templateUrl: 'templates/blockingUi.html'
+        template: message
+
       });
     }
     function unBlockUi(){
@@ -50,7 +50,7 @@ angular.module('dataCapture')
           $scope.currentPage = $scope.data.selectedDataEntryForm.dataSet.sections.length - 1;
           $scope.data.loading = false;
         }else{
-          $scope.currentPage = parseInt($scope.data.selectedDataEntryForm.dataSet.dataElements.length/$scope.pageSizeDefault);
+          $scope.currentPage = Math.ceil($scope.data.selectedDataEntryForm.dataSet.dataElements.length/$scope.pageSizeDefault);
           $scope.data.loading = false;
         }
       }else{
@@ -121,14 +121,21 @@ angular.module('dataCapture')
       $localStorage.localStorageValues = 0;
       var counter = 0;
       var promises = [];
-      dataElements.forEach(function(dataElement){
+      dataElements.forEach(function(dataElement,index){
         dataElement.categoryCombo.categoryOptionCombos.forEach(function(categoryOptionCombo){
           var id = dataSetId + '-' + dataElement.id + '-' +categoryOptionCombo.id+ '-' +pe+ '-' +ou;
           promises.push(dataSetsServices.getDataValueById(id)
             .then(function(returnedDataValue){
+              var message = Math.ceil(((index + 1)/dataElements.length) * 100) + '% to completion';
+              progressMessage(message);
               if(returnedDataValue != null){
-                counter ++;
-                $localStorage.localStorageValues = counter;
+                if(returnedDataValue.sync){
+                  $scope.data.dataValue.online ++;
+                }else {
+                  counter ++;
+                  $scope.data.dataValue.local = counter;
+                }
+
                 if(id == returnedDataValue.id){
                   $scope.data.dataValues[dataElement.id+'-'+returnedDataValue.co] = isDataElementHasDropDown(dataElement.id)?{name :returnedDataValue.value,id:''}:returnedDataValue.value;
                 }
@@ -162,19 +169,11 @@ angular.module('dataCapture')
         .then(function(dataValueSets){
           checkDataSetCompleteness(dataValueSets);
           if(dataValueSets.dataValues){
-            $scope.data.dataValue.online = dataValueSets.dataValues.length;
             dataValueSets.dataValues.forEach(function(dataElementValues,index){
               var value = isDataElementValueTypeNumber(dataElementValues.dataElement)?parseInt(dataElementValues.value):dataElementValues.value;
               var storedValue = isDataElementHasDropDown(dataElementValues.dataElement)?{name :value,id : ''} : value;
               $scope.data.dataValues[dataElementValues.dataElement+'-'+dataElementValues.categoryOptionCombo] = storedValue;
               prepareDataValuesToIndexDb(dataElementValues.dataElement + "-" + dataElementValues.categoryOptionCombo,storedValue,true);
-              if(index < dataValueSets.length){
-                progressMessage("Waiting while saving data to local storage");
-              }else{
-                if(index == dataValueSets.dataValues.length -1 ){
-                  progressMessage("All data has been saved to local storage");
-                }
-              }
             });
             $scope.data.loading = false;
           }else{
