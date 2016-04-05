@@ -127,7 +127,7 @@ angular.module('dataCapture')
           promises.push(dataSetsServices.getDataValueById(id)
             .then(function(returnedDataValue){
               var message = Math.ceil(((index + 1)/dataElements.length) * 100) + '% to completion';
-              progressMessage(message);
+              progressMessageStick(message);
               if(returnedDataValue != null){
                 if(returnedDataValue.sync){
                   $scope.data.dataValue.online ++;
@@ -142,6 +142,7 @@ angular.module('dataCapture')
             },function(){
               //error
               var message = Math.ceil(((index + 1)/dataElements.length) * 100) + '% to completion';
+              progressMessageStick(message);
             })
           );
 
@@ -203,6 +204,9 @@ angular.module('dataCapture')
     //function for toaster messages
     function progressMessage(message){
       ionicToast.show(message, 'top', false, 2000);
+    }
+    function progressMessageStick(message){
+      ionicToast.show(message, 'top', true, 2000);
     }
 
     //checking changes on selected orgUnit
