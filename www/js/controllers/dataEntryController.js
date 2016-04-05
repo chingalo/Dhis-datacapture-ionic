@@ -449,6 +449,7 @@ angular.module('dataCapture')
     //function to generate default data entry form
     $scope.generateDefaultDataEntryForm = function(){
       $scope.data.loading = true;
+      $localStorage.allowDataEntrySync = true;
       var message = "Please wait...";
       ionicToast.show(message, 'bottom', false, 2500);
       $localStorage.dataEntryData.formType = 'DEFAULT';
@@ -501,6 +502,7 @@ angular.module('dataCapture')
     //function to generate section data entry form
     $scope.generateSectionDataEntryForm = function(){
       $scope.data.loading = true;
+      $localStorage.allowDataEntrySync = true;
       var message = "Please wait...";
       ionicToast.show(message, 'bottom', false, 2500);
       var checkResults = checkingAndSetDataEntryForm('SECTION');
