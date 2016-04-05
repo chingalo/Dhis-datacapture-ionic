@@ -135,7 +135,6 @@ angular.module('dataCapture')
                   counter ++;
                   $scope.data.dataValue.local = counter;
                 }
-
                 if(id == returnedDataValue.id){
                   $scope.data.dataValues[dataElement.id+'-'+returnedDataValue.co] = isDataElementHasDropDown(dataElement.id)?{name :returnedDataValue.value,id:''}:returnedDataValue.value;
                 }
@@ -149,7 +148,7 @@ angular.module('dataCapture')
       });
       $q.all(promises).then(function(){
         unBlockUi();
-        $scope.data.dataValue.local = $localStorage.localStorageValues;
+        progressMessage('100% to completion');
       },function(){
         unBlockUi();
         progressMessage('Fail to load all data values from server');
@@ -357,16 +356,32 @@ angular.module('dataCapture')
     //@todo modify based on  api on docs
     //function to save data values from the form to indexed db
     function prepareDataValuesToIndexDb(key,value,syncStatus){
-      var valueToBeStored = angular.isUndefined(value.name)? value:value.name;
+      var valueToBeStored = null;
+      if(value.name){
+        valueToBeStored = value.name;
+      }else{
+        valueToBeStored = value;
+      }
       var ou = $localStorage.dataEntryData.orgUnit;
       var pe = $localStorage.dataEntryData.period;
       var dataSetId = $localStorage.dataEntryData.dataSet.id;
       var modelValue = key.split('-');
       var id = dataSetId + '-' +modelValue[0] + '-'+modelValue[1]+'-'+pe+ '-' +ou;
       var dataValue = null;
+      var data = null;
+      data = {
+        "id":id,
+        "de": modelValue[0],
+        "pe": pe,
+        "value": isDatElementHasDateValueDate(modelValue[0]) ? formatDate(valueToBeStored):valueToBeStored,
+        "co" : modelValue[1],
+        "ou" : ou,
+        "cc":$localStorage.dataEntryData.dataSet.categoryCombo.id,
+        "cp":$localStorage.dataEntryData.categoryOptionCombosId,
+        "sync":syncStatus
+      };
       dataSetsServices.getDataValueById(id).then(function(returnedDataValue){
         dataValue = returnedDataValue;
-        var data = null;
         var canUpdate = false;
         if(dataValue == null ){
           canUpdate = true;
@@ -376,20 +391,11 @@ angular.module('dataCapture')
           }
         }
         if(canUpdate){
-          data = {
-            "id":id,
-            "de": modelValue[0],
-            "pe": pe,
-            "value": isDatElementHasDateValueDate(modelValue[0]) ? formatDate(valueToBeStored):valueToBeStored,
-            "co" : modelValue[1],
-            "ou" : ou,
-            "cc":$localStorage.dataEntryData.dataSet.categoryCombo.id,
-            "cp":$localStorage.dataEntryData.categoryOptionCombosId,
-            "sync":syncStatus
-          };
+
           dataSetsServices.saveDataSetDataValue(data);
         }
       },function(){
+        dataSetsServices.saveDataSetDataValue(data);
       });
     }
 
