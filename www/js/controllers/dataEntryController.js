@@ -150,7 +150,7 @@ angular.module('dataCapture')
       });
       $q.all(promises).then(function(){
         unBlockUi();
-        progressMessage('100% to completion');
+        progressMessageStick('100% to completion');
       },function(){
         unBlockUi();
         progressMessage('Fail to load all data values from server');
@@ -206,7 +206,7 @@ angular.module('dataCapture')
       ionicToast.show(message, 'top', false, 2000);
     }
     function progressMessageStick(message){
-      ionicToast.show(message, 'top', true, 2000);
+      ionicToast.show(message, 'top', true,3000);
     }
 
     //checking changes on selected orgUnit
@@ -669,26 +669,32 @@ angular.module('dataCapture')
 
     //function to handle form completeness
     $scope.completeDataEntryForm = function(){
+      $scope.data.loading = true;
       var parameter = getDatSetCompletenessParameter();
       dataValueSetServices.completeOnDataSetRegistrations(parameter).then(function(){
         //success on complete form
         $scope.data.isDataSetCompleted = true;
+        $scope.data.loading = false;
         progressMessage('Data entry form has been completed successfully');
       },function(){
         //error on complete form
+        $scope.data.loading = false;
         progressMessage('Data entry form  has not been completed, it might be due to network connectivity');
       });
     };
 
     //function to handle form un-completeness
     $scope.unCompleteDataEntryForm = function(){
+      $scope.data.loading = true;
       var parameter = getDatSetCompletenessParameter();
       dataValueSetServices.inCompleteOnDataSetRegistrations(parameter).then(function(){
         //success on incomplete form
         $scope.data.isDataSetCompleted = false;
+        $scope.data.loading = false;
         progressMessage('Data entry form has been uncompleted successfully');
       },function(){
         //error on incomplete form
+        $scope.data.loading = false;
         progressMessage('Data entry form  has not been uncompleted, it might be due to network connectivity');
       });
     };
