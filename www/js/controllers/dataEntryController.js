@@ -35,8 +35,9 @@ angular.module('dataCapture')
     $scope.pageSizeDefault = 5;
     $scope.pageSizeSection = 1;
     function blockAppUi(message){
+      $scope.blockingMessage = message;
       $ionicLoading.show({
-        template: message
+        templateUrl: 'templates/blockingUi.html'
       });
     }
     function unBlockUi(){
@@ -119,15 +120,12 @@ angular.module('dataCapture')
       $scope.data.loading = true;
       $localStorage.localStorageValues = 0;
       var counter = 0;
-      dataElements.forEach(function(dataElement,index){
+      var promises = [];
+      dataElements.forEach(function(dataElement){
         dataElement.categoryCombo.categoryOptionCombos.forEach(function(categoryOptionCombo){
           var id = dataSetId + '-' + dataElement.id + '-' +categoryOptionCombo.id+ '-' +pe+ '-' +ou;
-          dataSetsServices.getDataValueById(id)
+          promises.push(dataSetsServices.getDataValueById(id)
             .then(function(returnedDataValue){
-              if(index + 1 == dataElements.length){
-                unBlockUi();
-                $scope.data.dataValue.local = $localStorage.localStorageValues;
-              }
               if(returnedDataValue != null){
                 counter ++;
                 $localStorage.localStorageValues = counter;
@@ -137,8 +135,17 @@ angular.module('dataCapture')
               }
             },function(){
               //error
-            });
+            })
+          );
+
         });
+      });
+      $q.all(promises).then(function(){
+        unBlockUi();
+        $scope.data.dataValue.local = $localStorage.localStorageValues;
+      },function(){
+        unBlockUi();
+        progressMessage('Fail to load all data values from server');
       });
       $scope.data.loading = false;
     }

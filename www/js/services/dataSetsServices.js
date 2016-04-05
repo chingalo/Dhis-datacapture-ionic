@@ -91,15 +91,11 @@ angular.module('dataCapture')
       },
       getDataValueById : function(id){
         var defer = $q.defer();
+        var result = null;
         $indexedDB.openStore('dataValues',function(dataValuesData){
-            dataValuesData.getAll().then(function(dataValues){
-              var data = null;
-              dataValues.forEach(function(dataValue){
-                if(dataValue.id == id){
-                  data = dataValue;
-                }
-              });
-              defer.resolve(data);
+            dataValuesData.find(id).then(function(dataValue){
+              result = dataValue;
+              defer.resolve(result);
             },function(){
               //error get all data values from indexDB
               defer.reject();
