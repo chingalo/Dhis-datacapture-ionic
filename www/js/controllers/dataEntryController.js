@@ -141,6 +141,7 @@ angular.module('dataCapture')
               }
             },function(){
               //error
+              var message = Math.ceil(((index + 1)/dataElements.length) * 100) + '% to completion';
             })
           );
 
