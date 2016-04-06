@@ -9,7 +9,8 @@ angular.module('dataCapture')
     $scope.data.appInfo = {
       Name : 'Dhis 2 Touch',
       Version : '0.15',
-      'App revision' : '7b2c885'
+      'App revision' : '8ca0ddc'
+
     };
 
     $scope.getSystemInfoName = function(key){
