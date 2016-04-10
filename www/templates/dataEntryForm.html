@@ -2,14 +2,12 @@
   <ion-content>
     <div class="">
       <div class="">
-        <div class="row">
+        <div class="row stickTop">
           <div class="col col-100">
             <div class="item item-text-wrap">
               <h2 align="center">{{  data.selectedDataEntryForm.dataSet.name }} Data entry form</h2>
               <p>Organisation Unit : {{ data.selectedDataEntryForm.orgUnitName }}</p>
-              <p>Period : {{ data.selectedDataEntryForm.periodDisplayName }}</p>
-              <p>Data values that has been synced : {{ data.dataValue.online }}</p>
-              <p>Data values that has not been synced : {{ data.dataValue.local}}</p>
+              <p>Period : {{ data.selectedDataEntryForm.periodDisplayName }}, synced : {{ data.dataValue.online }} Not synced : {{ data.dataValue.local}} </p>
             </div>
           </div>
         </div>
@@ -123,7 +121,6 @@
           </div>
         </div>
 
-
         <div ng-if = "data.selectedDataEntryForm.formType == 'SECTION' ">
           <div class="paginationScroll" ng-repeat="section in data.sectionsForm | paginationFilter:currentPage*pageSizeSection | limitTo:pageSizeSection ">
             <div class="row">
@@ -234,16 +231,6 @@
           </div>
         </div>
 
-
-        <div class="card" ng-if = "data.selectedDataEntryForm.formType == 'CUSTOM' ">
-          <div class="item item-text-wrap">
-            <div class="row" >
-              <div class="col col-100">
-                Still on progress ....
-              </div>
-            </div>
-          </div>
-        </div>
 
         <!--complete and incomplete buttons-->
         <div class="row" style="margin-top: 2%;">

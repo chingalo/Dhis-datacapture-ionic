@@ -52,6 +52,10 @@ span.arrow{
   padding: 10px;
 }
 .paginationScroll{
-  height:370px;
+  height:400px;
   overflow:auto;
+}
+.stickTop{
+  position: fixed;
+  top: 0;
 }
