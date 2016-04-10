@@ -55,7 +55,3 @@ span.arrow{
   height:400px;
   overflow:auto;
 }
-.stickTop{
-  position: fixed;
-  top: 0;
-}
