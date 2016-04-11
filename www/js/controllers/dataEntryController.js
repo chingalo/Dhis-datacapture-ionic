@@ -124,12 +124,11 @@ angular.module('dataCapture')
       dataElements.forEach(function(dataElement,index){
         dataElement.categoryCombo.categoryOptionCombos.forEach(function(categoryOptionCombo){
           var id = dataSetId + '-' + dataElement.id + '-' +categoryOptionCombo.id+ '-' +pe+ '-' +ou;
-          alert(id);
           promises.push(dataSetsServices.getDataValueById(id)
             .then(function(returnedDataValue){
               var message = Math.ceil(((index + 1)/dataElements.length) * 100) + '% to completion';
               progressMessageStick(message);
-              if(returnedDataValue != null){
+              if(returnedDataValue != null && returnedDataValue.length > 0){
                 if(returnedDataValue.sync){
                   $scope.data.dataValue.online ++;
                 }else {
