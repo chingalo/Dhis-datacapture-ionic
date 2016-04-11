@@ -271,7 +271,7 @@ angular.module('dataCapture')
       $scope.data.selectedData = null;
       $scope.data.period = null;
       $scope.data.hasCategoryComboOptions = false;
-      dataSetsServices.getDataSetById($scope.data.dataSetId)
+      dataSetsServices.getDataSetById($scope.data.dataSetId,$scope.data.dataSets)
         .then(function(data){
           $scope.data.selectedDataSet = data;
           $scope.data.loading = false;

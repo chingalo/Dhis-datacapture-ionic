@@ -50,16 +50,19 @@ angular.module('dataCapture')
         });
         return orgUnitDataSets;
       },
-      getDataSetById: function (dataSetId) {
-        var defer = $q.defer();
-        sqlLiteServices.getDataById(dataSetId)
-          .then(function (dataSet) {
-            defer.resolve(dataSet);
-          }, function () {
+        getDataSetById:function(dataSetId,dataSets){
+          var defer = $q.defer();
+          if(dataSetId && dataSets){
+            dataSets.forEach(function(dataSet){
+              if(dataSet.id == dataSetId){
+                defer.resolve(dataSet);
+              }
+            })
+          }else{
             defer.reject();
-          });
-        return defer.promise;
-      },
+          }
+          return defer.promise;
+        },
       saveDataSetDataValue: function (data) {
 
         var status = 0;
@@ -105,7 +108,7 @@ angular.module('dataCapture')
         var value = 0;
         sqlLiteServices.getAllDataByAttribute('dataValues',attribute,value)
           .then(function (dataValues){
-            alert('prepare ' + dataValues.length + " data values to sync")
+            alert('prepare ' + dataValues.length + " data values to sync");
             defer.resolve(dataValues);
         },function(){
             defer.reject();
