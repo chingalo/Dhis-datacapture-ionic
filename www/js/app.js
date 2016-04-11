@@ -59,7 +59,7 @@ angular.module('dataCapture', [
               function(tx, result) {
                 //alert("Table "+table+" created successfully");
                 sqlLiteServices.getAllData(table).then(function(data){
-                  alert('data : ' + JSON.stringify(data.length))
+                  alert('data on '+table+' : ' + JSON.stringify(data.length))
                 },function(e){
                   alert('error')
                 })
