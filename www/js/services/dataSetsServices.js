@@ -94,6 +94,7 @@ angular.module('dataCapture')
       getDataValueById: function (id) {
         var defer = $q.defer();
         var result = null;
+        alert('inside service ' + id);
         sqlLiteServices.getDataById('dataValues', id).then(function (dataValue) {
           result = dataValue;
           alert('data value' + JSON.stringify(dataValue))

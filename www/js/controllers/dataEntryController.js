@@ -121,10 +121,10 @@ angular.module('dataCapture')
       $localStorage.localStorageValues = 0;
       var counter = 0;
       var promises = [];
-      alert('data elemenst ' + dataElements.length);
       dataElements.forEach(function(dataElement,index){
         dataElement.categoryCombo.categoryOptionCombos.forEach(function(categoryOptionCombo){
           var id = dataSetId + '-' + dataElement.id + '-' +categoryOptionCombo.id+ '-' +pe+ '-' +ou;
+          alert(id);
           promises.push(dataSetsServices.getDataValueById(id)
             .then(function(returnedDataValue){
               var message = Math.ceil(((index + 1)/dataElements.length) * 100) + '% to completion';
