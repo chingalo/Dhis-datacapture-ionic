@@ -23,11 +23,18 @@ angular.module('dataCapture', [
       if (window.cordova && window.cordova.plugins.Keyboard) {
         cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
         cordova.plugins.Keyboard.disableScroll(true);
-
       }
       if (window.StatusBar) {
         // org.apache.cordova.statusbar required
         StatusBar.styleDefault();
+      }
+      document.addEventListener("deviceready", onDeviceReady, false);
+      function onDeviceReady() {
+        alert('here');
+        var db = window.sqlitePlugin.openDatabase({name: "my.db"});
+        db.transaction(function (tx) {
+          tx.executeSql('CREATE TABLE IF NOT EXISTS person (id TEXT primary key, data LONGTEXT)');
+        });
       }
     });
   })
@@ -46,6 +53,18 @@ angular.module('dataCapture', [
     //function for toaster messages
     function progressMessage(message) {
       ionicToast.show(message, 'bottom', false, 2500);
+    }
+    init()
+    function init(){
+      alert('inside function');
+      document.addEventListener("deviceready", onDeviceReady, false);
+      function onDeviceReady() {
+        alert('here');
+        var db = window.sqlitePlugin.openDatabase({name: "my.db"});
+        db.transaction(function (tx) {
+          tx.executeSql('CREATE TABLE IF NOT EXISTS person (id TEXT primary key, data LONGTEXT)');
+        });
+      }
     }
 
     function progressTopMessage(message) {
