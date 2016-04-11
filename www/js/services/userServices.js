@@ -35,50 +35,23 @@ angular.module('dataCapture')
       },
       deleteOrgUnitFromIndexDb: function () {
         var defer = $q.defer();
-        $indexedDB.openStore('orgUnits', function (orgUnits) {
-          orgUnits.clear().then(function () {
-            //success
-            defer.resolve();
-          }, function () {
-            //error
-            defer.reject();
-          })
-        })
+        sqlLiteServices.dropTable('orgUnits').then(function () {
+          //success
+          defer.resolve();
+        }, function () {
+          //error
+          defer.reject();
+        });
         return defer.promise;
       },
       getAssignedOrgUnitFromIndexDb: function () {
         var defer = $q.defer();
-
         sqlLiteServices.getAllData('orgUnits').then(function (data) {
           defer.resolve(data);
         }, function () {
           defer.reject('error');
         });
-        /*$indexedDB.openStore('orgUnits', function (orgUnitData) {
-          orgUnitData.getAll().then(function (data) {
-            defer.resolve(data);
-          }, function () {
-            defer.reject('error');
-          });
-        });*/
-
-
         return defer.promise;
-      },
-      updateAssignedOrgUnits: function () {
-        var base = $localStorage.baseUrl;
-        var orgUnits = $localStorage.loginUserData.organisationUnits;
-        orgUnits.forEach(function (orgUnit) {
-          this.getAssignedOrgUnitChildrenFromServer(orgUnit.id, base).then(function (data) {
-            $indexedDB.openStore('dataSets', function (dataSetData) {
-              dataSetData.upsert(data).then(function () {
-                //success
-              }, function () {
-                //error
-              });
-            });
-          })
-        });
       }
     };
 

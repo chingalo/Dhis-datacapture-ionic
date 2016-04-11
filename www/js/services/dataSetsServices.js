@@ -25,25 +25,16 @@ angular.module('dataCapture')
         },function(){
           defer.reject();
         });
-        /*$indexedDB.openStore('dataSets',function(dataSetData){
-          dataSetData.getAll().then(function(data){
-            defer.resolve(data);
-          },function(){
-            defer.reject();
-          });
-        });*/
         return defer.promise;
       },
       deleteAllDataSets : function(){
         var defer = $q.defer();
-        $indexedDB.openStore('dataSets', function (dataSets) {
-          dataSets.clear().then(function () {
-            //success
-            defer.resolve();
-          }, function () {
-            //error
-            defer.reject();
-          })
+        sqlLiteServices.dropTable('dataSets').then(function () {
+          //success
+          defer.resolve();
+        }, function () {
+          //error
+          defer.reject();
         });
         return defer.promise;
       },
@@ -84,30 +75,25 @@ angular.module('dataCapture')
       },
       deleteAllDataValues : function(){
         var defer = $q.defer();
-        $indexedDB.openStore('dataValues', function (dataValues) {
-          dataValues.clear().then(function () {
-            //success
-            defer.resolve();
-          }, function () {
-            //error
-            defer.reject();
-          })
+        sqlLiteServices.dropTable('dataValues').then(function () {
+          //success
+          defer.resolve();
+        }, function () {
+          //error
+          defer.reject();
         });
         return defer.promise;
       },
       getDataValueById : function(id){
         var defer = $q.defer();
         var result = null;
-        $indexedDB.openStore('dataValues',function(dataValuesData){
-            dataValuesData.find(id).then(function(dataValue){
-              result = dataValue;
-              defer.resolve(result);
-            },function(){
-              //error get all data values from indexDB
-              defer.reject();
-            });
+        sqlLiteServices.getDataById('dataValues',id).then(function(dataValue){
+          result = dataValue;
+          defer.resolve(result);
+        },function(){
+          //error get all data values from indexDB
+          defer.reject();
         });
-        return defer.promise;
       },
       getSavedDataValuesFromIndexDbForSync : function(){
         var defer = $q.defer();

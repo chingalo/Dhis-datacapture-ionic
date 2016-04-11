@@ -2,7 +2,7 @@
  * Created by chingalo on 3/2/16.
  */
 angular.module('dataCapture')
-  .factory('constantsServices',function($http,$q,$localStorage,$indexedDB){
+  .factory('constantsServices',function($http,$q,$localStorage,$indexedDB,sqlLiteServices){
 
     var constantsServices = {
       getAllConstantsFromServer : function(baseUrl){
@@ -18,27 +18,24 @@ angular.module('dataCapture')
         return defer.promise;
       },
       saveConstantIntoIndexDb : function(constant){
-        $indexedDB.openStore('constants', function (constantData) {
-          constantData.upsert(constant).then(function () {
-            //success
-          }, function () {
-            //error
-          });
-        })
+        sqlLiteServices.insertData('constants',constant.id,constant).then(function () {
+          //success
+        }, function () {
+          //error
+        });
       },
       deleteAllConstants : function(){
         var defer = $q.defer();
-        $indexedDB.openStore('constants', function (reports) {
-          reports.clear().then(function () {
-            //success
-            defer.resolve();
-          }, function () {
-            //error
-            defer.reject();
-          })
-        });
+        sqlLiteServices.dropTable('constants').then(function () {
+          //success
+          defer.resolve();
+        }, function () {
+          //error
+          defer.reject();
+        })
+
         return defer.promise;
-      },
+      }
     };
     return constantsServices;
   });

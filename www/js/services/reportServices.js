@@ -2,7 +2,7 @@
  * Created by joseph on 2/3/16.
  */
 angular.module('dataCapture')
-  .factory('reportServices',function($http,$q,$localStorage,$indexedDB){
+  .factory('reportServices',function($http,$q,$localStorage,$indexedDB,sqlLiteServices){
     //var baseUrl = $localStorage.baseUrl;
     var reportServices = {
       getAllReportsFromServer:function(baseUrl){
@@ -19,36 +19,31 @@ angular.module('dataCapture')
         return defer.promise;
       },
       saveReportToIndexDb : function(report){
-        $indexedDB.openStore('reports', function (reportData) {
-          reportData.upsert(report).then(function () {
-            //success
-          }, function () {
-            //error
+        sqlLiteServices.insertData("reports",report.id,report)
+          .then(function(pass){
+            //alert('success : ' + JSON.stringify(pass));
+          },function(fail){
+            //alert('Fail : ' + JSON.stringify(fail));
           });
-        })
+
       },
       deleteAllReports : function(){
         var defer = $q.defer();
-        $indexedDB.openStore('reports', function (reports) {
-          reports.clear().then(function () {
-            //success
-            defer.resolve();
-          }, function () {
-            //error
-            defer.reject();
-          })
+        sqlLiteServices.dropTable('reports').then(function () {
+          //success
+          defer.resolve();
+        }, function () {
+          //error
+          defer.reject();
         });
         return defer.promise;
       },
       getAllReportsFromIndexDb : function(){
-
         var defer = $q.defer();
-        $indexedDB.openStore('reports',function(reportsData){
-          reportsData.getAll().then(function(data){
-            defer.resolve(data);
-          },function(){
-            defer.reject('error');
-          });
+        sqlLiteServices.getAllData('reports').then(function(data){
+          defer.resolve(data);
+        },function(){
+          defer.reject('error');
         });
         return defer.promise;
       }

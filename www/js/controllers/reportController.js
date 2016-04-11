@@ -64,18 +64,6 @@ angular.module('dataCapture')
           var message = "Fail to load reports from Offline storage ";
           progressMessage(message);
         });
-
-      //reportServices.getAllReportsFromIndexDb()
-      //  .then(function(reports){
-      //    var reportLength = angular.isUndefined(reports.length)? 0: reports.length;
-      //    progressMessage('There are '+ reportLength + ' report(s) available at the moment on Offline storage');
-      //    $scope.data.reports =reports;
-      //    $scope.data.loading = false;
-      //  },function(){
-      //    //error
-      //    var message = "Fail to load reports from Offline storage ";
-      //    progressMessage(message);
-      //  });
     }
 
     //function to take updates of reports from index db
@@ -87,7 +75,6 @@ angular.module('dataCapture')
           progressMessage('There are '+ reportLength + ' report(s) available at the moment from server');
           if(! angular.isUndefined(reports)){
             $scope.data.reports = reports;
-            reportServices.saveReportToIndexDb(reports);
             reports.forEach(function(report){
               reportServices.saveReportToIndexDb(report);
             });
@@ -110,6 +97,7 @@ angular.module('dataCapture')
     };
 
     //function to get report details
+    //todo use sql to speed it up
     function getReportDetails(reportId){
       $scope.data.loading = true;
       reportServices.getAllReportsFromIndexDb()

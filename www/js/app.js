@@ -35,7 +35,7 @@ angular.module('dataCapture', [
                                           userServices, synchronizationServices,
                                           $ionicHistory, $ionicModal, ionicToast,
                                           indicatorsServices, reportServices, constantsServices,
-                                          $localStorage, dataSetsServices,sqlLiteServices,$q,
+                                          $localStorage, dataSetsServices, sqlLiteServices, $q,
                                           sectionsServices, $indexedDB) {
 
     //initial variables
@@ -46,30 +46,31 @@ angular.module('dataCapture', [
     function progressMessage(message) {
       ionicToast.show(message, 'bottom', false, 2500);
     }
+
     //creation of database for an app
     initDatabase();
-    function initDatabase(){
+    function initDatabase() {
       document.addEventListener("deviceready", onDeviceReady, false);
       function onDeviceReady() {
         var db = window.sqlitePlugin.openDatabase({name: "hisptz.db"});
-        var tables = ['dataSets','reports','sections','orgUnits','indicators','constants'];
-        tables.forEach(function(table){
+        var tables = ['dataSets', 'reports', 'sections', 'orgUnits', 'indicators', 'constants'];
+        tables.forEach(function (table) {
           db.transaction(function (tx) {
-            tx.executeSql('CREATE TABLE IF NOT EXISTS '+table+' (id TEXT primary key, data LONGTEXT)', [],
-              function(tx, result) {
+            tx.executeSql('CREATE TABLE IF NOT EXISTS ' + table + ' (id TEXT primary key, data LONGTEXT)', [],
+              function (tx, result) {
                 //alert("Table "+table+" created successfully");
               },
-              function(error) {
+              function (error) {
                 //alert("Error occurred while creating the table "+table+".");
               });
           });
         });
         db.transaction(function (tx) {
           tx.executeSql('CREATE TABLE IF NOT EXISTS dataValues (id TEXT primary key, data LONGTEXT, isSync INTEGER)', [],
-            function(tx, result) {
+            function (tx, result) {
               //alert("Table dataValues created successfully");
             },
-            function(error) {
+            function (error) {
               //alert("Error occurred while creating the table dataValues.");
             });
         });
@@ -80,7 +81,7 @@ angular.module('dataCapture', [
       ionicToast.show(message, 'top', false, 3500);
     }
 
-    $scope.deleteLocalStorageData = function (){
+    $scope.deleteLocalStorageData = function () {
       delete $localStorage.allowDataEntrySync;
     };
     //initialization of base url for an app to access as well as auto login for logged in user
@@ -113,13 +114,13 @@ angular.module('dataCapture', [
     }
 
     //initialize data downloading on login process
-    if(angular.isUndefined($scope.data.dataDownLoadingMessage)){
+    if (angular.isUndefined($scope.data.dataDownLoadingMessage)) {
       $scope.data.dataDownLoadingMessage = [];
     }
-    if(angular.isUndefined($localStorage.dataDownLoadingStatus)){
+    if (angular.isUndefined($localStorage.dataDownLoadingStatus)) {
       $localStorage.dataDownLoadingStatus = false;
     }
-    if(angular.isUndefined($localStorage.dataDownLoadingTracker)){
+    if (angular.isUndefined($localStorage.dataDownLoadingTracker)) {
       $localStorage.dataDownLoadingTracker = [];
     }
 
@@ -154,9 +155,9 @@ angular.module('dataCapture', [
       delete $localStorage.dataDownLoadingStatus;
       delete $localStorage.dataDownLoadingTracker;
       delete $localStorage.allowDataEntrySync;
-      $ionicHistory.clearCache().then(function() {
+      $ionicHistory.clearCache().then(function () {
         $ionicHistory.clearHistory();
-        $ionicHistory.nextViewOptions({ disableBack: true, historyRoot: true });
+        $ionicHistory.nextViewOptions({disableBack: true, historyRoot: true});
         $state.go('login');
         $window.location.reload(true);
         $scope.data.loading = false;
@@ -166,7 +167,6 @@ angular.module('dataCapture', [
 
     //function redirect the landing page f the app
     function directToLandingPage() {
-      progressTopMessage("It's ready, kindly enjoy the offline support");
       startSyncProcess($localStorage.loginUser);
       $state.go('app.dataEntry', {}, {location: "replace", reload: true});
     }
@@ -273,7 +273,7 @@ angular.module('dataCapture', [
     function loadSystemInfo(base) {
       var processName = "systemInfo";
       $scope.data.dataDownLoadingMessage.push('Loading system information');
-      if(! isProcessCompleted(processName)){
+      if (!isProcessCompleted(processName)) {
         userServices.getSystemInfo(base).then(function (systemInfo) {
           $localStorage.systemInfo = systemInfo;
           $localStorage.dataDownLoadingTracker.push(processName);
@@ -287,37 +287,30 @@ angular.module('dataCapture', [
     function loadDataEntrySections(base) {
       $scope.data.dataDownLoadingMessage.push('Downloading form sections');
       var processName = "dataEntrySection";
-      if(isProcessCompleted(processName)){
+      if (isProcessCompleted(processName)) {
         loadIndicators(base);
-      }else{
+      } else {
         $scope.data.loading = true;
         sectionsServices.getAllSectionsFromServer(base)
           .then(function (sections) {
             var tableName = 'sections';
             var promises = [];
-            sections.forEach(function (section,index) {
-              /*$indexedDB.openStore('sections', function (dataSetData) {
-                dataSetData.upsert(section).then(function () {
-                  //success
-                }, function () {
-                  //error
-                });
-              });*/
+            sections.forEach(function (section) {
               var id = section.id;
               promises.push(
-                sqlLiteServices.insertData(tableName,id,section)
-                  .then(function(pass){
+                sqlLiteServices.insertData(tableName, id, section)
+                  .then(function (pass) {
                     //alert('success : ' + JSON.stringify(pass));
-                  },function(fail){
+                  }, function (fail) {
                     //alert('Fail : ' + JSON.stringify(fail));
                   })
               )
             });
-            $q.all(promises).then(function(){
+            $q.all(promises).then(function () {
               //loading indicators
               loadIndicators(base);
               $localStorage.dataDownLoadingTracker.push(processName);
-            },function(){
+            }, function () {
               var message = "Fail to save sections";
               progressTopMessage(message);
               $scope.data.loading = false;
@@ -337,35 +330,33 @@ angular.module('dataCapture', [
       $scope.data.loading = true;
       $scope.data.dataDownLoadingMessage.push('Downloading indicators');
       var processName = "indicators";
-      if(isProcessCompleted(processName)){
+      if (isProcessCompleted(processName)) {
         loadReports(base);
-      }else{
+      } else {
         indicatorsServices.getAllIndicatorsFromServer(base)
           .then(function (indicators) {
             var promises = [];
             var tableName = "indicators";
             indicators.forEach(function (indicator) {
-              //indicatorsServices.saveIndicatorIntoIndexDb(indicator);
               var id = indicator.id;
               promises.push(
-                sqlLiteServices.insertData(tableName,id,indicator)
-                  .then(function(pass){
+                sqlLiteServices.insertData(tableName, id, indicator)
+                  .then(function (pass) {
                     //alert('success : ' + JSON.stringify(pass));
-                  },function(fail){
+                  }, function (fail) {
                     //alert('Fail : ' + JSON.stringify(fail));
                   })
               )
             });
-            $q.all(promises).then(function(){
+            $q.all(promises).then(function () {
               //loading reports
               loadReports(base);
               $localStorage.dataDownLoadingTracker.push(processName);
-            },function(){
+            }, function () {
               var message = "Fail to save indicators";
               progressTopMessage(message);
               $scope.data.loading = false;
             });
-
           }, function () {
             //error
             var message = "Fail to download indicators";
@@ -380,33 +371,31 @@ angular.module('dataCapture', [
     function loadReports(base) {
       var processName = 'reports';
       $scope.data.dataDownLoadingMessage.push('Downloading reports');
-      if(isProcessCompleted(processName)){
+      if (isProcessCompleted(processName)) {
         loadConstants(base);
-      }else{
+      } else {
         $scope.data.loading = true;
         reportServices.getAllReportsFromServer(base)
           .then(function (reports) {
             $scope.data.reports = reports;
-            //reportServices.saveReportToIndexDb(reports);
             var promises = [];
             var tableName = "reports";
             reports.forEach(function (report) {
-              //reportServices.saveReportToIndexDb(report);
               var id = report.id;
               promises.push(
-              sqlLiteServices.insertData(tableName,id,report)
-                .then(function(pass){
-                  //alert('success : ' + JSON.stringify(pass));
-                },function(fail){
-                  //alert('Fail : ' + JSON.stringify(fail));
-                })
+                sqlLiteServices.insertData(tableName, id, report)
+                  .then(function (pass) {
+                    //alert('success : ' + JSON.stringify(pass));
+                  }, function (fail) {
+                    //alert('Fail : ' + JSON.stringify(fail));
+                  })
               )
             });
-            $q.all(promises).then(function(){
+            $q.all(promises).then(function () {
               //loading all constants
               loadConstants(base);
               $localStorage.dataDownLoadingTracker.push(processName);
-            },function(){
+            }, function () {
               var message = "Fail to save reports";
               progressTopMessage(message);
               $scope.data.loading = false;
@@ -425,35 +414,34 @@ angular.module('dataCapture', [
     function loadConstants(base) {
       var processName = "constants";
       $scope.data.dataDownLoadingMessage.push('Downloading constants for reports');
-      if(isProcessCompleted(processName)){
+      if (isProcessCompleted(processName)) {
         $scope.data.dataDownLoadingMessage.push('');
         $localStorage.dataDownLoadingStatus = true;
         //redirect to th landing page
         directToLandingPage();
-      }else{
+      } else {
         constantsServices.getAllConstantsFromServer(base)
           .then(function (constants) {
             var promises = [];
             var tableName = "constants";
             constants.forEach(function (constant) {
-             // constantsServices.saveConstantIntoIndexDb(constant);
               var id = constant.id;
               promises.push(
-                sqlLiteServices.insertData(tableName,id,constant)
-                  .then(function(pass){
+                sqlLiteServices.insertData(tableName, id, constant)
+                  .then(function (pass) {
                     //alert('success : ' + JSON.stringify(pass));
-                  },function(fail){
+                  }, function (fail) {
                     //alert('Fail : ' + JSON.stringify(fail));
                   })
               )
             });
-            $q.all(promises).then(function(){
+            $q.all(promises).then(function () {
               $scope.data.dataDownLoadingMessage.push('');
               $localStorage.dataDownLoadingStatus = true;
               $localStorage.dataDownLoadingTracker.push(processName);
               //redirect to th landing page
               directToLandingPage();
-            },function(){
+            }, function () {
               var message = "Fail to save constants";
               progressTopMessage(message);
               $scope.data.loading = false;
@@ -473,35 +461,28 @@ angular.module('dataCapture', [
       $scope.data.loading = true;
       var processName = "dataSets";
       $scope.data.dataDownLoadingMessage.push('Download data entry forms');
-      if(isProcessCompleted(processName)){
+      if (isProcessCompleted(processName)) {
         loadDataEntrySections(base);
-      }else{
+      } else {
         dataSetsServices.getAllDataSetsFromServer(base).then(function (dataSets) {
           var promises = [];
           var tableName = "dataSets";
           dataSets.forEach(function (dataSet) {
-            /*$indexedDB.openStore('dataSets', function (dataSetData) {
-              dataSetData.upsert(dataSet).then(function () {
-                //success
-              }, function () {
-                //error getting individual data set
-              });
-            });*/
             var id = dataSet.id;
             promises.push(
-              sqlLiteServices.insertData(tableName,id,dataSet)
-                .then(function(pass){
+              sqlLiteServices.insertData(tableName, id, dataSet)
+                .then(function (pass) {
                   //alert('success : ' + JSON.stringify(pass));
-                },function(fail){
+                }, function (fail) {
                   //alert('Fail : ' + JSON.stringify(fail));
                 })
             )
           });
-          $q.all(promises).then(function(){
+          $q.all(promises).then(function () {
             //load all data entry sections forms
             $localStorage.dataDownLoadingTracker.push(processName);
             loadDataEntrySections(base);
-          },function(){
+          }, function () {
             var message = "Fail to save dataSets";
             progressTopMessage(message);
             $scope.data.loading = false;
@@ -520,26 +501,19 @@ angular.module('dataCapture', [
     function addAssignedOrgUnit(orgUnits, baseUrl) {
       var processName = "orgUnits";
       $scope.data.dataDownLoadingMessage.push('Fetch assigned Organisation ');
-      if(! isProcessCompleted(processName)){
-        orgUnits.forEach(function (orgUnit,index) {
+      if (!isProcessCompleted(processName)) {
+        orgUnits.forEach(function (orgUnit, index) {
           userServices.getAssignedOrgUnitChildrenFromServer(orgUnit.id, baseUrl).then(function (OrgUnitChildrenData) {
             var tableName = "orgUnits";
-            /*$indexedDB.openStore('orgUnits', function (orgUnitsData) {
-              orgUnitsData.upsert(OrgUnitChildrenData).then(function () {
-                //success
-              }, function () {
-                //error
-              });
-            });*/
             var id = OrgUnitChildrenData.id;
-            sqlLiteServices.insertData(tableName,id,OrgUnitChildrenData)
-              .then(function(pass){
+            sqlLiteServices.insertData(tableName, id, OrgUnitChildrenData)
+              .then(function (pass) {
                 //alert('success : ' + JSON.stringify(pass));
-              },function(fail){
+              }, function (fail) {
                 //alert('Fail : ' + JSON.stringify(fail));
               });
 
-            if(index == (orgUnits.length -1)){
+            if (index == (orgUnits.length - 1)) {
               $localStorage.dataDownLoadingTracker.push(processName);
             }
           }, function () {
@@ -559,10 +533,10 @@ angular.module('dataCapture', [
     }
 
     //function to checking state of process
-    function isProcessCompleted(processName){
+    function isProcessCompleted(processName) {
       var processStatus = false;
-      $localStorage.dataDownLoadingTracker.forEach(function(process){
-        if(process == processName){
+      $localStorage.dataDownLoadingTracker.forEach(function (process) {
+        if (process == processName) {
           processStatus = true;
         }
       });
@@ -570,100 +544,68 @@ angular.module('dataCapture', [
     }
 
     //flexibility for form
-    $scope.isInteger = function(key){
-      if(key == "NUMBER" || key == "INTEGER"){
+    $scope.isInteger = function (key) {
+      if (key == "NUMBER" || key == "INTEGER") {
         return true;
-      }else{
+      } else {
         return false;
       }
     };
-    $scope.isTrueOnly = function(key){
-      if(key == "TRUE_ONLY"){
+    $scope.isTrueOnly = function (key) {
+      if (key == "TRUE_ONLY") {
         return true;
-      }else{
+      } else {
         return false;
       }
     };
-    $scope.isIntegerZeroOrPositive = function(key){
-      if(key == "INTEGER_ZERO_OR_POSITIVE"){
+    $scope.isIntegerZeroOrPositive = function (key) {
+      if (key == "INTEGER_ZERO_OR_POSITIVE") {
         return true;
-      }else{
+      } else {
         return false;
       }
     };
-    $scope.isDate = function(key){
-      if(key == "DATE"){
+    $scope.isDate = function (key) {
+      if (key == "DATE") {
         return true;
-      }else{
+      } else {
         return false;
       }
     };
-    $scope.isString = function(key){
-      if(key == "TEXT" || key == "LONG_TEXT"){
+    $scope.isString = function (key) {
+      if (key == "TEXT" || key == "LONG_TEXT") {
         return true;
-      }else{
+      } else {
         return false;
       }
     };
-    $scope.isBoolean = function(key){
-      if(key == "BOOLEAN"){
+    $scope.isBoolean = function (key) {
+      if (key == "BOOLEAN") {
         return true;
-      }else{
+      } else {
         return false;
       }
     };
-    $scope.hasDataSets = function(dataElement){
+    $scope.hasDataSets = function (dataElement) {
 
-      if(dataElement.optionSet != undefined){
+      if (dataElement.optionSet != undefined) {
         return true;
-      }else{
+      } else {
         return false;
       }
     };
-    $scope.getOptionSets = function(dataElement){
-      if(dataElement.optionSet){
+    $scope.getOptionSets = function (dataElement) {
+      if (dataElement.optionSet) {
         return dataElement.optionSet.options;
-      }else{
+      } else {
         return false;
       }
     };
 
   })
 
-  .config(function ($stateProvider, $urlRouterProvider, $indexedDBProvider, $ionicConfigProvider) {
+  .config(function ($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
     $ionicConfigProvider.scrolling.jsScrolling(false);
-    $indexedDBProvider
-      .connection('hisptz')
-      .upgradeDatabase(1, function (event, db, tx) {
-
-        var dataSets = db.createObjectStore('dataSets', {keyPath: 'id'});
-        dataSets.createIndex('id_index', 'id', {unique: true});
-        dataSets.createIndex('name_index', 'name', {unique: false});
-
-        var dataSets = db.createObjectStore('reports', {keyPath: 'id'});
-        dataSets.createIndex('id_index', 'id', {unique: true});
-        dataSets.createIndex('name_index', 'name', {unique: false});
-
-        var dataSets = db.createObjectStore('sections', {keyPath: 'id'});
-        dataSets.createIndex('id_index', 'id', {unique: true});
-        dataSets.createIndex('name_index', 'name', {unique: false});
-
-        var dataSets = db.createObjectStore('orgUnits', {keyPath: 'id'});
-        dataSets.createIndex('id_index', 'id', {unique: true});
-
-        var dataSets = db.createObjectStore('dataValues', {keyPath: 'id'});
-        dataSets.createIndex('id_index', 'id', {unique: true});
-
-      })
-      .upgradeDatabase(2, function (event, db, tx) {
-        var dataSets = db.createObjectStore('indicators', {keyPath: 'id'});
-        dataSets.createIndex('id_index', 'id', {unique: true});
-      })
-      .upgradeDatabase(3, function (event, db, tx) {
-        var dataSets = db.createObjectStore('constants', {keyPath: 'id'});
-        dataSets.createIndex('id_index', 'id', {unique: true});
-      });
-
     $stateProvider
       .state('login', {
         url: '/login',
