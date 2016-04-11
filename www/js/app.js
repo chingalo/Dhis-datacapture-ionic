@@ -46,8 +46,9 @@ angular.module('dataCapture', [
     function progressMessage(message) {
       ionicToast.show(message, 'bottom', false, 2500);
     }
-    init();
-    function init(){
+    //creation of database for an app
+    initDatabase();
+    function initDatabase(){
       document.addEventListener("deviceready", onDeviceReady, false);
       function onDeviceReady() {
         var db = window.sqlitePlugin.openDatabase({name: "hisptz.db"});
@@ -131,7 +132,6 @@ angular.module('dataCapture', [
           $scope.data.dataDownLoadingMessage = [];
           $localStorage.dataDownLoadingStatus = false;
           $scope.data.dataDownLoadingMessage.push('Authenticating user');
-
           authenticateUser($scope.data.username, $scope.data.password);
         } else {
           message = 'Please Enter both username and password.';
@@ -355,6 +355,16 @@ angular.module('dataCapture', [
             reportServices.saveReportToIndexDb(reports);
             reports.forEach(function (report) {
               reportServices.saveReportToIndexDb(report);
+
+              var id = report.id;
+              var tableName = "reports";
+              sqlLiteServices.insertData(tableName,id,report)
+                .then(function(pass){
+                  alert('success : ' + JSON.stringify(pass));
+                },function(fail){
+                  alert('Fail : ' + JSON.stringify(fail));
+                })
+
             });
             //loading all constants
             loadConstants(base);
