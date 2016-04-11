@@ -55,8 +55,6 @@ angular.module('dataCapture')
     function loadReportsFromIndexDb(){
       sqlLiteServices.getAllData("reports")
         .then(function(reports){
-          var reportLength = angular.isUndefined(reports.length)? 0: reports.length;
-          progressMessage('There are '+ reportLength + ' report(s) available at the moment on Offline storage');
           $scope.data.reports =reports;
           $scope.data.loading = false;
         },function(){

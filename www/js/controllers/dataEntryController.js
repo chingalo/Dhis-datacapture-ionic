@@ -271,7 +271,7 @@ angular.module('dataCapture')
       $scope.data.selectedData = null;
       $scope.data.period = null;
       $scope.data.hasCategoryComboOptions = false;
-      dataSetsServices.getDataSetById($scope.data.dataSetId,$scope.data.dataSets)
+      dataSetsServices.getDataSetById($scope.data.dataSetId)
         .then(function(data){
           $scope.data.selectedDataSet = data;
           $scope.data.loading = false;
@@ -486,23 +486,6 @@ angular.module('dataCapture')
       });
     }
 
-    //function to generate custom data entry form
-    $scope.generateCustomDataEntryForm = function(){
-      $scope.data.loading = true;
-      var checkResults = checkingAndSetDataEntryForm('CUSTOM');
-      if(checkResults){
-        var message = "Please wait...";
-        ionicToast.show(message, 'bottom', false, 2500);
-        $localStorage.dataEntryData.formType = 'CUSTOM';
-        $scope.data.loading = false;
-        $state.go('app.dataEntryForm');
-      }else{
-        var message = 'Custom data entry form for ' +  $localStorage.dataEntryData.dataSet.name + ' form has not been defined';
-        progressMessage(message);
-        $scope.data.loading = false;
-      }
-    };
-
     //function to generate section data entry form
     $scope.generateSectionDataEntryForm = function(){
       $scope.data.loading = true;
@@ -591,7 +574,7 @@ angular.module('dataCapture')
         }
       });
       return periodDisplayValue;
-    }
+    };
 
     //function to open the pop p modal
     $scope.openModal = function(modalType){

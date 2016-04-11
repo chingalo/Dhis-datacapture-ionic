@@ -161,7 +161,6 @@ angular.module('dataCapture', [
         $state.go('login');
         $window.location.reload(true);
         $scope.data.loading = false;
-        progressMessage("You have logged out successfully");
       });
     };
 
@@ -295,6 +294,7 @@ angular.module('dataCapture', [
           .then(function (sections) {
             var tableName = 'sections';
             var promises = [];
+            $scope.data.dataDownLoadingMessage.push('Saving form sections');
             sections.forEach(function (section) {
               var id = section.id;
               promises.push(
@@ -337,6 +337,7 @@ angular.module('dataCapture', [
           .then(function (indicators) {
             var promises = [];
             var tableName = "indicators";
+            $scope.data.dataDownLoadingMessage.push('Saving indicators');
             indicators.forEach(function (indicator) {
               var id = indicator.id;
               promises.push(
@@ -380,6 +381,7 @@ angular.module('dataCapture', [
             $scope.data.reports = reports;
             var promises = [];
             var tableName = "reports";
+            $scope.data.dataDownLoadingMessage.push('Saving reports');
             reports.forEach(function (report) {
               var id = report.id;
               promises.push(
@@ -422,6 +424,7 @@ angular.module('dataCapture', [
       } else {
         constantsServices.getAllConstantsFromServer(base)
           .then(function (constants) {
+            $scope.data.dataDownLoadingMessage.push('Saving constants for reports');
             var promises = [];
             var tableName = "constants";
             constants.forEach(function (constant) {
@@ -460,13 +463,14 @@ angular.module('dataCapture', [
       $localStorage.baseUrl = base;
       $scope.data.loading = true;
       var processName = "dataSets";
-      $scope.data.dataDownLoadingMessage.push('Download data entry forms');
+      $scope.data.dataDownLoadingMessage.push('Downloading data entry forms');
       if (isProcessCompleted(processName)) {
         loadDataEntrySections(base);
       } else {
         dataSetsServices.getAllDataSetsFromServer(base).then(function (dataSets) {
           var promises = [];
           var tableName = "dataSets";
+          $scope.data.dataDownLoadingMessage.push('saving data entry forms');
           dataSets.forEach(function (dataSet) {
             var id = dataSet.id;
             promises.push(

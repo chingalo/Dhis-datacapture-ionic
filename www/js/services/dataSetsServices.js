@@ -2,32 +2,32 @@
  * Created by joseph on 1/30/16.
  */
 angular.module('dataCapture')
-  .factory('dataSetsServices',function($http,$q,$localStorage,sqlLiteServices,$indexedDB){
+  .factory('dataSetsServices', function ($http, $q, $localStorage, sqlLiteServices, $indexedDB) {
 
     var dataSetsServices = {
 
-      getAllDataSetsFromServer :function(baseUrl){
+      getAllDataSetsFromServer: function (baseUrl) {
         var defer = $q.defer();
         var field = "fields=id,name,timelyDays,formType,version,periodType,openFuturePeriods,expiryDays,dataElements[id,name,displayName,description,formName,attributeValues[value,attribute[name]],valueType,optionSet[name,options[name,id]],categoryCombo[id,name,categoryOptionCombos[id,name]]],organisationUnits[id,name],sections[id,name],indicators[id,name,indicatorType[factor],denominatorDescription,numeratorDescription,numerator,denominator],categoryCombo[id,name,displayName,categoryOptionCombos[id,name]]";
         $http.get(baseUrl + '/api/dataSets.json?paging=false&' + field)
-          .success(function(results){
+          .success(function (results) {
             defer.resolve(results.dataSets);
           })
-          .error(function(){
+          .error(function () {
             defer.reject('error');
           });
         return defer.promise;
       },
-      getAllDataSets:function(){
+      getAllDataSets: function () {
         var defer = $q.defer();
-        sqlLiteServices.getAllData('dataSets').then(function(data){
+        sqlLiteServices.getAllData('dataSets').then(function (data) {
           defer.resolve(data);
-        },function(){
+        }, function () {
           defer.reject();
         });
         return defer.promise;
       },
-      deleteAllDataSets : function(){
+      deleteAllDataSets: function () {
         var defer = $q.defer();
         sqlLiteServices.dropTable('dataSets').then(function () {
           //success
@@ -38,42 +38,42 @@ angular.module('dataCapture')
         });
         return defer.promise;
       },
-      getDataSetsByOrgUnitId : function(orgUnitId,dataSets){
+      getDataSetsByOrgUnitId: function (orgUnitId, dataSets) {
         var orgUnitDataSets = [];
-        dataSets.forEach(function(dataSet){
+        dataSets.forEach(function (dataSet) {
           var orgUnits = dataSet.organisationUnits;
-          orgUnits.forEach(function(orgUnit){
-            if(orgUnit.id === orgUnitId){
+          orgUnits.forEach(function (orgUnit) {
+            if (orgUnit.id === orgUnitId) {
               orgUnitDataSets.push(dataSet);
             }
           })
         });
         return orgUnitDataSets;
       },
-      getDataSetById:function(dataSetId,dataSets){
+      getDataSetById: function (dataSetId) {
         var defer = $q.defer();
-        if(dataSetId && dataSets){
-          dataSets.forEach(function(dataSet){
-            if(dataSet.id == dataSetId){
-              defer.resolve(dataSet);
-            }
-          })
-        }else{
-          defer.reject();
-        }
+        sqlLiteServices.getDataById(dataSetId)
+          .then(function (dataSet) {
+            defer.resolve(dataSet);
+          }, function () {
+            defer.reject();
+          });
         return defer.promise;
       },
-      saveDataSetDataValue:function(data){
+      saveDataSetDataValue: function (data) {
 
-        $indexedDB.openStore('dataValues',function(dataValuesData){
-          dataValuesData.upsert(data).then(function(){
+        var status = 0;
+        if(data.sync){
+          status = 1;
+        }
+        sqlLiteServices.insertDataValues('dataValues',data.id,data,status)
+          .then(function () {
             //success saving data values
-          },function(){
+          }, function () {
             //error
           });
-        })
       },
-      deleteAllDataValues : function(){
+      deleteAllDataValues: function () {
         var defer = $q.defer();
         sqlLiteServices.dropTable('dataValues').then(function () {
           //success
@@ -84,52 +84,45 @@ angular.module('dataCapture')
         });
         return defer.promise;
       },
-      getDataValueById : function(id){
+      getDataValueById: function (id) {
         var defer = $q.defer();
         var result = null;
-        sqlLiteServices.getDataById('dataValues',id).then(function(dataValue){
+        sqlLiteServices.getDataById('dataValues', id).then(function (dataValue) {
           result = dataValue;
           defer.resolve(result);
-        },function(){
+        }, function () {
           //error get all data values from indexDB
           defer.reject();
         });
       },
-      getSavedDataValuesFromIndexDbForSync : function(){
+      getSavedDataValuesFromIndexDbForSync: function () {
         var defer = $q.defer();
-        $indexedDB.openStore('dataValues',function(dataValuesData){
-          dataValuesData.getAll().then(function(dataValues){
-            var data = [];
-            dataValues.forEach(function(dataValue){
-              if(! dataValue.sync){
-                data.push(dataValue)
-              }
-            });
-            //success
-            defer.resolve(data);
-          },function(){
-            //error get all data values from indexDB
+        var attribute = 'isSync';
+        var value = 0;
+        sqlLiteServices.getAllDataByAttribute('dataValues',attribute,value)
+          .then(function (dataValues){
+            defer.resolve(dataValues);
+        },function(){
             defer.reject();
           });
-        });
         return defer.promise;
       },
-      uploadDataValuesToTheServer : function(formattedDataValues,dataValues){
+      uploadDataValuesToTheServer: function (formattedDataValues, dataValues) {
         var base = $localStorage.baseUrl;
         var i = -1;
-        formattedDataValues.forEach(function(data){
-          i ++;
-          $http.post(base+'/api/dataValues?'+data,null)
-            .then(function(){
+        formattedDataValues.forEach(function (data) {
+          i++;
+          $http.post(base + '/api/dataValues?' + data, null)
+            .then(function () {
               dataValues[i].sync = true;
-              $indexedDB.openStore('dataValues',function(dataValuesData){
-                dataValuesData.upsert(dataValues[i]).then(function(){
+              $indexedDB.openStore('dataValues', function (dataValuesData) {
+                dataValuesData.upsert(dataValues[i]).then(function () {
                   //success
-                },function(){
+                }, function () {
                   //error
                 });
               });
-            },function(){
+            }, function () {
               //error on uploading data set values
             });
         })
