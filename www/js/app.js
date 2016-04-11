@@ -28,14 +28,6 @@ angular.module('dataCapture', [
         // org.apache.cordova.statusbar required
         StatusBar.styleDefault();
       }
-      document.addEventListener("deviceready", onDeviceReady, false);
-      function onDeviceReady() {
-        alert('here');
-        var db = window.sqlitePlugin.openDatabase({name: "my.db"});
-        db.transaction(function (tx) {
-          tx.executeSql('CREATE TABLE IF NOT EXISTS person (id TEXT primary key, data LONGTEXT)');
-        });
-      }
     });
   })
 
@@ -54,15 +46,21 @@ angular.module('dataCapture', [
     function progressMessage(message) {
       ionicToast.show(message, 'bottom', false, 2500);
     }
-    init()
+    init();
     function init(){
       alert('inside function');
       document.addEventListener("deviceready", onDeviceReady, false);
       function onDeviceReady() {
-        alert('here');
+        alert('here inside controller');
         var db = window.sqlitePlugin.openDatabase({name: "my.db"});
-        db.transaction(function (tx) {
-          tx.executeSql('CREATE TABLE IF NOT EXISTS person (id TEXT primary key, data LONGTEXT)');
+        db.transaction(function(transaction) {
+          transaction.executeSql('CREATE TABLE IF NOT EXISTS phonegap_pro (id integer primary key, title text, desc text)', [],
+            function(tx, result) {
+              alert("Table created successfully");
+            },
+            function(error) {
+              alert("Error occurred while creating the table.");
+            });
         });
       }
     }
