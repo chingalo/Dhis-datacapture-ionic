@@ -5,7 +5,7 @@ angular.module('dataCapture')
   .controller('settingController',function($scope,ionicToast,$ionicHistory,$state,
                                            $ionicModal,dataSetsServices,$indexedDB,
                                            sectionsServices,reportServices,
-                                           userServices,constantsServices,
+                                           userServices,constantsServices,sqlLiteServices,
                                            $localStorage,synchronizationServices){
 
     //initialization of setting configuration variables
@@ -131,7 +131,7 @@ angular.module('dataCapture')
 
     //function to delete all data
     function deleteAllData(){
-      $indexedDB.deleteDatabase().then(function(){
+     sqlLiteServices.dropDataBase().then(function(){
         var message = "Offline storage has been reset successfully";
         progressMessage(message);
         logOutUser();

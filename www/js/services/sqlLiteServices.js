@@ -121,6 +121,14 @@ angular.module('dataCapture')
           });
         });
         return defer.promise;
+      },
+      dropDataBase : function(){
+        var defer = $q.defer();
+        window.sqlitePlugin.deleteDatabase({name: "hisptz.db"},function(){
+          defer.resolve();
+        },function(){
+          defer.reject();
+        });
       }
     };
     return sqlLiteServices;
