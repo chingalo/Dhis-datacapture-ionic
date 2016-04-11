@@ -109,6 +109,17 @@ angular.module('dataCapture')
         });
         return defer.promise;
       },
+      createTable : function(tableName){
+        db.transaction(function (tx) {
+          tx.executeSql('CREATE TABLE IF NOT EXISTS '+tableName+' (id TEXT primary key, data LONGTEXT, isSync INTEGER)', [],
+            function (tx, result) {
+              //alert("Table dataValues created successfully");
+            },
+            function (error) {
+              //alert("Error occurred while creating the table dataValues.");
+            });
+        });
+      },
       dropTable : function(tableName){
         var defer = $q.defer();
         db = window.sqlitePlugin.openDatabase({name: "hisptz.db"});

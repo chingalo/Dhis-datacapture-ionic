@@ -67,10 +67,13 @@ angular.module('dataCapture')
           status = 1;
         }
         sqlLiteServices.insertDataValues('dataValues',data.id,data,status)
-          .then(function () {
+          .then(function (data) {
             //success saving data values
-          }, function () {
+            alert('Saving :' + JSON.stringify(data));
+
+          }, function (erro) {
             //error
+            alert('Saving error :' + JSON.stringify(erro));
           });
       },
       deleteAllDataValues: function () {
@@ -78,6 +81,7 @@ angular.module('dataCapture')
         sqlLiteServices.dropTable('dataValues').then(function () {
           //success
           defer.resolve();
+
         }, function () {
           //error
           defer.reject();
@@ -101,6 +105,7 @@ angular.module('dataCapture')
         var value = 0;
         sqlLiteServices.getAllDataByAttribute('dataValues',attribute,value)
           .then(function (dataValues){
+            alert('prepare ' + dataValues.length + " data values to sync")
             defer.resolve(dataValues);
         },function(){
             defer.reject();

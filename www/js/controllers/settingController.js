@@ -121,12 +121,26 @@ angular.module('dataCapture')
       $scope.data.loading = true;
       dataSetsServices.deleteAllDataValues()
         .then(function(){
+          createDataValuesTable()
           $scope.data.loading = false;
           progressMessage("Data Entry values has been reset successfully");
         },function(){
           progressMessage("Data Entry values has been failed to reset successfully");
           $scope.data.loading = false;
         })
+    }
+
+    function createDataValuesTable(){
+      var db = window.sqlitePlugin.openDatabase({name: "hisptz.db"});
+      db.transaction(function (tx) {
+        tx.executeSql('CREATE TABLE IF NOT EXISTS dataValues (id TEXT primary key, data LONGTEXT, isSync INTEGER)', [],
+          function (tx, result) {
+            //alert("Table dataValues created successfully");
+          },
+          function (error) {
+            //alert("Error occurred while creating the table dataValues.");
+          });
+      });
     }
 
     //function to delete all data
