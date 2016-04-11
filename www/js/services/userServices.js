@@ -2,7 +2,7 @@
  * Created by joseph on 2/4/16.
  */
 angular.module('dataCapture')
-  .factory('userServices', function ($http, $q, $localStorage, $indexedDB, Base64) {
+  .factory('userServices', function ($http, $q, $localStorage,sqlLiteServices,$indexedDB, Base64) {
     var userServices = {
       authenticateUser: function (username, password) {
         var base = $localStorage.baseUrl;
@@ -48,13 +48,20 @@ angular.module('dataCapture')
       },
       getAssignedOrgUnitFromIndexDb: function () {
         var defer = $q.defer();
-        $indexedDB.openStore('orgUnits', function (orgUnitData) {
+
+        sqlLiteServices.getAllData('orgUnits').then(function (data) {
+          defer.resolve(data);
+        }, function () {
+          defer.reject('error');
+        });
+        /*$indexedDB.openStore('orgUnits', function (orgUnitData) {
           orgUnitData.getAll().then(function (data) {
             defer.resolve(data);
           }, function () {
             defer.reject('error');
           });
-        });
+        });*/
+
 
         return defer.promise;
       },

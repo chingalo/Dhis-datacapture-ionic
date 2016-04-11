@@ -2,13 +2,13 @@
  * Created by joseph on 1/30/16.
  */
 angular.module('dataCapture')
-  .factory('dataSetsServices',function($http,$q,$localStorage,$indexedDB){
+  .factory('dataSetsServices',function($http,$q,$localStorage,sqlLiteServices,$indexedDB){
 
     var dataSetsServices = {
 
       getAllDataSetsFromServer :function(baseUrl){
         var defer = $q.defer();
-        var field = "fields=id,name,timelyDays,formType,version,periodType,openFuturePeriods,expiryDays,dataEntryForm,dataElements[id,name,displayName,description,formName,attributeValues[value,attribute[name]],valueType,optionSet[name,options[name,id]],categoryCombo[id,name,categoryOptionCombos[id,name]]],organisationUnits[id,name],sections[id,name],indicators[id,name,indicatorType[factor],denominatorDescription,numeratorDescription,numerator,denominator],categoryCombo[id,name,displayName,categoryOptionCombos[id,name]]";
+        var field = "fields=id,name,timelyDays,formType,version,periodType,openFuturePeriods,expiryDays,dataElements[id,name,displayName,description,formName,attributeValues[value,attribute[name]],valueType,optionSet[name,options[name,id]],categoryCombo[id,name,categoryOptionCombos[id,name]]],organisationUnits[id,name],sections[id,name],indicators[id,name,indicatorType[factor],denominatorDescription,numeratorDescription,numerator,denominator],categoryCombo[id,name,displayName,categoryOptionCombos[id,name]]";
         $http.get(baseUrl + '/api/dataSets.json?paging=false&' + field)
           .success(function(results){
             defer.resolve(results.dataSets);
@@ -20,13 +20,18 @@ angular.module('dataCapture')
       },
       getAllDataSets:function(){
         var defer = $q.defer();
-        $indexedDB.openStore('dataSets',function(dataSetData){
+        sqlLiteServices.getAllData('dataSets').then(function(data){
+          defer.resolve(data);
+        },function(){
+          defer.reject();
+        });
+        /*$indexedDB.openStore('dataSets',function(dataSetData){
           dataSetData.getAll().then(function(data){
             defer.resolve(data);
           },function(){
             defer.reject();
           });
-        });
+        });*/
         return defer.promise;
       },
       deleteAllDataSets : function(){
@@ -68,7 +73,7 @@ angular.module('dataCapture')
         return defer.promise;
       },
       saveDataSetDataValue:function(data){
-        console.log('before : ',data);
+
         $indexedDB.openStore('dataValues',function(dataValuesData){
           dataValuesData.upsert(data).then(function(){
             //success saving data values

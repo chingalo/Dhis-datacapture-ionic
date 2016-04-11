@@ -4,7 +4,7 @@
 angular.module('dataCapture')
   .controller('reportController',function($scope,$state,ionicToast,$filter,
                                           $localStorage,reportServices,
-                                          periodSelectionServices,
+                                          periodSelectionServices,sqlLiteServices,
                                           userServices,$ionicModal){
 
     //variable for reports
@@ -34,6 +34,7 @@ angular.module('dataCapture')
       loadReportsFromIndexDb();
     }else{
       $scope.data.selectedReport = $localStorage.selectedReport;
+      loadReportsFromIndexDb();
     }
 
     //function for toaster messages
@@ -52,7 +53,7 @@ angular.module('dataCapture')
 
     //function to load reports from index db
     function loadReportsFromIndexDb(){
-      reportServices.getAllReportsFromIndexDb()
+      sqlLiteServices.getAllData("reports")
         .then(function(reports){
           var reportLength = angular.isUndefined(reports.length)? 0: reports.length;
           progressMessage('There are '+ reportLength + ' report(s) available at the moment on Offline storage');
@@ -63,6 +64,18 @@ angular.module('dataCapture')
           var message = "Fail to load reports from Offline storage ";
           progressMessage(message);
         });
+
+      //reportServices.getAllReportsFromIndexDb()
+      //  .then(function(reports){
+      //    var reportLength = angular.isUndefined(reports.length)? 0: reports.length;
+      //    progressMessage('There are '+ reportLength + ' report(s) available at the moment on Offline storage');
+      //    $scope.data.reports =reports;
+      //    $scope.data.loading = false;
+      //  },function(){
+      //    //error
+      //    var message = "Fail to load reports from Offline storage ";
+      //    progressMessage(message);
+      //  });
     }
 
     //function to take updates of reports from index db

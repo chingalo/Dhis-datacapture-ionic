@@ -58,11 +58,6 @@ angular.module('dataCapture', [
             tx.executeSql('CREATE TABLE IF NOT EXISTS '+table+' (id TEXT primary key, data LONGTEXT)', [],
               function(tx, result) {
                 //alert("Table "+table+" created successfully");
-                sqlLiteServices.getAllData(table).then(function(data){
-                  alert('data on '+table+' : ' + JSON.stringify(data.length))
-                },function(e){
-                  alert('error')
-                })
               },
               function(error) {
                 //alert("Error occurred while creating the table "+table+".");
@@ -301,13 +296,13 @@ angular.module('dataCapture', [
             var tableName = 'sections';
             var promises = [];
             sections.forEach(function (section,index) {
-              $indexedDB.openStore('sections', function (dataSetData) {
+              /*$indexedDB.openStore('sections', function (dataSetData) {
                 dataSetData.upsert(section).then(function () {
                   //success
                 }, function () {
                   //error
                 });
-              });
+              });*/
               var id = section.id;
               promises.push(
                 sqlLiteServices.insertData(tableName,id,section)
@@ -350,8 +345,7 @@ angular.module('dataCapture', [
             var promises = [];
             var tableName = "indicators";
             indicators.forEach(function (indicator) {
-              indicatorsServices.saveIndicatorIntoIndexDb(indicator);
-
+              //indicatorsServices.saveIndicatorIntoIndexDb(indicator);
               var id = indicator.id;
               promises.push(
                 sqlLiteServices.insertData(tableName,id,indicator)
@@ -393,12 +387,11 @@ angular.module('dataCapture', [
         reportServices.getAllReportsFromServer(base)
           .then(function (reports) {
             $scope.data.reports = reports;
-            reportServices.saveReportToIndexDb(reports);
-
+            //reportServices.saveReportToIndexDb(reports);
             var promises = [];
             var tableName = "reports";
             reports.forEach(function (report) {
-              reportServices.saveReportToIndexDb(report);
+              //reportServices.saveReportToIndexDb(report);
               var id = report.id;
               promises.push(
               sqlLiteServices.insertData(tableName,id,report)
@@ -443,7 +436,7 @@ angular.module('dataCapture', [
             var promises = [];
             var tableName = "constants";
             constants.forEach(function (constant) {
-              constantsServices.saveConstantIntoIndexDb(constant);
+             // constantsServices.saveConstantIntoIndexDb(constant);
               var id = constant.id;
               promises.push(
                 sqlLiteServices.insertData(tableName,id,constant)
@@ -487,14 +480,13 @@ angular.module('dataCapture', [
           var promises = [];
           var tableName = "dataSets";
           dataSets.forEach(function (dataSet) {
-            $indexedDB.openStore('dataSets', function (dataSetData) {
+            /*$indexedDB.openStore('dataSets', function (dataSetData) {
               dataSetData.upsert(dataSet).then(function () {
                 //success
               }, function () {
                 //error getting individual data set
               });
-            });
-
+            });*/
             var id = dataSet.id;
             promises.push(
               sqlLiteServices.insertData(tableName,id,dataSet)
@@ -532,13 +524,13 @@ angular.module('dataCapture', [
         orgUnits.forEach(function (orgUnit,index) {
           userServices.getAssignedOrgUnitChildrenFromServer(orgUnit.id, baseUrl).then(function (OrgUnitChildrenData) {
             var tableName = "orgUnits";
-            $indexedDB.openStore('orgUnits', function (orgUnitsData) {
+            /*$indexedDB.openStore('orgUnits', function (orgUnitsData) {
               orgUnitsData.upsert(OrgUnitChildrenData).then(function () {
                 //success
               }, function () {
                 //error
               });
-            });
+            });*/
             var id = OrgUnitChildrenData.id;
             sqlLiteServices.insertData(tableName,id,OrgUnitChildrenData)
               .then(function(pass){
