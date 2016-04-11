@@ -48,18 +48,71 @@ angular.module('dataCapture', [
     }
     init();
     function init(){
-      alert('inside function');
       document.addEventListener("deviceready", onDeviceReady, false);
       function onDeviceReady() {
-        alert('here inside controller');
-        var db = window.sqlitePlugin.openDatabase({name: "my.db"});
-        db.transaction(function(transaction) {
-          transaction.executeSql('CREATE TABLE IF NOT EXISTS phonegap_pro (id integer primary key, title text, desc text)', [],
+        var db = window.sqlitePlugin.openDatabase({name: "hisptz.db"});
+
+        db.transaction(function (tx) {
+          tx.executeSql('CREATE TABLE IF NOT EXISTS dataSets (id TEXT primary key, data LONGTEXT)', [],
+            function(tx, result) {
+              alert("Table dataSets created successfully");
+            },
+            function(error) {
+              alert("Error occurred while creating the table dataSets.");
+            });
+        });
+        db.transaction(function (tx) {
+          tx.executeSql('CREATE TABLE IF NOT EXISTS reports (id TEXT primary key, data LONGTEXT)', [],
+            function(tx, result) {
+              alert("Table reports created successfully");
+            },
+            function(error) {
+              alert("Error occurred while creating the table reports.");
+            });
+        });
+        db.transaction(function (tx) {
+          tx.executeSql('CREATE TABLE IF NOT EXISTS sections (id TEXT primary key, data LONGTEXT)', [],
+            function(tx, result) {
+              alert("Table sections created successfully");
+            },
+            function(error) {
+              alert("Error occurred while creating the table sections.");
+            });
+        });
+        db.transaction(function (tx) {
+          tx.executeSql('CREATE TABLE IF NOT EXISTS orgUnits (id TEXT primary key, data LONGTEXT)', [],
             function(tx, result) {
               alert("Table created successfully");
             },
             function(error) {
               alert("Error occurred while creating the table.");
+            });
+        });
+        db.transaction(function (tx) {
+          tx.executeSql('CREATE TABLE IF NOT EXISTS indicators (id TEXT primary key, data LONGTEXT)', [],
+            function(tx, result) {
+              alert("Table indicators created successfully");
+            },
+            function(error) {
+              alert("Error occurred while creating the table indicators.");
+            });
+        });
+        db.transaction(function (tx) {
+          tx.executeSql('CREATE TABLE IF NOT EXISTS constants (id TEXT primary key, data LONGTEXT)', [],
+            function(tx, result) {
+              alert("Table constants created successfully");
+            },
+            function(error) {
+              alert("Error occurred while creating the table. constants");
+            });
+        });
+        db.transaction(function (tx) {
+          tx.executeSql('CREATE TABLE IF NOT EXISTS dataValues (id TEXT primary key, data LONGTEXT, isSync INTEGER)', [],
+            function(tx, result) {
+              alert("Table dataValues created successfully");
+            },
+            function(error) {
+              alert("Error occurred while creating the table dataValues.");
             });
         });
       }
