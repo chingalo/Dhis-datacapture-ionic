@@ -57,20 +57,25 @@ angular.module('dataCapture', [
           db.transaction(function (tx) {
             tx.executeSql('CREATE TABLE IF NOT EXISTS '+table+' (id TEXT primary key, data LONGTEXT)', [],
               function(tx, result) {
-                alert("Table "+table+" created successfully");
+                //alert("Table "+table+" created successfully");
+                sqlLiteServices.getAllData(table).then(function(data){
+                  alert('data : ' + JSON.stringify(data))
+                },function(e){
+                  alert('error')
+                })
               },
               function(error) {
-                alert("Error occurred while creating the table "+table+".");
+                //alert("Error occurred while creating the table "+table+".");
               });
           });
         });
         db.transaction(function (tx) {
           tx.executeSql('CREATE TABLE IF NOT EXISTS dataValues (id TEXT primary key, data LONGTEXT, isSync INTEGER)', [],
             function(tx, result) {
-              alert("Table dataValues created successfully");
+              //alert("Table dataValues created successfully");
             },
             function(error) {
-              alert("Error occurred while creating the table dataValues.");
+              //alert("Error occurred while creating the table dataValues.");
             });
         });
       }
@@ -272,7 +277,7 @@ angular.module('dataCapture', [
     //function to load system info
     function loadSystemInfo(base) {
       var processName = "systemInfo";
-      $scope.data.dataDownLoadingMessage.push('Load system information');
+      $scope.data.dataDownLoadingMessage.push('Loading system information');
       if(! isProcessCompleted(processName)){
         userServices.getSystemInfo(base).then(function (systemInfo) {
           $localStorage.systemInfo = systemInfo;
@@ -285,7 +290,7 @@ angular.module('dataCapture', [
 
     //function to fetching date entry sections
     function loadDataEntrySections(base) {
-      $scope.data.dataDownLoadingMessage.push('Download form sections');
+      $scope.data.dataDownLoadingMessage.push('Downloading form sections');
       var processName = "dataEntrySection";
       if(isProcessCompleted(processName)){
         loadIndicators(base);
@@ -294,6 +299,15 @@ angular.module('dataCapture', [
         sectionsServices.getAllSectionsFromServer(base)
           .then(function (sections) {
             sections.forEach(function (section,index) {
+              var data = section;
+              var id = section.id;
+              var tableName = 'sections';
+              sqlLiteServices.insertData(tableName,id,data)
+                .then(function(pass){
+                  alert('success : ' + JSON.stringify(pass));
+                },function(fail){
+                  alert('Fail : ' + JSON.stringify(fail));
+                })
               $indexedDB.openStore('sections', function (dataSetData) {
                 dataSetData.upsert(section).then(function () {
                   //success
@@ -318,7 +332,7 @@ angular.module('dataCapture', [
     //function to fetching indicators
     function loadIndicators(base) {
       $scope.data.loading = true;
-      $scope.data.dataDownLoadingMessage.push('Download indicators');
+      $scope.data.dataDownLoadingMessage.push('Downloading indicators');
       var processName = "indicators";
       if(isProcessCompleted(processName)){
         loadReports(base);
@@ -344,7 +358,7 @@ angular.module('dataCapture', [
     //function to fetching reports from the server
     function loadReports(base) {
       var processName = 'reports';
-      $scope.data.dataDownLoadingMessage.push('Download reports');
+      $scope.data.dataDownLoadingMessage.push('Downloading reports');
       if(isProcessCompleted(processName)){
         loadConstants(base);
       }else{
@@ -358,6 +372,7 @@ angular.module('dataCapture', [
 
               var id = report.id;
               var tableName = "reports";
+              alert('here');
               sqlLiteServices.insertData(tableName,id,report)
                 .then(function(pass){
                   alert('success : ' + JSON.stringify(pass));
@@ -382,7 +397,7 @@ angular.module('dataCapture', [
     //function to fetching all constants from the server
     function loadConstants(base) {
       var processName = "constants";
-      $scope.data.dataDownLoadingMessage.push('Download constants for reports');
+      $scope.data.dataDownLoadingMessage.push('Downloading constants for reports');
       if(isProcessCompleted(processName)){
         $scope.data.dataDownLoadingMessage.push('');
         $localStorage.dataDownLoadingStatus = true;

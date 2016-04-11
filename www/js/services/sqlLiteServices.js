@@ -11,7 +11,7 @@ angular.module('dataCapture')
         db = window.sqlitePlugin.openDatabase({name: "hisptz.db"});
         db.transaction(function (tx) {
           var query = "INSERT INTO " + tableName + " (id,data) VALUES (?,?)";
-          tx.executeSql(query, [JSON.stringify(id),JSON.stringify(data)], function (tx, res) {
+          tx.executeSql(query, [id,JSON.stringify(data)], function (tx, res) {
             //success adding data
             defer.resolve(res);
           }, function (e) {
