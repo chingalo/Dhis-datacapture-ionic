@@ -35,7 +35,7 @@ angular.module('dataCapture', [
                                           userServices, synchronizationServices,
                                           $ionicHistory, $ionicModal, ionicToast,
                                           indicatorsServices, reportServices, constantsServices,
-                                          $localStorage, dataSetsServices,
+                                          $localStorage, dataSetsServices,sqlLiteServices,
                                           sectionsServices, $indexedDB) {
 
     //initial variables
