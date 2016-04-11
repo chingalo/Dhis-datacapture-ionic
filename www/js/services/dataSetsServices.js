@@ -94,11 +94,13 @@ angular.module('dataCapture')
       getDataValueById: function (id) {
         var defer = $q.defer();
         var result = null;
-        alert('inside service ' + id);
         sqlLiteServices.getAllDataByAttribute('dataValues','id',id).then(function (dataValue) {
           result = dataValue;
-          alert('data value' + JSON.stringify(dataValue));
-          defer.resolve(result[0]);
+          alert('inside service ' + id);
+          if(dataValue.length > 0){
+            result = dataValue[0]
+          }
+          defer.resolve(result);
         }, function (err) {
           //error get all data values from indexDB
           alert('eror datavalues ' + JSON.stringify(err));

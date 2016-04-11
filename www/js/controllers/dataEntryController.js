@@ -128,7 +128,7 @@ angular.module('dataCapture')
             .then(function(returnedDataValue){
               var message = Math.ceil(((index + 1)/dataElements.length) * 100) + '% to completion';
               progressMessageStick(message);
-              if(returnedDataValue != null && returnedDataValue.length > 0){
+              if(returnedDataValue != null){
                 if(returnedDataValue.sync){
                   $scope.data.dataValue.online ++;
                 }else {
