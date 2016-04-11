@@ -35,7 +35,7 @@ angular.module('dataCapture', [
                                           userServices, synchronizationServices,
                                           $ionicHistory, $ionicModal, ionicToast,
                                           indicatorsServices, reportServices, constantsServices,
-                                          $localStorage, dataSetsServices,sqlLiteServices,
+                                          $localStorage, dataSetsServices,sqlLiteServices,$q,
                                           sectionsServices, $indexedDB) {
 
     //initial variables
@@ -59,7 +59,7 @@ angular.module('dataCapture', [
               function(tx, result) {
                 //alert("Table "+table+" created successfully");
                 sqlLiteServices.getAllData(table).then(function(data){
-                  alert('data : ' + JSON.stringify(data))
+                  alert('data : ' + JSON.stringify(data.length))
                 },function(e){
                   alert('error')
                 })
@@ -298,16 +298,9 @@ angular.module('dataCapture', [
         $scope.data.loading = true;
         sectionsServices.getAllSectionsFromServer(base)
           .then(function (sections) {
+            var tableName = 'sections';
+            var promises = [];
             sections.forEach(function (section,index) {
-              var data = section;
-              var id = section.id;
-              var tableName = 'sections';
-              sqlLiteServices.insertData(tableName,id,data)
-                .then(function(pass){
-                  alert('success : ' + JSON.stringify(pass));
-                },function(fail){
-                  alert('Fail : ' + JSON.stringify(fail));
-                })
               $indexedDB.openStore('sections', function (dataSetData) {
                 dataSetData.upsert(section).then(function () {
                   //success
@@ -315,10 +308,25 @@ angular.module('dataCapture', [
                   //error
                 });
               });
+              var id = section.id;
+              promises.push(
+                sqlLiteServices.insertData(tableName,id,section)
+                  .then(function(pass){
+                    //alert('success : ' + JSON.stringify(pass));
+                  },function(fail){
+                    //alert('Fail : ' + JSON.stringify(fail));
+                  })
+              )
             });
-            //loading indicators
-            loadIndicators(base);
-            $localStorage.dataDownLoadingTracker.push(processName);
+            $q.all(promises).then(function(){
+              //loading indicators
+              loadIndicators(base);
+              $localStorage.dataDownLoadingTracker.push(processName);
+            },function(){
+              var message = "Fail to save sections";
+              progressTopMessage(message);
+              $scope.data.loading = false;
+            });
           }, function () {
             //error
             var message = "Fail to download form sections";
@@ -339,12 +347,31 @@ angular.module('dataCapture', [
       }else{
         indicatorsServices.getAllIndicatorsFromServer(base)
           .then(function (indicators) {
+            var promises = [];
+            var tableName = "indicators";
             indicators.forEach(function (indicator) {
               indicatorsServices.saveIndicatorIntoIndexDb(indicator);
+
+              var id = indicator.id;
+              promises.push(
+                sqlLiteServices.insertData(tableName,id,indicator)
+                  .then(function(pass){
+                    //alert('success : ' + JSON.stringify(pass));
+                  },function(fail){
+                    //alert('Fail : ' + JSON.stringify(fail));
+                  })
+              )
             });
-            //loading reports
-            loadReports(base);
-            $localStorage.dataDownLoadingTracker.push(processName);
+            $q.all(promises).then(function(){
+              //loading reports
+              loadReports(base);
+              $localStorage.dataDownLoadingTracker.push(processName);
+            },function(){
+              var message = "Fail to save indicators";
+              progressTopMessage(message);
+              $scope.data.loading = false;
+            });
+
           }, function () {
             //error
             var message = "Fail to download indicators";
@@ -367,23 +394,30 @@ angular.module('dataCapture', [
           .then(function (reports) {
             $scope.data.reports = reports;
             reportServices.saveReportToIndexDb(reports);
+
+            var promises = [];
+            var tableName = "reports";
             reports.forEach(function (report) {
               reportServices.saveReportToIndexDb(report);
-
               var id = report.id;
-              var tableName = "reports";
-              alert('here');
+              promises.push(
               sqlLiteServices.insertData(tableName,id,report)
                 .then(function(pass){
-                  alert('success : ' + JSON.stringify(pass));
+                  //alert('success : ' + JSON.stringify(pass));
                 },function(fail){
-                  alert('Fail : ' + JSON.stringify(fail));
+                  //alert('Fail : ' + JSON.stringify(fail));
                 })
-
+              )
             });
-            //loading all constants
-            loadConstants(base);
-            $localStorage.dataDownLoadingTracker.push(processName);
+            $q.all(promises).then(function(){
+              //loading all constants
+              loadConstants(base);
+              $localStorage.dataDownLoadingTracker.push(processName);
+            },function(){
+              var message = "Fail to save reports";
+              progressTopMessage(message);
+              $scope.data.loading = false;
+            });
           }, function () {
             //error
             var message = "Fail to download reports";
@@ -406,14 +440,31 @@ angular.module('dataCapture', [
       }else{
         constantsServices.getAllConstantsFromServer(base)
           .then(function (constants) {
+            var promises = [];
+            var tableName = "constants";
             constants.forEach(function (constant) {
               constantsServices.saveConstantIntoIndexDb(constant);
+              var id = constant.id;
+              promises.push(
+                sqlLiteServices.insertData(tableName,id,constant)
+                  .then(function(pass){
+                    //alert('success : ' + JSON.stringify(pass));
+                  },function(fail){
+                    //alert('Fail : ' + JSON.stringify(fail));
+                  })
+              )
             });
-            $scope.data.dataDownLoadingMessage.push('');
-            $localStorage.dataDownLoadingStatus = true;
-            $localStorage.dataDownLoadingTracker.push(processName);
-            //redirect to th landing page
-            directToLandingPage();
+            $q.all(promises).then(function(){
+              $scope.data.dataDownLoadingMessage.push('');
+              $localStorage.dataDownLoadingStatus = true;
+              $localStorage.dataDownLoadingTracker.push(processName);
+              //redirect to th landing page
+              directToLandingPage();
+            },function(){
+              var message = "Fail to save constants";
+              progressTopMessage(message);
+              $scope.data.loading = false;
+            });
           }, function () {
             $scope.data.loading = false;
             var message = "Fail to download constants for reports";
@@ -433,6 +484,8 @@ angular.module('dataCapture', [
         loadDataEntrySections(base);
       }else{
         dataSetsServices.getAllDataSetsFromServer(base).then(function (dataSets) {
+          var promises = [];
+          var tableName = "dataSets";
           dataSets.forEach(function (dataSet) {
             $indexedDB.openStore('dataSets', function (dataSetData) {
               dataSetData.upsert(dataSet).then(function () {
@@ -440,11 +493,27 @@ angular.module('dataCapture', [
               }, function () {
                 //error getting individual data set
               });
-            })
+            });
+
+            var id = dataSet.id;
+            promises.push(
+              sqlLiteServices.insertData(tableName,id,dataSet)
+                .then(function(pass){
+                  //alert('success : ' + JSON.stringify(pass));
+                },function(fail){
+                  //alert('Fail : ' + JSON.stringify(fail));
+                })
+            )
           });
-          //load all data entry sections forms
-          $localStorage.dataDownLoadingTracker.push(processName);
-          loadDataEntrySections(base);
+          $q.all(promises).then(function(){
+            //load all data entry sections forms
+            $localStorage.dataDownLoadingTracker.push(processName);
+            loadDataEntrySections(base);
+          },function(){
+            var message = "Fail to save dataSets";
+            progressTopMessage(message);
+            $scope.data.loading = false;
+          });
         }, function () {
           //error getting data sets from server
           var message = "Fail to download data entry forms";
@@ -462,6 +531,7 @@ angular.module('dataCapture', [
       if(! isProcessCompleted(processName)){
         orgUnits.forEach(function (orgUnit,index) {
           userServices.getAssignedOrgUnitChildrenFromServer(orgUnit.id, baseUrl).then(function (OrgUnitChildrenData) {
+            var tableName = "orgUnits";
             $indexedDB.openStore('orgUnits', function (orgUnitsData) {
               orgUnitsData.upsert(OrgUnitChildrenData).then(function () {
                 //success
@@ -469,6 +539,14 @@ angular.module('dataCapture', [
                 //error
               });
             });
+            var id = OrgUnitChildrenData.id;
+            sqlLiteServices.insertData(tableName,id,OrgUnitChildrenData)
+              .then(function(pass){
+                //alert('success : ' + JSON.stringify(pass));
+              },function(fail){
+                //alert('Fail : ' + JSON.stringify(fail));
+              });
+
             if(index == (orgUnits.length -1)){
               $localStorage.dataDownLoadingTracker.push(processName);
             }
