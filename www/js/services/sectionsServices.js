@@ -21,6 +21,7 @@ angular.module('dataCapture')
       getAllDataEntryFormSection : function(){
         var defer = $q.defer();
         sqlLiteServices.getAllData('sections').then(function(data){
+          alert('section ' + data.length);
           defer.resolve(data);
         },function(){
           defer.reject('error');
