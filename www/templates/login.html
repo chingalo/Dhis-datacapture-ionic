@@ -40,6 +40,12 @@
       <div class="row" ng-if = "data.loading" style="text-align:  center;">
         <div class="col col-100">
           <div class="loginLoader">
+            <div class="row">
+              <div class="col col-100">
+                <progress id="progressbar" max="100" value="{{ getDataDownLoadingPercentage() }}"> </progress>
+                <p>{{ getDataDownLoadingPercentage() }} % to complete downloading all data</p>
+              </div>
+            </div>
             <div style ="text-align: justify" ng-repeat="downLoadingMessage in data.dataDownLoadingMessage ">
               <div class="row">
                 <div class="col col-90">{{ downLoadingMessage}}</div>
