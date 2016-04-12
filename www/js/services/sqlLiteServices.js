@@ -10,7 +10,7 @@ angular.module('dataCapture')
         var defer = $q.defer();
         db = window.sqlitePlugin.openDatabase({name: "hisptz.db"});
         db.transaction(function (tx) {
-          var query = "INSERT INTO " + tableName + " (id,data) VALUES (?,?)";
+          var query = "INSERT OR REPLACE INTO " + tableName + " (id,data) VALUES (?,?)";
           tx.executeSql(query, [id,JSON.stringify(data)], function (tx, res) {
             //success adding data
             defer.resolve(res);
@@ -24,7 +24,7 @@ angular.module('dataCapture')
         var defer = $q.defer();
         db = window.sqlitePlugin.openDatabase({name: "hisptz.db"});
         db.transaction(function (tx) {
-          var query = "INSERT INTO " + tableName + " (id,data,isSync) VALUES (?,?,?)";
+          var query = "INSERT OR REPLACE INTO " + tableName + " (id,data,isSync) VALUES (?,?,?)";
           tx.executeSql(query, [id,JSON.stringify(data),status], function (tx, res) {
             //success adding data
             defer.resolve(res);
