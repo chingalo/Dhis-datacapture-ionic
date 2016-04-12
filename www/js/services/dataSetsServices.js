@@ -104,7 +104,6 @@ angular.module('dataCapture')
         var value = 1;
         sqlLiteServices.getAllDataByAttribute('dataValues', 'isSync',parseInt(value))
           .then(function (dataValues) {
-            alert('prepare ' + dataValues.length + " data values to sync");
             defer.resolve(dataValues);
           }, function () {
             defer.reject();
