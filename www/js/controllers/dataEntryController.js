@@ -288,11 +288,14 @@ angular.module('dataCapture')
     //function to checking changes on data elements values from data entry form
     $scope.changeDataEntryForm = function(dataElement){
       for(var key in $scope.data.dataValues){
-        if($scope.data.dataValues[key]){
-          var value = $scope.data.dataValues[key];
-          prepareDataValuesToIndexDb(key,value,false);
-          if(dataElement.attributeValues.length > 0){
-            extendDataElementFunctions(dataElement,value);
+        var modelValue = key.split('-');
+        if(modelValue[0] == dataElement.id){
+          if($scope.data.dataValues[key]){
+            var value = $scope.data.dataValues[key];
+            prepareDataValuesToIndexDb(key,value,false);
+            if(dataElement.attributeValues.length > 0){
+              extendDataElementFunctions(dataElement,value);
+            }
           }
         }
       }

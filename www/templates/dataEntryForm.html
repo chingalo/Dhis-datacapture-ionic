@@ -26,7 +26,7 @@
                       <b>{{ dataElement[getFormLabelPreferences()]?dataElement[getFormLabelPreferences()]:dataElement['displayName'] }}<span ng-if = "dataElement.categoryCombo.name != 'default'" >&nbsp;&nbsp;{{ categoryOptionCombos.name}}</span>&nbsp;&nbsp;<i class="icon ion-ios-help-outline tooltip tooltipSize" title="{{ dataElement.description }}" ng-show="dataElement.description" animation="fade"></i></b>
                       <br>
                       <label class="item item-input">
-                        <input ng-change='changeDataEntryForm(dataElement)' type="number" placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
+                        <input ng-blur='changeDataEntryForm(dataElement)' type="number" placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
                       </label>
                     </div>
 
@@ -34,7 +34,7 @@
                       <b>{{ dataElement[getFormLabelPreferences()]?dataElement[getFormLabelPreferences()]:dataElement['displayName'] }}<span ng-if = "dataElement.categoryCombo.name != 'default'" >&nbsp;&nbsp;{{ categoryOptionCombos.name}}</span>&nbsp;&nbsp;<i class="icon ion-ios-help-outline tooltip tooltipSize" title="{{ dataElement.description }}" ng-show="dataElement.description" animation="fade"></i></b>
                       <br>
                       <label class="item item-input">
-                        <input ng-change='changeDataEntryForm(dataElement)' type="text"  ui-date placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
+                        <input ng-blur='changeDataEntryForm(dataElement)' type="text"  ui-date placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
                       </label>
                     </div>
 
@@ -42,7 +42,7 @@
                       <b>{{ dataElement[getFormLabelPreferences()]?dataElement[getFormLabelPreferences()]:dataElement['displayName'] }}<span ng-if = "dataElement.categoryCombo.name != 'default'" >&nbsp;&nbsp;{{ categoryOptionCombos.name}}</span>&nbsp;&nbsp;<i class="icon ion-ios-help-outline tooltip tooltipSize" title="{{ dataElement.description }}" ng-show="dataElement.description" animation="fade"></i></b>
                       <br>
                       <label class="item item-input">
-                        <input ng-change='changeDataEntryForm(dataElement)' type="number" min="0" placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
+                        <input ng-blur='changeDataEntryForm(dataElement)' type="number" min="0" placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
                       </label>
                     </div>
 
@@ -50,7 +50,7 @@
                       <b>{{ dataElement[getFormLabelPreferences()]?dataElement[getFormLabelPreferences()]:dataElement['displayName'] }}<span ng-if = "dataElement.categoryCombo.name != 'default'" >&nbsp;&nbsp;{{ categoryOptionCombos.name}}</span>&nbsp;&nbsp;<i class="icon ion-ios-help-outline tooltip tooltipSize" title="{{ dataElement.description }}" ng-show="dataElement.description" animation="fade"></i></b>
                       <br>
                       <label class="item item-input">
-                        <input ng-change='changeDataEntryForm(dataElement)' type="text" placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
+                        <input ng-blur='changeDataEntryForm(dataElement)' type="text" placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
                       </label>
                     </div>
 
@@ -61,7 +61,7 @@
                       <div class="item item-input item-select" >
                         <div class="input-label" >
                         </div>
-                        <select ng-change='changeDataEntryForm(dataElement)' ng-options="item.name for item in getOptionSets(dataElement) track by item.name" ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]" >
+                        <select ng-blur='changeDataEntryForm(dataElement)' ng-options="item.name for item in getOptionSets(dataElement) track by item.name" ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]" >
                           <option value="">Touch to choose option</option>
                         </select>
                       </div>
@@ -73,7 +73,7 @@
                       <div class="item item-input item-select" >
                         <div class="input-label" >
                         </div>
-                        <select ng-change='changeDataEntryForm(dataElement)' ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
+                        <select ng-blur='changeDataEntryForm(dataElement)' ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
                           <option value="">Touch to choose option</option>
                           <option value="true">Yes</option>
                           <option value="false">No</option>
@@ -87,7 +87,7 @@
                       <div class="item item-input item-select" >
                         <div class="input-label" >
                         </div>
-                        <select ng-change='changeDataEntryForm(dataElement)' ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
+                        <select ng-blur='changeDataEntryForm(dataElement)' ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
                           <option value="">Touch to choose option</option>
                           <option value="true">Yes</option>
                         </select>
@@ -136,7 +136,7 @@
                         <b>{{ dataElement[getFormLabelPreferences()]?dataElement[getFormLabelPreferences()]:dataElement['displayName'] }}<span ng-if = "dataElement.categoryCombo.name != 'default'" >&nbsp;&nbsp;{{ categoryOptionCombos.name}}</span>&nbsp;&nbsp;<i class="icon ion-ios-help-outline tooltip tooltipSize" title="{{ dataElement.description }}" ng-show="dataElement.description" animation="fade"></i></b>
                         <br>
                         <label class="item item-input">
-                          <input ng-change='changeDataEntryForm(dataElement)' type="number" placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
+                          <input ng-blur='changeDataEntryForm(dataElement)' type="number" placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
                         </label>
                       </div>
 
@@ -144,7 +144,7 @@
                         <b>{{ dataElement[getFormLabelPreferences()]?dataElement[getFormLabelPreferences()]:dataElement['displayName'] }}<span ng-if = "dataElement.categoryCombo.name != 'default'" >&nbsp;&nbsp;{{ categoryOptionCombos.name}}</span>&nbsp;&nbsp;<i class="icon ion-ios-help-outline tooltip tooltipSize" title="{{ dataElement.description }}" ng-show="dataElement.description" animation="fade"></i></b>
                         <br>
                         <label class="item item-input">
-                          <input ng-change='changeDataEntryForm(dataElement)' type="text"  ui-date placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
+                          <input ng-blur='changeDataEntryForm(dataElement)' type="text"  ui-date placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
                         </label>
                       </div>
 
@@ -152,7 +152,7 @@
                         <b>{{ dataElement[getFormLabelPreferences()]?dataElement[getFormLabelPreferences()]:dataElement['displayName'] }}<span ng-if = "dataElement.categoryCombo.name != 'default'" >&nbsp;&nbsp;{{ categoryOptionCombos.name}}</span>&nbsp;&nbsp;<i class="icon ion-ios-help-outline tooltip tooltipSize" title="{{ dataElement.description }}" ng-show="dataElement.description" animation="fade"></i></b>
                         <br>
                         <label class="item item-input">
-                          <input ng-change='changeDataEntryForm(dataElement)' type="number" min="0" placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
+                          <input ng-blur='changeDataEntryForm(dataElement)' type="number" min="0" placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
                         </label>
                       </div>
 
@@ -160,7 +160,7 @@
                         <b>{{ dataElement[getFormLabelPreferences()]?dataElement[getFormLabelPreferences()]:dataElement['displayName'] }}<span ng-if = "dataElement.categoryCombo.name != 'default'" >&nbsp;&nbsp;{{ categoryOptionCombos.name}}</span>&nbsp;&nbsp;<i class="icon ion-ios-help-outline tooltip tooltipSize" title="{{ dataElement.description }}" ng-show="dataElement.description" animation="fade"></i></b>
                         <br>
                         <label class="item item-input">
-                          <input ng-change='changeDataEntryForm(dataElement)' type="text" placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
+                          <input ng-blur='changeDataEntryForm(dataElement)' type="text" placeholder="{{ dataElement.displayName }}" ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
                         </label>
                       </div>
 
@@ -170,7 +170,7 @@
                         <div class="item item-input item-select" >
                           <div class="input-label" >
                           </div>
-                          <select ng-change='changeDataEntryForm(dataElement)' ng-options="item.name for item in getOptionSets(dataElement) track by item.name" ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]" >
+                          <select ng-blur='changeDataEntryForm(dataElement)' ng-options="item.name for item in getOptionSets(dataElement) track by item.name" ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]" >
                             <option value="">Touch to choose option</option>
                           </select>
                         </div>
@@ -182,7 +182,7 @@
                         <div class="item item-input item-select" >
                           <div class="input-label" >
                           </div>
-                          <select ng-change='changeDataEntryForm(dataElement)' ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
+                          <select ng-blur='changeDataEntryForm(dataElement)' ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
                             <option value="">Touch to choose option</option>
                             <option value="true">Yes</option>
                             <option value="false">No</option>
@@ -196,7 +196,7 @@
                         <div class="item item-input item-select" >
                           <div class="input-label" >
                           </div>
-                          <select ng-change='changeDataEntryForm(dataElement)' ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
+                          <select ng-blur='changeDataEntryForm(dataElement)' ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
                             <option value="">Touch to choose option</option>
                             <option value="true">Yes</option>
                           </select>
