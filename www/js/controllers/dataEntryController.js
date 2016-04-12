@@ -126,21 +126,17 @@ angular.module('dataCapture')
           var id = dataSetId + '-' + dataElement.id + '-' +categoryOptionCombo.id+ '-' +pe+ '-' +ou;
           promises.push(dataSetsServices.getDataValueById(id)
             .then(function(returnedDataValue){
-              alert( 'index : ' + index + "\n datavalues : " + returnedDataValue + '\nlength ' + returnedDataValue.length);
               var message = Math.ceil(((index + 1)/dataElements.length) * 100) + '% to completion';
               progressMessageStick(message);
-              /*if(returnedDataValue != null){
-                if(returnedDataValue.sync){
+              if(angular.isDefined(returnedDataValue[0])){
+                if(returnedDataValue[0].sync){
                   $scope.data.dataValue.online ++;
                 }else {
-
                   counter ++;
                   $scope.data.dataValue.local = counter;
                 }
-                if(id == returnedDataValue.id){
-                  $scope.data.dataValues[dataElement.id+'-'+returnedDataValue.co] = isDataElementHasDropDown(dataElement.id)?{name :returnedDataValue.value,id:''}:returnedDataValue.value;
-                }
-              }*/
+                $scope.data.dataValues[dataElement.id+'-'+returnedDataValue[0].co] = isDataElementHasDropDown(dataElement.id)?{name :returnedDataValue[0].value,id:''}:returnedDataValue[0].value;
+              }
             },function(){
               //error
               var message = Math.ceil(((index + 1)/dataElements.length) * 100) + '% to completion';
@@ -163,7 +159,7 @@ angular.module('dataCapture')
     //function to prepare data elements and values from server to be rendered on form
     function prepareDataElementsValuesFromServer(){
       $scope.data.loading = true;
-      //prepareDataElementsValuesFromIndexDb();
+      prepareDataElementsValuesFromIndexDb();
       progressMessage("Downloading data values from server");
       var dataSet = $localStorage.dataEntryData.dataSet.id;
       var period = $localStorage.dataEntryData.period;
@@ -398,7 +394,6 @@ angular.module('dataCapture')
           canUpdate = true;
         }
         if(canUpdate){
-          alert('can update the values');
           dataSetsServices.saveDataSetDataValue(data);
         }
       },function(){
