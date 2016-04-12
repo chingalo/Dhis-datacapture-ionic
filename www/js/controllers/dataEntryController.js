@@ -135,9 +135,7 @@ angular.module('dataCapture')
                   counter ++;
                   $scope.data.dataValue.local = counter;
                 }
-                if(id == returnedDataValue.id){
-                  $scope.data.dataValues[dataElement.id+'-'+returnedDataValue.co] = isDataElementHasDropDown(dataElement.id)?{name :returnedDataValue.value,id:''}:returnedDataValue.value;
-                }
+                $scope.data.dataValues[dataElement.id+'-'+returnedDataValue.co] = isDataElementHasDropDown(dataElement.id)?{name :returnedDataValue.value,id:''}:returnedDataValue.value;
               }
             },function(){
               //error
@@ -555,7 +553,7 @@ angular.module('dataCapture')
 
     //function to handle selection of date entry period selection
     $scope.periodSelect = function(){
-      $scope.close();
+      //$scope.close();
       if($scope.data.selectedDataSet.categoryCombo.categoryOptionCombos[0].name != 'default'){
         $scope.data.hasCategoryComboOptions = true;
       }else{
@@ -676,6 +674,7 @@ angular.module('dataCapture')
       dataValueSetServices.completeOnDataSetRegistrations(parameter).then(function(){
         //success on complete form
         $scope.data.isDataSetCompleted = true;
+        updateDataSetCompleteness();
         $scope.data.loading = false;
         progressMessage('Data entry form has been completed successfully');
       },function(){
@@ -712,9 +711,21 @@ angular.module('dataCapture')
     function checkDataSetCompleteness(dataSetValues){
       if(dataSetValues.completeDate){
         $scope.data.isDataSetCompleted = true;
+        $scope.data.dateOfCompletion = dataSetValues.completeDate;
       }else{
         $scope.data.isDataSetCompleted = false;
       }
+    }
+    function updateDataSetCompleteness(){
+      var dataSet = $localStorage.dataEntryData.dataSet.id;
+      var period = $localStorage.dataEntryData.period;
+      var orgUnit = $localStorage.dataEntryData.orgUnit;
+      dataValueSetServices.getDataValueSet(dataSet,period,orgUnit)
+        .then(function(dataValueSets){
+          checkDataSetCompleteness(dataValueSets);
+        },function(){
+          //error
+        });
     }
 
     //function to get all data set completeness parameters
