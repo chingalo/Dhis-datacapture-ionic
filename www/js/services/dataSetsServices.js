@@ -64,9 +64,9 @@ angular.module('dataCapture')
         return defer.promise;
       },
       saveDataSetDataValue: function (data) {
-        var status = 0;
+        var status = 1;
         if (data.sync) {
-          status = 1;
+          status = 2;
         }
         sqlLiteServices.insertDataValues('dataValues', data.id, data, status)
           .then(function (data) {
@@ -104,7 +104,7 @@ angular.module('dataCapture')
       getSavedDataValuesFromIndexDbForSync: function () {
         var defer = $q.defer();
         var attribute = 'isSync';
-        var value = 0;
+        var value = 2;
         sqlLiteServices.getAllDataByAttribute('dataValues', attribute, value)
           .then(function (dataValues) {
             alert('prepare ' + dataValues.length + " data values to sync");
