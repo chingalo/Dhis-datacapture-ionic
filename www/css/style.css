@@ -55,3 +55,6 @@ span.arrow{
   height:400px;
   overflow:auto;
 }
+.tree-control .tree-view .line {
+  max-height: 0px;
+}
