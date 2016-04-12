@@ -1,5 +1,9 @@
 <ion-view view-title="Reports List">
   <ion-content>
+    <ion-refresher
+      pulling-text="Pull to refresh report list"
+      on-refresh="reloadReports()">
+    </ion-refresher>
     <div class="row">
       <div class="col col-100">
 
@@ -15,14 +19,6 @@
             </div>
           </div>
           <div ng-if = "!data.loading">
-
-            <div class="row">
-              <div class="col col-100">
-                <button class="button button-full button-clear" ng-click="reloadReports()">
-                  <i class="icon ion-loop"></i>
-                </button>
-              </div>
-            </div>
 
             <div class="row">
               <div class="col col-100">

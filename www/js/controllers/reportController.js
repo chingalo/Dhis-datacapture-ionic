@@ -78,6 +78,8 @@ angular.module('dataCapture')
             reports.forEach(function(report){
               reportServices.saveReportToIndexDb(report);
             });
+            $scope.$broadcast('scroll.refreshComplete');
+            $scope.$apply();
           }
           $scope.data.loading = false;
         },function(){
