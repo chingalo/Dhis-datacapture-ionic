@@ -126,12 +126,14 @@ angular.module('dataCapture')
           var id = dataSetId + '-' + dataElement.id + '-' +categoryOptionCombo.id+ '-' +pe+ '-' +ou;
           promises.push(dataSetsServices.getDataValueById(id)
             .then(function(returnedDataValue){
+              alert( 'inside : ' + index);
               var message = Math.ceil(((index + 1)/dataElements.length) * 100) + '% to completion';
               progressMessageStick(message);
               if(returnedDataValue != null){
                 if(returnedDataValue.sync){
                   $scope.data.dataValue.online ++;
                 }else {
+
                   counter ++;
                   $scope.data.dataValue.local = counter;
                 }
@@ -161,7 +163,7 @@ angular.module('dataCapture')
     //function to prepare data elements and values from server to be rendered on form
     function prepareDataElementsValuesFromServer(){
       $scope.data.loading = true;
-      prepareDataElementsValuesFromIndexDb();
+      //prepareDataElementsValuesFromIndexDb();
       progressMessage("Downloading data values from server");
       var dataSet = $localStorage.dataEntryData.dataSet.id;
       var period = $localStorage.dataEntryData.period;
