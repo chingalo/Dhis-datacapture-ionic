@@ -388,27 +388,20 @@ angular.module('dataCapture')
         "sync":syncStatus
       };
       dataSetsServices.getDataValueById(id).then(function(returnedDataValue){
-        if(angular.isDefined(returnedDataValue[0])){
-          alert('Data saving process : ' + JSON.stringify(returnedDataValue));
-        }else{
-          alert('Data saving process : No data found');
-        }
-        dataValue = returnedDataValue;
-
         var canUpdate = false;
-        if(dataValue == null ){
-          canUpdate = true;
-        }else{
+        if(angular.isDefined(returnedDataValue[0])){
+          dataValue = returnedDataValue[0];
           if(dataValue.value != valueToBeStored){
             canUpdate = true;
           }
+        }else{
+          canUpdate = true;
         }
         if(canUpdate){
-
+          alert('can update the values');
           dataSetsServices.saveDataSetDataValue(data);
         }
       },function(){
-        dataSetsServices.saveDataSetDataValue(data);
       });
     }
 

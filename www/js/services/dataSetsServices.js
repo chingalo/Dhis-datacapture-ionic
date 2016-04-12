@@ -64,7 +64,6 @@ angular.module('dataCapture')
         return defer.promise;
       },
       saveDataSetDataValue: function (data) {
-
         var status = 0;
         if (data.sync) {
           status = 1;
