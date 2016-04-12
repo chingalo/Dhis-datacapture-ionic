@@ -535,7 +535,7 @@ angular.module('dataCapture')
 
     //function to handle selection of date entry period selection
     $scope.periodSelect = function(){
-      $scope.close();
+      //$scope.close();
       if($scope.data.selectedDataSet.categoryCombo.categoryOptionCombos[0].name != 'default'){
         $scope.data.hasCategoryComboOptions = true;
       }else{
@@ -650,15 +650,16 @@ angular.module('dataCapture')
     }
 
     //function to handle form completeness
-    $scope.completeDataEntryForm = function(){
+    $scope.completeDataEntryForm = function () {
       $scope.data.loading = true;
       var parameter = getDatSetCompletenessParameter();
-      dataValueSetServices.completeOnDataSetRegistrations(parameter).then(function(){
+      dataValueSetServices.completeOnDataSetRegistrations(parameter).then(function () {
         //success on complete form
         $scope.data.isDataSetCompleted = true;
+        updateDataSetCompleteness();
         $scope.data.loading = false;
         progressMessage('Data entry form has been completed successfully');
-      },function(){
+      }, function () {
         //error on complete form
         $scope.data.loading = false;
         progressMessage('Data entry form  has not been completed, it might be due to network connectivity');
@@ -689,12 +690,28 @@ angular.module('dataCapture')
       return result;
     };
     //function to check data set completeness
-    function checkDataSetCompleteness(dataSetValues){
-      if(dataSetValues.completeDate){
+    function checkDataSetCompleteness(dataSetValues) {
+      if (dataSetValues.completeDate) {
         $scope.data.isDataSetCompleted = true;
-      }else{
+        updateDataSetCompleteness();
+      } else {
         $scope.data.isDataSetCompleted = false;
       }
+    }
+
+    function updateDataSetCompleteness() {
+      var dataSet = $localStorage.dataEntryData.dataSet.id;
+      var period = $localStorage.dataEntryData.period;
+      var orgUnit = $localStorage.dataEntryData.orgUnit;
+      dataValueSetServices.getDataSetCompletenessInfo(dataSet, period, orgUnit)
+        .then(function (data) {
+          $scope.data.dataSetCompletenessData = {
+            name : data.storedBy,
+            date : data.date
+          }
+        }, function () {
+          //error
+        });
     }
 
     //function to get all data set completeness parameters

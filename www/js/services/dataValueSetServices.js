@@ -17,6 +17,18 @@ angular.module('dataCapture')
           });
         return defer.promise;
       },
+      getDataSetCompletenessInfo : function(dataSet,period,orgUnit){
+        var defer = $q.defer();
+        var parameter = 'dataSetId='+dataSet+'&periodId='+period+'&organisationUnitId='+orgUnit;
+        $http.get(baseUrl + '/dhis-web-dataentry/getDataValues.action?'+parameter)
+          .success(function(results){
+            defer.resolve(results);
+          })
+          .error(function(){
+            defer.reject();
+          });
+        return defer.promise;
+      },
       getDataValuesFromIndexDb : function(){
         var defer = $q.defer();
         sqlLiteServices.getAllData('dataValues').then(function(dataValues){

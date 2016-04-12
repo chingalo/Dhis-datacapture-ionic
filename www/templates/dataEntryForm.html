@@ -247,6 +247,13 @@
             <button class="button button-full button-positive" ng-click="navigateToNewPage(0,'last')">Last</button>
           </div>
         </div>
+        <div class="row" ng-if = "isDataSetCompleted()">
+          <div class="col col-100">
+            <div class="item item-text-wrap">
+              <p>Completed by: <b>{{ data.dataSetCompletenessData.name}}</b> at: <b>{{ data.dataSetCompletenessData.date }}</b></p>
+            </div>
+          </div>
+        </div>
 
       </div>
     </div>
