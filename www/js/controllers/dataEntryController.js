@@ -52,7 +52,7 @@ angular.module('dataCapture')
           $scope.currentPage = $scope.data.selectedDataEntryForm.dataSet.sections.length - 1;
           $scope.data.loading = false;
         } else {
-          $scope.currentPage = Math.ceil($scope.data.selectedDataEntryForm.dataSet.dataElements.length / $scope.pageSizeDefault);
+          $scope.currentPage = parseInt($scope.data.selectedDataEntryForm.dataSet.dataElements.length / $scope.pageSizeDefault);
           $scope.data.loading = false;
         }
       } else {
