@@ -163,7 +163,7 @@ angular.module('dataCapture')
     //function to prepare data elements and values from server to be rendered on form
     function prepareDataElementsValuesFromServer(){
       $scope.data.loading = true;
-      prepareDataElementsValuesFromIndexDb();
+      //prepareDataElementsValuesFromIndexDb();
       progressMessage("Downloading data values from server");
       var dataSet = $localStorage.dataEntryData.dataSet.id;
       var period = $localStorage.dataEntryData.period;
@@ -389,7 +389,7 @@ angular.module('dataCapture')
       };
       dataSetsServices.getDataValueById(id).then(function(returnedDataValue){
         dataValue = returnedDataValue[0];
-        alert('ata saving process : ' + JSON.stringify(returnedDataValue[0]) + "\nlength : " +returnedDataValue.length )
+        alert('ata saving process : ' + JSON.stringify(returnedDataValue))
         var canUpdate = false;
         if(dataValue == null ){
           canUpdate = true;
