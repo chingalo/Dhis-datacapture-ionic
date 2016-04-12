@@ -71,11 +71,9 @@ angular.module('dataCapture')
         sqlLiteServices.insertDataValues('dataValues', data.id, data, status)
           .then(function (data) {
             //success saving data values
-            alert('Saving :' + JSON.stringify(data));
 
           }, function (erro) {
             //error
-            alert('Saving error :' + JSON.stringify(erro));
           });
       },
       deleteAllDataValues: function () {
@@ -105,7 +103,7 @@ angular.module('dataCapture')
         var defer = $q.defer();
         var attribute = 'isSync';
         var value = 2;
-        sqlLiteServices.getAllDataByAttribute('dataValues', attribute, value)
+        sqlLiteServices.getAllDataByAttribute('dataValues', attribute,parseInt(value))
           .then(function (dataValues) {
             alert('prepare ' + dataValues.length + " data values to sync");
             defer.resolve(dataValues);
