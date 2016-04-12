@@ -280,10 +280,10 @@
           </div>
         </div>
 
-        <div class="row ">
+        <div class="row " ng-if = "isDataSetCompleted()">
           <div class="col col-100">
             <div class="item item-text-wrap">
-              <div class="row" ng-if = "isDataSetCompleted()">
+              <div class="row" >
                 <div class="col col-100">
                   <p>Completed by: <b>{{ data.dataSetCompletenessData.name}}</b> at: <b>{{ data.dataSetCompletenessData.date }}</b></p>
 
