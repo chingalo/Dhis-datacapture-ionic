@@ -101,9 +101,8 @@ angular.module('dataCapture')
       },
       getSavedDataValuesFromIndexDbForSync: function () {
         var defer = $q.defer();
-        var attribute = 'isSync';
-        var value = 2;
-        sqlLiteServices.getAllDataByAttribute('dataValues', attribute,parseInt(value))
+        var value = 1;
+        sqlLiteServices.getAllDataByAttribute('dataValues', 'isSync',parseInt(value))
           .then(function (dataValues) {
             alert('prepare ' + dataValues.length + " data values to sync");
             defer.resolve(dataValues);
