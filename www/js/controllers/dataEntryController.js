@@ -373,7 +373,7 @@ angular.module('dataCapture')
       var pe = $localStorage.dataEntryData.period;
       var dataSetId = $localStorage.dataEntryData.dataSet.id;
       var modelValue = key.split('-');
-      var id = dataSetId + '-' +modelValue[0] + '-'+modelValue[1]+'-'+pe+ '-' +ou;
+      var id = String(dataSetId + '-' +modelValue[0] + '-'+modelValue[1]+'-'+pe+ '-' +ou);
       var dataValue = null;
       var data = null;
       data = {
@@ -387,10 +387,14 @@ angular.module('dataCapture')
         "cp":$localStorage.dataEntryData.categoryOptionCombosId,
         "sync":syncStatus
       };
-      alert('on saving process : ' + String(id));
       dataSetsServices.getDataValueById(id).then(function(returnedDataValue){
-        dataValue = returnedDataValue[0];
-        alert('Data saving process : ' + JSON.stringify(returnedDataValue))
+        if(angular.isDefined(returnedDataValue[0])){
+          alert('Data saving process : ' + JSON.stringify(returnedDataValue));
+        }else{
+          alert('Data saving process : No data found');
+        }
+        dataValue = returnedDataValue;
+
         var canUpdate = false;
         if(dataValue == null ){
           canUpdate = true;

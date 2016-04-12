@@ -50,26 +50,26 @@ angular.module('dataCapture')
         });
         return orgUnitDataSets;
       },
-        getDataSetById:function(dataSetId,dataSets){
-          var defer = $q.defer();
-          if(dataSetId && dataSets){
-            dataSets.forEach(function(dataSet){
-              if(dataSet.id == dataSetId){
-                defer.resolve(dataSet);
-              }
-            })
-          }else{
-            defer.reject();
-          }
-          return defer.promise;
-        },
+      getDataSetById: function (dataSetId, dataSets) {
+        var defer = $q.defer();
+        if (dataSetId && dataSets) {
+          dataSets.forEach(function (dataSet) {
+            if (dataSet.id == dataSetId) {
+              defer.resolve(dataSet);
+            }
+          })
+        } else {
+          defer.reject();
+        }
+        return defer.promise;
+      },
       saveDataSetDataValue: function (data) {
 
         var status = 0;
-        if(data.sync){
+        if (data.sync) {
           status = 1;
         }
-        sqlLiteServices.insertDataValues('dataValues',data.id,data,status)
+        sqlLiteServices.insertDataValues('dataValues', data.id, data, status)
           .then(function (data) {
             //success saving data values
             alert('Saving :' + JSON.stringify(data));
@@ -93,24 +93,24 @@ angular.module('dataCapture')
       },
       getDataValueById: function (id) {
         var defer = $q.defer();
-        var result = null;
-        sqlLiteServices.getAllDataByAttribute('dataValues','id',String(id)).then(function (dataValue) {
-          result = dataValue;
-          defer.resolve(result);
-        }, function () {
-          //error get all data values from indexDB
-          defer.reject();
-        });
+        sqlLiteServices.getAllDataByAttribute('dataValues', 'id', String(id))
+          .then(function (dataValue) {
+            defer.resolve(dataValue);
+          }, function () {
+            //error get all data values from indexDB
+            defer.reject();
+          });
+        return defer.promise;
       },
       getSavedDataValuesFromIndexDbForSync: function () {
         var defer = $q.defer();
         var attribute = 'isSync';
         var value = 0;
-        sqlLiteServices.getAllDataByAttribute('dataValues',attribute,value)
-          .then(function (dataValues){
+        sqlLiteServices.getAllDataByAttribute('dataValues', attribute, value)
+          .then(function (dataValues) {
             alert('prepare ' + dataValues.length + " data values to sync");
             defer.resolve(dataValues);
-        },function(){
+          }, function () {
             defer.reject();
           });
         return defer.promise;
