@@ -250,7 +250,9 @@
 
         <div class="row" ng-if = "isDataSetCompleted()">
           <div class="col col-100">
-            Completed on {{ data.dateOfCompletion | date : dd-MM-yyyy }}
+            <div class="item item-text-wrap">
+              <p>Completed by: {{ data.dataSetCompletenessData.name}} at: {{ data.dataSetCompletenessData.date }}</p>
+            </div>
           </div>
         </div>
 

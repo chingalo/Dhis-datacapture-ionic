@@ -17,12 +17,11 @@ angular.module('dataCapture')
           });
         return defer.promise;
       },
-      getDataSetCompletenesInfo : function(dataSet,period,orgUnit){
+      getDataSetCompletenessInfo : function(dataSet,period,orgUnit){
         var defer = $q.defer();
-        var parameter = 'dataSet='+dataSet+'&period='+period+'&orgUnit='+orgUnit;
+        var parameter = 'dataSetId='+dataSet+'&periodId='+period+'&organisationUnitId='+orgUnit;
         $http.get(baseUrl + '/dhis-web-dataentry/getDataValues.action?'+parameter)
           .success(function(results){
-            console.log(results);
             defer.resolve(results);
           })
           .error(function(){
