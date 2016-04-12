@@ -387,9 +387,10 @@ angular.module('dataCapture')
         "cp":$localStorage.dataEntryData.categoryOptionCombosId,
         "sync":syncStatus
       };
+      alert('on saving process : ' + String(id));
       dataSetsServices.getDataValueById(id).then(function(returnedDataValue){
         dataValue = returnedDataValue[0];
-        alert('ata saving process : ' + JSON.stringify(returnedDataValue))
+        alert('Data saving process : ' + JSON.stringify(returnedDataValue))
         var canUpdate = false;
         if(dataValue == null ){
           canUpdate = true;

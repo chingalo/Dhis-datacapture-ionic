@@ -96,12 +96,8 @@ angular.module('dataCapture')
         var result = null;
         sqlLiteServices.getAllDataByAttribute('dataValues','id',String(id)).then(function (dataValue) {
           result = dataValue;
-          if(!angular.isUndefined(dataValue[0])){
-            result = dataValue[0];
-          }
-          alert('return Data values : ' +JSON.stringify(result));
           defer.resolve(result);
-        }, function (err) {
+        }, function () {
           //error get all data values from indexDB
           defer.reject();
         });
