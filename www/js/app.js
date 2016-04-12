@@ -88,6 +88,13 @@ angular.module('dataCapture', [
     if(angular.isUndefined($scope.data.dataDownLoadingMessage)){
       $scope.data.dataDownLoadingMessage = [];
     }
+
+    //function to get data downloading percentage
+    var numberOfProcess = 9;
+    $scope.getDataDownLoadingPercentage = function(){
+      return(Math.ceil(($scope.data.dataDownLoadingMessage.length/numberOfProcess) * 100))
+    };
+
     if(angular.isUndefined($localStorage.dataDownLoadingStatus)){
       $localStorage.dataDownLoadingStatus = false;
     }
