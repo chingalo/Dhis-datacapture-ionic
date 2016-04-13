@@ -2,7 +2,7 @@
  * Created by joseph on 2/3/16.
  */
 angular.module('dataCapture')
-  .factory('reportServices',function($http,$q,$localStorage,$indexedDB,sqlLiteServices){
+  .factory('reportServices',function($http,$q,$localStorage,sqlLiteServices){
     //var baseUrl = $localStorage.baseUrl;
     var reportServices = {
       getAllReportsFromServer:function(baseUrl){

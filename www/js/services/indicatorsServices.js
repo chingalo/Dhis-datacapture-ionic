@@ -2,7 +2,7 @@
  * Created by chingalo on 2/27/16.
  */
 angular.module('dataCapture')
-  .factory('indicatorsServices', function ($http, $q, $localStorage, sqlLiteServices, $indexedDB) {
+  .factory('indicatorsServices', function ($http, $q, $localStorage, sqlLiteServices) {
 
     var indicatorsServices = {
       getAllIndicatorsFromServer: function (baseUrl) {

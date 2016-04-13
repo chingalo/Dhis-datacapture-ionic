@@ -2,7 +2,7 @@
  * Created by joseph on 1/30/16.
  */
 angular.module('dataCapture')
-  .factory('dataSetsServices', function ($http, $q, $localStorage, sqlLiteServices, $indexedDB) {
+  .factory('dataSetsServices', function ($http, $q, $localStorage, sqlLiteServices) {
 
     var dataSetsServices = {
 

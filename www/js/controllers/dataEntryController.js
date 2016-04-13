@@ -2,7 +2,7 @@
  * Created by joseph on 1/29/16.
  */
 angular.module('dataCapture')
-  .controller('dataEntryController',function($scope,$indexedDB,$filter,$q,
+  .controller('dataEntryController',function($scope,$filter,$q,
                                              $state,$ionicModal,ionicToast,
                                              $localStorage,userServices,dataSetsServices,
                                              dataValueSetServices,$ionicLoading,

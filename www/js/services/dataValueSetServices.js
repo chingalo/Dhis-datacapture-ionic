@@ -2,7 +2,7 @@
  * Created by chingalo on 2/17/16.
  */
 angular.module('dataCapture')
-  .factory('dataValueSetServices',function($http,$q,$localStorage,sqlLiteServices,$indexedDB){
+  .factory('dataValueSetServices',function($http,$q,$localStorage,sqlLiteServices){
     var baseUrl = $localStorage.baseUrl;
     var dataValueSetServices = {
       getDataValueSet:function(dataSet,period,orgUnit){

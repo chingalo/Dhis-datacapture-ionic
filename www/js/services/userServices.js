@@ -2,7 +2,7 @@
  * Created by joseph on 2/4/16.
  */
 angular.module('dataCapture')
-  .factory('userServices', function ($http, $q, $localStorage,sqlLiteServices,$indexedDB, Base64) {
+  .factory('userServices', function ($http, $q, $localStorage,sqlLiteServices, Base64) {
     var userServices = {
       authenticateUser: function (username, password) {
         var base = $localStorage.baseUrl;

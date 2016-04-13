@@ -2,7 +2,7 @@
  * Created by chingalo on 3/2/16.
  */
 angular.module('dataCapture')
-  .factory('constantsServices',function($http,$q,$localStorage,$indexedDB,sqlLiteServices){
+  .factory('constantsServices',function($http,$q,$localStorage,sqlLiteServices){
 
     var constantsServices = {
       getAllConstantsFromServer : function(baseUrl){

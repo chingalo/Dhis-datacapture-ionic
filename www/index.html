@@ -54,7 +54,6 @@
   <script type="application/javascript" src="library/localStorage/ngStorage.js"></script>
   <script type="text/javascript" src="library/third-party-scripts/ext-all.js"></script>
   <script type="text/javascript" src="library/third-party-scripts/table.js"></script>
-  <script src="library/angular-indexedDB/angular-indexed-db.js"></script>
   <script type="text/javascript" src="library/jquery-ui/jqueryui-1.11.4/jquery-ui.js"></script>
   <script type="text/javascript" src="library/ui-date/date.js"></script>
   <script type="text/javascript" src="library/reports/highcharts.js"></script>
@@ -214,10 +213,9 @@
       getIndicators: function (indicatorIds, callback) {
         var defer = $.Deferred();
 
+        //sample testing on sqlLite services
         dhis2.sqlLiteServices.getAllDataFromTable('indicators').done(function(data){
           alert('indicators : ' + JSON.stringify(data.length));
-        },function(err){
-          alert('error to get indicators' )
         });
 
         var indicators = [];

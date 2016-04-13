@@ -2,7 +2,7 @@
  * Created by joseph on 2/2/16.
  */
 angular.module('dataCapture')
-  .factory('sectionsServices',function($http,$q,$localStorage,$indexedDB,sqlLiteServices){
+  .factory('sectionsServices',function($http,$q,$localStorage,sqlLiteServices){
 
 
     var sectionsServices = {

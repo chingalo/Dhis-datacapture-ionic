@@ -3,8 +3,8 @@
  */
 angular.module('dataCapture')
   .factory('synchronizationServices',function($http,$q,$localStorage,userServices,
-                                              ionicToast,
-                                              $indexedDB,$interval,dataSetsServices){
+                                              ionicToast
+                                              ,$interval,dataSetsServices){
     var syncCtr,userSyncCtr;
 
     var synchronizationServices = {

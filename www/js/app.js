@@ -36,7 +36,7 @@ angular.module('dataCapture', [
                                           $ionicHistory, $ionicModal, ionicToast,
                                           indicatorsServices, reportServices, constantsServices,
                                           $localStorage, dataSetsServices, sqlLiteServices, $q,
-                                          sectionsServices, $indexedDB) {
+                                          sectionsServices) {
 
     //initial variables
     $scope.data = {};
@@ -206,6 +206,7 @@ angular.module('dataCapture', [
       if ($localStorage.loginUser && $localStorage.dataDownLoadingStatus) {
         if ($localStorage.loginUser.password == password && $localStorage.loginUser.username == username) {
           $scope.data.loading = false;
+          $http.defaults.headers.common.Authorization = 'Basic ' + Base64.encode(username + ':' + password);
           //redirect to home page
           directToLandingPage();
         }
