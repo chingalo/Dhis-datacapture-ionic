@@ -109,7 +109,7 @@
           <!-- pagination for default data entry form, 5 per data elements -->
           <div class="row ">
             <div class="col col-100">
-              <div class="item item-text-wrap">
+              <div class="item item-text-wrap pagination">
                 <div class="row">
                   <div class="col col-45">
                     <button class="button button-full button-positive" ng-disabled="currentPage == 0" ng-click="navigateToNewPage(currentPage-1,'')">
@@ -233,7 +233,7 @@
           <!-- pagination for section data entry one per section-->
           <div class="row ">
             <div class="col col-100">
-              <div class="item item-text-wrap">
+              <div class="item item-text-wrap pagination">
                 <div class="row">
                   <div class="col col-45">
                     <button class="button button-full button-positive" ng-disabled="currentPage == 0" ng-click="navigateToNewPage(currentPage-1,'')">
@@ -261,7 +261,7 @@
         <!--complete and incomplete buttons-->
         <div class="row ">
           <div class="col col-100">
-            <div class="item item-text-wrap">
+            <div class="item item-text-wrap dataSetCompleteness">
               <div class="row" style="margin-top: 2%;">
                 <div class="col col-50" ng-if = "!isDataSetCompleted()">
                   <button class="button button-full button-balanced" ng-click="completeDataEntryForm()">Complete</button>

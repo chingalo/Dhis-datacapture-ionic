@@ -58,3 +58,9 @@ span.arrow{
 .tree-control .tree-view .line {
   max-height: 0px;
 }
+.pagination{
+  background-color : #C3D8FD;
+}
+.dataSetCompleteness {
+  background-color : #DCF1DC;
+}
