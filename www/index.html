@@ -129,23 +129,22 @@
       },
       getDataElementValue: function (de, coc, dataSet, match) {
         var defer = $.Deferred();
-        var dataValuesStore = $.indexedDB("hisptz").objectStore("dataValues");
-        var promise = dataValuesStore.get(dataSet + "-" + de + "-" + coc + "-" + dhis2.report.period + "-" + dhis2.report.organisationUnit.id);
-        promise.done(function (item, event) {
-          if (item) {
-            var val = item.value;
-            if (val && dhis2.validation.isNumber(val)) {
-              defer.resolve(new Number(item.value), match);
+        dhis2.sqlLiteServices.getDataFromTable('dataValues',dataSet + "-" + de + "-" + coc + "-" + dhis2.report.period + "-" + dhis2.report.organisationUnit.id)
+          .then(function(item){
+            if (item) {
+              alert(JSON.stringify(item));
+              var val = item.value;
+              if (val && dhis2.validation.isNumber(val)) {
+                defer.resolve(new Number(item.value), match);
+              } else {
+                defer.resolve(new Number("0"), match);
+              }
             } else {
               defer.resolve(new Number("0"), match);
             }
-          } else {
-            defer.resolve(new Number("0"), match);
-          }
-        });
-        promise.fail(function (error, event) {
-          defer.reject(error);
-        });
+          },function(error){
+            defer.reject(error);
+          });
         return defer.promise();
       },
       getConstantValue: function (constantId, dataSet, match) {
