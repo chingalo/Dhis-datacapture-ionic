@@ -59,8 +59,11 @@ span.arrow{
   max-height: 0px;
 }
 .pagination{
-  background-color : #C3D8FD;
+  background-color : #FCFCFC;
 }
 .dataSetCompleteness {
-  background-color : #DCF1DC;
+  background-color : #E5F8E5;
+}
+.button.button-assertive{
+  background-color: #FF938A;
 }
