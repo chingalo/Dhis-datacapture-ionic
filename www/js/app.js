@@ -8,7 +8,6 @@ angular.module('dataCapture', [
     'ionic',
     'ionic-toast',
     'ngStorage',
-    'indexedDB',
     'ngSanitize',
     'ui.date',
     'multi-select-tree',
@@ -31,7 +30,7 @@ angular.module('dataCapture', [
     });
   })
 
-  .controller('mainController', function ($scope, $window, $interval, $state,
+  .controller('mainController', function ($scope, $window, $interval, $state,$http,Base64,
                                           userServices, synchronizationServices,
                                           $ionicHistory, $ionicModal, ionicToast,
                                           indicatorsServices, reportServices, constantsServices,
