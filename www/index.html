@@ -162,9 +162,8 @@
         var dataValuesId = dataSet + "-" + de + "-" + coc + "-" + dhis2.report.period + "-" + dhis2.report.organisationUnit.id;
         dhis2.sqlLiteServices.getDataFromTableById('dataValues',dataValuesId)
           .done(function(item){
-            alert('found data values : ' + JSON.stringify(item));
+            console.log('found data values : ' + JSON.stringify(item));
             if (item) {
-              alert('found data values inside if : ' + JSON.stringify(item));
               var val = item.value;
               if (val && dhis2.validation.isNumber(val)) {
                 defer.resolve(new Number(item.value), match);
@@ -218,7 +217,6 @@
             var de = operand.substring(0, operand.indexOf(dhis2.de.cst.separator));
             var coc = operand.substring(operand.indexOf(dhis2.de.cst.separator) + 1, operand.length);
             deferreds.push(dhis2.de.getDataElementValue(de, coc, dataSet, match).done(function (sum, matchRef) {
-              alert("sum : " + sum);
               console.log("sum : " + sum);
               expression = expression.replace(matchRef, sum);
             }));
@@ -260,16 +258,19 @@
           rows: []
         };
         dhis2.de.getIndicators(indicatorIds).done(function (indicators) {
+          console.log('indicators ' + JSON.stringify(indicators));
           $.each(indicators, function (indicatorIndex, indicator) {
+            console.log('indicators indicatorIndex ' + indicatorIndex);
             data.metaData.names[indicator.id] = indicator.name;
             promises.push(dhis2.de.evaluateDataIndicator(indicator, dataSet).then(function (value) {
-              console.log('evalueted valaue ' + value)
+              console.log('evaluated value : ' + value);
               if (value) {
                 data.rows.push([indicator.id, dhis2.report.period, value]);
               }
             }));
           });
           $.when.apply($, promises).then(function () {
+            console.log('data : ' + JSON.stringify(data));
             defer.resolve(data);
           });
         });
