@@ -81,6 +81,7 @@
               alert(JSON.stringify(eval("(" + results.rows.item(0).data + ")")));
               defer.resolve(eval("(" + results.rows.item(0).data + ")"));
             }, function (error) {
+              alert('data values id : ' + id + 'error : ' + JSON.stringify)
               defer.reject(error);
             });
           });
