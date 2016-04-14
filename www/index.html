@@ -161,7 +161,6 @@
         var dataValuesId = dataSet + "-" + de + "-" + coc + "-" + dhis2.report.period + "-" + dhis2.report.organisationUnit.id;
         dhis2.sqlLiteServices.getDataFromTableById('dataValues',dataValuesId)
           .done(function(item){
-            console.log('found data values : ' + JSON.stringify(item));
             if (item) {
               var val = item.value;
               if (val && dhis2.validation.isNumber(val)) {
@@ -179,7 +178,6 @@
         var defer = $.Deferred();
         dhis2.sqlLiteServices.getDataFromTableById('constants',constantId)
           .done(function(constant){
-            console.log('found constant values : ' + JSON.stringify(constant));
             if (constant) {
               var val = constant.value;
               if (val && dhis2.validation.isNumber(val)) {
@@ -204,7 +202,7 @@
           var operand = match.replace(/[#\{\}]/g, '');
           var isTotal = !!( operand.indexOf(dhis2.de.cst.separator) == -1 );
           if (isTotal) {
-            alert('is total');
+            //alert('is total');
             /*deferreds.push(dhis2.de.getDataElementTotalValue(operand, dataSet, match).done(function (sum, matchRef) {
               expression = expression.replace(matchRef, sum);
             }));*/
@@ -213,7 +211,6 @@
             var de = operand.substring(0, operand.indexOf(dhis2.de.cst.separator));
             var coc = operand.substring(operand.indexOf(dhis2.de.cst.separator) + 1, operand.length);
             deferreds.push(dhis2.de.getDataElementValue(de, coc, dataSet, match).done(function (sum, matchRef) {
-              console.log("sum : " + sum);
               expression = expression.replace(matchRef, sum);
             }));
           }
@@ -254,19 +251,15 @@
           rows: []
         };
         dhis2.de.getIndicators(indicatorIds).done(function (indicators) {
-          console.log('indicators ' + JSON.stringify(indicators));
           $.each(indicators, function (indicatorIndex, indicator) {
-            console.log('indicators indicatorIndex ' + indicatorIndex);
             data.metaData.names[indicator.id] = indicator.name;
             promises.push(dhis2.de.evaluateDataIndicator(indicator, dataSet).then(function (value) {
-              console.log('evaluated value : ' + value);
               if (value) {
                 data.rows.push([indicator.id, dhis2.report.period, value]);
               }
             }));
           });
           $.when.apply($, promises).then(function () {
-            console.log('data : ' + JSON.stringify(data));
             defer.resolve(data);
           });
         });
