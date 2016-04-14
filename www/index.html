@@ -240,7 +240,7 @@
       getIndicators: function (indicatorIds, callback) {
         var defer = $.Deferred();
         //sample testing on sqlLite services
-        dhis2.sqlLiteServices.getDataFromTableByIds('indicators',indicatorIds).done(function(data){
+        dhis2.sqlLiteServices.getDataFromTableByIds('indicators',indicatorIds).then(function(data){
           defer.resolve(data);
         });
         return defer.promise();
@@ -255,7 +255,7 @@
           rows: []
         };
         dhis2.sqlLiteServices.getDataFromTableByIds('indicators',indicatorIds).then(function(indicators){
-          alert('indicator : ' + JSON.stringify( [0]));
+          alert('indicator : ' + JSON.stringify( indicators[0]));
           $.each(indicators, function (indicatorIndex, indicator) {
             data.metaData.names[indicator.id] = indicator.name;
             promises.push(dhis2.de.evaluateDataIndicator(indicator, dataSet).then(function (value) {
