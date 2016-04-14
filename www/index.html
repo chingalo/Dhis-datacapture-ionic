@@ -219,6 +219,7 @@
             var coc = operand.substring(operand.indexOf(dhis2.de.cst.separator) + 1, operand.length);
             deferreds.push(dhis2.de.getDataElementValue(de, coc, dataSet, match).done(function (sum, matchRef) {
               alert("sum : " + sum);
+              console.log("sum : " + sum);
               expression = expression.replace(matchRef, sum);
             }));
           }
