@@ -62,241 +62,247 @@
   <script src="library/tooltipster/jquery.tooltipster.js"></script>
   <script src="library/angular-spinkit/angular-spinkit.min.js"></script>
   <script>
-    var dhis2 = {
-      validation: {
-        isNumber: function (value) {
-          var regex = /^(-?0|-?[1-9]\d*)(\.\d+)?(E\d+)?$/;
-          return regex.test(value);
-        }
-      },
-      sqlLiteServices: {
-        getDataFromTableById: function(tableName,id){
-          var defer = $.Deferred();
-          var attribute = "id";
-          var db = window.sqlitePlugin.openDatabase({name: "hisptz.db"});
-          db.transaction(function (tx) {
-            var query = "SELECT * FROM " + tableName + " WHERE "+attribute+" = ?";
-            tx.executeSql(query, [id], function (tx, results) {
-              defer.resolve(eval("(" + results.rows.item(0).data + ")"));
-            }, function (error) {
-              defer.reject(error);
-            });
-          });
-          return defer.promise;
-        },
-        getDataFromTableByIds: function(tableName,ids){
-          var defer = $.Deferred();
-          var attribute = "id";
-          var db = window.sqlitePlugin.openDatabase({name: "hisptz.db"});
-          var questionMarks = "?";
-          for(var i = 1; i < ids.length;i++){
-            questionMarks += ",?";
+    document.addEventListener("deviceready", onDeviceReady, false);
+    function onDeviceReady() {
+      var dhis2 = {
+        validation: {
+          isNumber: function (value) {
+            var regex = /^(-?0|-?[1-9]\d*)(\.\d+)?(E\d+)?$/;
+            return regex.test(value);
           }
-          db.transaction(function (tx) {
-            var query = "SELECT * FROM " + tableName + " WHERE "+attribute+" IN (" + questionMarks + ")";
-            tx.executeSql(query, ids, function (tx, results) {
-              var len = results.rows.length;
-              var data = [];
-              for (var i = 0; i < len; i++) {
-                data.push(eval("(" + results.rows.item(i).data + ")"));
-              }
-              alert('indicator sqllite: ' + JSON.stringify(data[0]));
-              defer.resolve(data);
-            }, function (error) {
-              defer.reject(error);
-            });
-          });
-          return defer.promise;
         },
-        getAllDataFromTable: function(tableName){
-          var defer = $.Deferred();
-          var db = window.sqlitePlugin.openDatabase({name: "hisptz.db"});
-          db.transaction(function (tx) {
-            var query = "SELECT * FROM " + tableName + ";";
-            tx.executeSql(query, [], function (tx, results) {
-              var len = results.rows.length;
-              var data = [];
-              for (var i = 0; i < len; i++) {
-                data.push(eval("(" + results.rows.item(i).data + ")"));
-              }
-              defer.resolve(data);
-            }, function (error) {
-              defer.reject(error);
+        sqlLiteServices: {
+          getDataFromTableById: function(tableName,id){
+            var defer = $.Deferred();
+            var attribute = "id";
+            var db = window.sqlitePlugin.openDatabase({name: "hisptz.db"});
+            db.transaction(function (tx) {
+              var query = "SELECT * FROM " + tableName + " WHERE "+attribute+" = ?";
+              tx.executeSql(query, [id], function (tx, results) {
+                defer.resolve(eval("(" + results.rows.item(0).data + ")"));
+              }, function (error) {
+                defer.reject(error);
+              });
             });
+            return defer.promise;
+          },
+          getDataFromTableByIds: function(tableName,ids){
+            var defer = $.Deferred();
+            var attribute = "id";
+            var db = window.sqlitePlugin.openDatabase({name: "hisptz.db"});
+            var questionMarks = "?";
+            for(var i = 1; i < ids.length;i++){
+              questionMarks += ",?";
+            }
+            db.transaction(function (tx) {
+              var query = "SELECT * FROM " + tableName + " WHERE "+attribute+" IN (" + questionMarks + ")";
+              tx.executeSql(query, ids, function (tx, results) {
+                var len = results.rows.length;
+                var data = [];
+                for (var i = 0; i < len; i++) {
+                  data.push(eval("(" + results.rows.item(i).data + ")"));
+                }
+                alert('indicator sqllite: ' + JSON.stringify(data[0]));
+                defer.resolve(data);
+              }, function (error) {
+                defer.reject(error);
+              });
+            });
+            return defer.promise;
+          },
+          getAllDataFromTable: function(tableName){
+            var defer = $.Deferred();
+            var db = window.sqlitePlugin.openDatabase({name: "hisptz.db"});
+            db.transaction(function (tx) {
+              var query = "SELECT * FROM " + tableName + ";";
+              tx.executeSql(query, [], function (tx, results) {
+                var len = results.rows.length;
+                var data = [];
+                for (var i = 0; i < len; i++) {
+                  data.push(eval("(" + results.rows.item(i).data + ")"));
+                }
+                defer.resolve(data);
+              }, function (error) {
+                defer.reject(error);
+              });
+            });
+            return defer.promise();
+          }
+        },
+        report: {}
+      };
+      dhis2.de = {
+        getDataElementTotalValue: function (de, dataSet, match) {
+          var defer = $.Deferred();
+          var sum = new Number();
+          var dataValuesStore = $.indexedDB("hisptz").objectStore("dataValues");
+          var promise = dataValuesStore.each(function (item) {
+            //Fetch datavalues
+            if (item.id.indexOf(de) != -1 && item.id.endsWith(dhis2.report.period + "-" + dhis2.report.organisationUnit.id)) {
+              var val = item.value.dataValue.value;
+              if (val && dhis2.validation.isNumber(val)) {
+                sum += new Number(item.value.dataValue.value);
+              }
+            }
+          });
+          promise.done(function (result, event) {
+            defer.resolve(sum, match);
+          });
+          promise.fail(function (error, event) {
+            defer.reject(error);
           });
           return defer.promise();
-        }
-      },
-      report: {}
-    };
-    dhis2.de = {
-      getDataElementTotalValue: function (de, dataSet, match) {
-        var defer = $.Deferred();
-        var sum = new Number();
-        var dataValuesStore = $.indexedDB("hisptz").objectStore("dataValues");
-        var promise = dataValuesStore.each(function (item) {
-          //Fetch datavalues
-          if (item.id.indexOf(de) != -1 && item.id.endsWith(dhis2.report.period + "-" + dhis2.report.organisationUnit.id)) {
-            var val = item.value.dataValue.value;
-            if (val && dhis2.validation.isNumber(val)) {
-              sum += new Number(item.value.dataValue.value);
-            }
-          }
-        });
-        promise.done(function (result, event) {
-          defer.resolve(sum, match);
-        });
-        promise.fail(function (error, event) {
-          defer.reject(error);
-        });
-        return defer.promise();
-      },
-      getDataElementValue: function (de, coc, dataSet, match) {
-        var defer = $.Deferred();
-        dhis2.sqlLiteServices.getDataFromTableById('dataValues',dataSet + "-" + de + "-" + coc + "-" + dhis2.report.period + "-" + dhis2.report.organisationUnit.id)
-          .then(function(item){
-            alert(JSON.stringify(item));
-            if (item) {
+        },
+        getDataElementValue: function (de, coc, dataSet, match) {
+          var defer = $.Deferred();
+          dhis2.sqlLiteServices.getDataFromTableById('dataValues',dataSet + "-" + de + "-" + coc + "-" + dhis2.report.period + "-" + dhis2.report.organisationUnit.id)
+            .then(function(item){
               alert(JSON.stringify(item));
-              var val = item.value;
-              if (val && dhis2.validation.isNumber(val)) {
-                defer.resolve(new Number(item.value), match);
+              if (item) {
+                alert(JSON.stringify(item));
+                var val = item.value;
+                if (val && dhis2.validation.isNumber(val)) {
+                  defer.resolve(new Number(item.value), match);
+                } else {
+                  defer.resolve(new Number("0"), match);
+                }
               } else {
                 defer.resolve(new Number("0"), match);
               }
-            } else {
-              defer.resolve(new Number("0"), match);
-            }
-          },function(error){
-            alert('error fetching data elements' + JSON.stringify(error));
-            defer.reject(error);
-          });
-        return defer.promise();
-      },
-      getConstantValue: function (constantId, dataSet, match) {
-        var defer = $.Deferred();
-        var dataValuesStore = $.indexedDB("hisptz").objectStore("constants");
-        var promise = dataValuesStore.get(constantId);
-        promise.done(function (constant, event) {
-          if (constant) {
-            var val = constant.value;
-            if (val && dhis2.validation.isNumber(val)) {
-              defer.resolve(new Number(constant.value), match);
+            },function(error){
+              alert('error fetching data elements' + JSON.stringify(error));
+              defer.reject(error);
+            });
+          return defer.promise();
+        },
+        getConstantValue: function (constantId, dataSet, match) {
+          var defer = $.Deferred();
+          var dataValuesStore = $.indexedDB("hisptz").objectStore("constants");
+          var promise = dataValuesStore.get(constantId);
+          promise.done(function (constant, event) {
+            if (constant) {
+              var val = constant.value;
+              if (val && dhis2.validation.isNumber(val)) {
+                defer.resolve(new Number(constant.value), match);
+              } else {
+                defer.resolve(new Number(0), match);
+              }
             } else {
               defer.resolve(new Number(0), match);
             }
-          } else {
-            defer.resolve(new Number(0), match);
-          }
-        });
-        promise.fail(function (error, event) {
-          defer.reject(error);
-        });
-        return defer.promise();
-      },
-      generateExpression: function (expression, dataSet) {
-        var defer = $.Deferred();
-        var deferreds = [];
-        var matcher = expression.match(dhis2.de.cst.formulaPattern);
-        var cMatcher = expression.match(dhis2.de.cst.constantPattern);
-        for (k in matcher) {
-          var match = matcher[k];
-          // Remove brackets from expression to simplify extraction of identifiers
-          var operand = match.replace(/[#\{\}]/g, '');
-          var isTotal = !!( operand.indexOf(dhis2.de.cst.separator) == -1 );
-          if (isTotal) {
-            alert('is total');
-            deferreds.push(dhis2.de.getDataElementTotalValue(operand, dataSet, match).done(function (sum, matchRef) {
-              expression = expression.replace(matchRef, sum);
-            }));
-          }
-          else {
-            alert('is not total');
-            var de = operand.substring(0, operand.indexOf(dhis2.de.cst.separator));
-            var coc = operand.substring(operand.indexOf(dhis2.de.cst.separator) + 1, operand.length);
-            deferreds.push(dhis2.de.getDataElementValue(de, coc, dataSet, match).done(function (sum, matchRef) {
-              expression = expression.replace(matchRef, sum);
-            }));
-          }
-          // TODO signed numbers
-        }
-        /*for (k in cMatcher) {
-          var match = cMatcher[k];
-          // Remove brackets from expression to simplify extraction of identifiers
-          var operand = match.replace(/[C\{\}]/g, '');
-          deferreds.push(dhis2.de.getConstantValue(operand, dataSet, match).done(function (sum, matchRef) {
-            expression = expression.replace(matchRef, sum);
-          }));
-        }*/
-        $.when.apply($, deferreds).then(function () {
-          if (expression == "0") {
-            expression = 0;
-          }
-          defer.resolve(eval('(' + expression + ')'));
-        });
-        return defer.promise();
-      },
-      //Get indicators from indexdb by id
-      getIndicators: function (indicatorIds, callback) {
-        var defer = $.Deferred();
-        //sample testing on sqlLite services
-        dhis2.sqlLiteServices.getDataFromTableByIds('indicators',indicatorIds).then(function(data){
-          defer.resolve(data);
-        });
-        return defer.promise();
-      },
-      getIndicatorDataValues: function (indicatorIds, dataSet) {
-        var defer = $.Deferred();
-        var promises = [];
-        var data = {
-          metaData: {
-            names: {}
-          },
-          rows: []
-        };
-        dhis2.sqlLiteServices.getDataFromTableById('indicators',indicatorIds[0]).done(function(indicator){
-          alert('indicator : ' + JSON.stringify(indicator));
-        });
-        //dhis2.sqlLiteServices.getDataFromTableByIds('indicators',indicatorIds).then(function(indicators){
-        dhis2.sqlLiteServices.getDataFromTableById('indicators',indicatorIds[0]).then(function(indicators){
-          alert('indicator : ' + JSON.stringify( indicators));
-          $.each(indicators, function (indicatorIndex, indicator) {
-            data.metaData.names[indicator.id] = indicator.name;
-            promises.push(dhis2.de.evaluateDataIndicator(indicator, dataSet).then(function (value) {
-              if (value) {
-                data.rows.push([indicator.id, dhis2.report.period, value]);
-              }
-            }));
           });
-          $.when.apply($, promises).then(function () {
+          promise.fail(function (error, event) {
+            defer.reject(error);
+          });
+          return defer.promise();
+        },
+        generateExpression: function (expression, dataSet) {
+          var defer = $.Deferred();
+          var deferreds = [];
+          var matcher = expression.match(dhis2.de.cst.formulaPattern);
+          var cMatcher = expression.match(dhis2.de.cst.constantPattern);
+          for (k in matcher) {
+            var match = matcher[k];
+            // Remove brackets from expression to simplify extraction of identifiers
+            var operand = match.replace(/[#\{\}]/g, '');
+            var isTotal = !!( operand.indexOf(dhis2.de.cst.separator) == -1 );
+            if (isTotal) {
+              alert('is total');
+              deferreds.push(dhis2.de.getDataElementTotalValue(operand, dataSet, match).done(function (sum, matchRef) {
+                expression = expression.replace(matchRef, sum);
+              }));
+            }
+            else {
+              alert('is not total');
+              var de = operand.substring(0, operand.indexOf(dhis2.de.cst.separator));
+              var coc = operand.substring(operand.indexOf(dhis2.de.cst.separator) + 1, operand.length);
+              deferreds.push(dhis2.de.getDataElementValue(de, coc, dataSet, match).done(function (sum, matchRef) {
+                expression = expression.replace(matchRef, sum);
+              }));
+            }
+            // TODO signed numbers
+          }
+          /*for (k in cMatcher) {
+           var match = cMatcher[k];
+           // Remove brackets from expression to simplify extraction of identifiers
+           var operand = match.replace(/[C\{\}]/g, '');
+           deferreds.push(dhis2.de.getConstantValue(operand, dataSet, match).done(function (sum, matchRef) {
+           expression = expression.replace(matchRef, sum);
+           }));
+           }*/
+          $.when.apply($, deferreds).then(function () {
+            if (expression == "0") {
+              expression = 0;
+            }
+            defer.resolve(eval('(' + expression + ')'));
+          });
+          return defer.promise();
+        },
+        //Get indicators by id
+        getIndicators: function (indicatorIds, callback) {
+          var defer = $.Deferred();
+          //sample testing on sqlLite services
+          dhis2.sqlLiteServices.getDataFromTableByIds('indicators',indicatorIds).then(function(data){
             defer.resolve(data);
           });
-        });
-        return defer.promise();
-      },
-      evaluateDataIndicator: function (indicator, dataSet) {
-        var defer = $.Deferred();
-        var promises = [];
-        var numerator = 0;
-        var denominator = 1;
-        promises.push(dhis2.de.generateExpression(indicator.numerator, dataSet).then(function (numeratorResult) {
-          numerator = numeratorResult;
-        }));
-        promises.push(dhis2.de.generateExpression(indicator.denominator, dataSet).then(function (denominatorResult) {
-          denominator = denominatorResult;
-        }));
-        $.when.apply($, promises).then(function () {
-          var returnValue = (numerator / denominator) * indicator.indicatorType.factor;
-          defer.resolve(returnValue);
-        });
-        return defer.promise();
-      },
-      cst: {
-        formulaPattern: /#\{.+?\}/g,
-        constantPattern: /C\{.+?\}/g,
-        separator: "."
-      }
-    };
+          return defer.promise();
+        },
+        getIndicatorDataValues: function (indicatorIds, dataSet) {
+          var defer = $.Deferred();
+          var promises = [];
+          var data = {
+            metaData: {
+              names: {}
+            },
+            rows: []
+          };
+          alert('Indicator ' + indicatorIds[0]);
+          dhis2.sqlLiteServices.getDataFromTableById('indicators',indicatorIds[0]).done(function(indicator){
+            alert('indicator : ' + JSON.stringify(indicator));
+          });
+          //dhis2.sqlLiteServices.getDataFromTableByIds('indicators',indicatorIds).then(function(indicators){
+          dhis2.sqlLiteServices.getDataFromTableById('indicators',indicatorIds[0]).then(function(indicators){
+            alert('indicator : ' + JSON.stringify( indicators));
+            $.each(indicators, function (indicatorIndex, indicator) {
+              data.metaData.names[indicator.id] = indicator.name;
+              promises.push(dhis2.de.evaluateDataIndicator(indicator, dataSet).then(function (value) {
+                if (value) {
+                  data.rows.push([indicator.id, dhis2.report.period, value]);
+                }
+              }));
+            });
+            $.when.apply($, promises).then(function () {
+              defer.resolve(data);
+            });
+          });
+          return defer.promise();
+        },
+        evaluateDataIndicator: function (indicator, dataSet) {
+          var defer = $.Deferred();
+          var promises = [];
+          var numerator = 0;
+          var denominator = 1;
+          promises.push(dhis2.de.generateExpression(indicator.numerator, dataSet).then(function (numeratorResult) {
+            numerator = numeratorResult;
+          }));
+          promises.push(dhis2.de.generateExpression(indicator.denominator, dataSet).then(function (denominatorResult) {
+            denominator = denominatorResult;
+          }));
+          $.when.apply($, promises).then(function () {
+            var returnValue = (numerator / denominator) * indicator.indicatorType.factor;
+            defer.resolve(returnValue);
+          });
+          return defer.promise();
+        },
+        cst: {
+          formulaPattern: /#\{.+?\}/g,
+          constantPattern: /C\{.+?\}/g,
+          separator: "."
+        }
+      };
+    }
+
+
     var reportParams = {
       ou: "",
       pe: ""
