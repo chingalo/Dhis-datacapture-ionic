@@ -89,7 +89,7 @@
         },
         getDataFromTableByIds: function(tableName,ids){
           var defer = $.Deferred();
-          var attribute = "id";
+          var attribute = 'id';
           var db = window.sqlitePlugin.openDatabase({name: "hisptz.db"});
           var questionMarks = "?";
           for(var i = 1; i < ids.length;i++){
