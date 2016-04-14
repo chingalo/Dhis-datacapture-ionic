@@ -92,17 +92,14 @@
           for(var i = 1; i < ids.length;i++){
             questionMarks += ",?";
           }
-          alert("IDS:" + ids.length);
           db.transaction(function (tx) {
             var query = "SELECT * FROM " + tableName + " WHERE "+attribute+" IN (" + questionMarks + ")";
             tx.executeSql(query, ids, function (tx, results) {
-              alert("Result Got:");
               var len = results.rows.length;
               var data = [];
               for (var i = 0; i < len; i++) {
                 data.push(eval("(" + results.rows.item(i).data + ")"));
               }
-              alert("Result:" + data.length);
               defer.resolve(data);
             }, function (error) {
               defer.reject(error);
@@ -157,6 +154,7 @@
         var defer = $.Deferred();
         dhis2.sqlLiteServices.getDataFromTableById('dataValues',dataSet + "-" + de + "-" + coc + "-" + dhis2.report.period + "-" + dhis2.report.organisationUnit.id)
           .then(function(item){
+            alert(JSON.stringify(item));
             if (item) {
               alert(JSON.stringify(item));
               var val = item.value;
@@ -169,6 +167,7 @@
               defer.resolve(new Number("0"), match);
             }
           },function(error){
+            alert('error fetching data elements' + JSON.stringify(error));
             defer.reject(error);
           });
         return defer.promise();
@@ -205,9 +204,9 @@
           var operand = match.replace(/[#\{\}]/g, '');
           var isTotal = !!( operand.indexOf(dhis2.de.cst.separator) == -1 );
           if (isTotal) {
-            deferreds.push(dhis2.de.getDataElementTotalValue(operand, dataSet, match).done(function (sum, matchRef) {
+            /*deferreds.push(dhis2.de.getDataElementTotalValue(operand, dataSet, match).done(function (sum, matchRef) {
               expression = expression.replace(matchRef, sum);
-            }));
+            }));*/
           }
           else {
             var de = operand.substring(0, operand.indexOf(dhis2.de.cst.separator));
@@ -218,14 +217,14 @@
           }
           // TODO signed numbers
         }
-        for (k in cMatcher) {
+        /*for (k in cMatcher) {
           var match = cMatcher[k];
           // Remove brackets from expression to simplify extraction of identifiers
           var operand = match.replace(/[C\{\}]/g, '');
           deferreds.push(dhis2.de.getConstantValue(operand, dataSet, match).done(function (sum, matchRef) {
             expression = expression.replace(matchRef, sum);
           }));
-        }
+        }*/
         $.when.apply($, deferreds).then(function () {
           if (expression == "0") {
             expression = 0;
