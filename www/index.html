@@ -73,6 +73,7 @@
         getDataFromTableById: function(tableName,id){
           var defer = $.Deferred();
           var attribute = "id";
+          alert('data values id : ' + id);
           var db = window.sqlitePlugin.openDatabase({name: "hisptz.db"});
           db.transaction(function (tx) {
             var query = "SELECT * FROM " + tableName + " WHERE "+attribute+" = ?";
@@ -154,7 +155,7 @@
       getDataElementValue: function (de, coc, dataSet, match) {
         var defer = $.Deferred();
         dhis2.sqlLiteServices.getDataFromTableById('dataValues',dataSet + "-" + de + "-" + coc + "-" + dhis2.report.period + "-" + dhis2.report.organisationUnit.id)
-          .then(function(item){
+          .done(function(item){
             alert(JSON.stringify(item));
             if (item) {
               alert(JSON.stringify(item));
@@ -167,8 +168,6 @@
             } else {
               defer.resolve(new Number("0"), match);
             }
-          },function(error){
-            defer.reject(error);
           });
         return defer.promise();
       },
