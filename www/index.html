@@ -154,7 +154,10 @@
       },
       getDataElementValue: function (de, coc, dataSet, match) {
         var defer = $.Deferred();
-        dhis2.sqlLiteServices.getDataFromTableById('dataValues',dataSet + "-" + de + "-" + coc + "-" + dhis2.report.period + "-" + dhis2.report.organisationUnit.id)
+
+        var dataValuesId = dataSet + "-" + de + "-" + coc + "-" + dhis2.report.period + "-" + dhis2.report.organisationUnit.id;
+        alert('Data values id : ' + dataValuesId);
+        dhis2.sqlLiteServices.getDataFromTableById('dataValues',dataValuesId)
           .done(function(item){
             alert(JSON.stringify(item));
             if (item) {
@@ -212,6 +215,7 @@
             var de = operand.substring(0, operand.indexOf(dhis2.de.cst.separator));
             var coc = operand.substring(operand.indexOf(dhis2.de.cst.separator) + 1, operand.length);
             deferreds.push(dhis2.de.getDataElementValue(de, coc, dataSet, match).done(function (sum, matchRef) {
+              alert("sum : " + sum);
               expression = expression.replace(matchRef, sum);
             }));
           }
