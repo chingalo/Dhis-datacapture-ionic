@@ -83,7 +83,6 @@
                 data.push(eval("(" + results.rows.item(i).data + ")"));
               }
               defer.resolve(data[0]);
-              alert('Returned ata values : ' + JSON.stringify(data[0]));
             }, function (error) {
               defer.reject(error);
             });
@@ -176,25 +175,22 @@
           });
         return defer.promise();
       },
-      getConstantValue: function (constantId, dataSet, match) {
+      getConstantValue: function (constantId, match) {
         var defer = $.Deferred();
-        var dataValuesStore = $.indexedDB("hisptz").objectStore("constants");
-        var promise = dataValuesStore.get(constantId);
-        promise.done(function (constant, event) {
-          if (constant) {
-            var val = constant.value;
-            if (val && dhis2.validation.isNumber(val)) {
-              defer.resolve(new Number(constant.value), match);
+        dhis2.sqlLiteServices.getDataFromTableById('constants',constantId)
+          .done(function(constant){
+            console.log('found constant values : ' + JSON.stringify(constant));
+            if (constant) {
+              var val = constant.value;
+              if (val && dhis2.validation.isNumber(val)) {
+                defer.resolve(new Number(constant.value), match);
+              } else {
+                defer.resolve(new Number(0), match);
+              }
             } else {
               defer.resolve(new Number(0), match);
             }
-          } else {
-            defer.resolve(new Number(0), match);
-          }
-        });
-        promise.fail(function (error, event) {
-          defer.reject(error);
-        });
+          });
         return defer.promise();
       },
       generateExpression: function (expression, dataSet) {
@@ -223,14 +219,14 @@
           }
           // TODO signed numbers
         }
-        /*for (k in cMatcher) {
+        for (k in cMatcher) {
           var match = cMatcher[k];
           // Remove brackets from expression to simplify extraction of identifiers
           var operand = match.replace(/[C\{\}]/g, '');
-          deferreds.push(dhis2.de.getConstantValue(operand, dataSet, match).done(function (sum, matchRef) {
+          deferreds.push(dhis2.de.getConstantValue(operand, match).done(function (sum, matchRef) {
             expression = expression.replace(matchRef, sum);
           }));
-        }*/
+        }
         $.when.apply($, deferreds).then(function () {
           if (expression == "0") {
             expression = 0;
