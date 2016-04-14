@@ -101,10 +101,12 @@
                 data.push(eval("(" + results.rows.item(i).data + ")"));
               }
               defer.resolve(data);
+              alert('return indicators sql : ' + data.length);
             }, function (error) {
               defer.reject(error);
             });
           });
+          alert('return indicators sql  just before : ' + JSON.stringify(defer.promise));
           return defer.promise;
         },
         getAllDataFromTable: function(tableName){
@@ -240,6 +242,7 @@
         var defer = $.Deferred();
         //sample testing on sqlLite services
         dhis2.sqlLiteServices.getDataFromTableByIds('indicators',indicatorIds).done(function(data){
+          alert('resturn indicators : ' + data.length);
           defer.resolve(data);
         });
         return defer.promise();
