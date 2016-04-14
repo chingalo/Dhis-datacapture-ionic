@@ -82,7 +82,7 @@
               defer.reject(error);
             });
           });
-          return defer.promise;
+          return defer.promise();
         },
         getDataFromTableByIds: function(tableName,ids){
           var defer = $.Deferred();
@@ -106,7 +106,7 @@
               defer.reject(error);
             });
           });
-          return defer.promise;
+          return defer.promise();
         },
         getAllDataFromTable: function(tableName){
           var defer = $.Deferred();
@@ -256,7 +256,7 @@
           rows: []
         };
         dhis2.de.getIndicators(indicatorIds).done(function (indicators) {
-          alert('indicator : ' + JSON.stringify(indicators[0]));
+          alert('first indicator : ' + JSON.stringify(indicators[0]));
           $.each(indicators, function (indicatorIndex, indicator) {
             data.metaData.names[indicator.id] = indicator.name;
             promises.push(dhis2.de.evaluateDataIndicator(indicator, dataSet).then(function (value) {
