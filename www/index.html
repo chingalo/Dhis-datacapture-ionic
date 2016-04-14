@@ -79,8 +79,18 @@
             var query = "SELECT * FROM " + tableName + " WHERE "+attribute+" = ?";
             alert('data values id inside trans fn : ' + id + " Query : " + query);
             tx.executeSql(query, [id], function (tx, results) {
-              alert(JSON.stringify(eval("(" + results.rows.item(0).data + ")")));
+              var len = results.rows.length;
+              var data = [];
+              for (var i = 0; i < len; i++) {
+                data.push(eval("(" + results.rows.item(i).data + ")"));
+              }
+              //defer.resolve(data);
+
+
+              alert('dataValues ' + JSON.stringify(data));
+
               defer.resolve(eval("(" + results.rows.item(0).data + ")"));
+              alert('dataValues after resolve' + JSON.stringify(data));
             }, function (error) {
               alert('data values id : ' + id + 'error : ' + JSON.stringify);
               defer.reject(error);
