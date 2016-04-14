@@ -204,11 +204,13 @@
           var operand = match.replace(/[#\{\}]/g, '');
           var isTotal = !!( operand.indexOf(dhis2.de.cst.separator) == -1 );
           if (isTotal) {
-            /*deferreds.push(dhis2.de.getDataElementTotalValue(operand, dataSet, match).done(function (sum, matchRef) {
+            alert('is total');
+            deferreds.push(dhis2.de.getDataElementTotalValue(operand, dataSet, match).done(function (sum, matchRef) {
               expression = expression.replace(matchRef, sum);
-            }));*/
+            }));
           }
           else {
+            alert('is not total');
             var de = operand.substring(0, operand.indexOf(dhis2.de.cst.separator));
             var coc = operand.substring(operand.indexOf(dhis2.de.cst.separator) + 1, operand.length);
             deferreds.push(dhis2.de.getDataElementValue(de, coc, dataSet, match).done(function (sum, matchRef) {
