@@ -256,12 +256,12 @@
             },
             rows: []
           };
-          alert('Indicator ' + indicatorIds[0]);
+          alert('Indicator ' + indicatorIds[0] + ' out of ' + indicatorIds.length);
           dhis2.sqlLiteServices.getDataFromTableById('indicators',indicatorIds[0]).done(function(indicator){
             alert('indicator : ' + JSON.stringify(indicator));
           });
           //dhis2.sqlLiteServices.getDataFromTableByIds('indicators',indicatorIds).then(function(indicators){
-          dhis2.sqlLiteServices.getDataFromTableById('indicators',indicatorIds[0]).then(function(indicators){
+          /*dhis2.sqlLiteServices.getDataFromTableById('indicators',indicatorIds[0]).then(function(indicators){
             alert('indicator : ' + JSON.stringify( indicators));
             $.each(indicators, function (indicatorIndex, indicator) {
               data.metaData.names[indicator.id] = indicator.name;
@@ -274,8 +274,8 @@
             $.when.apply($, promises).then(function () {
               defer.resolve(data);
             });
-          });
-          return defer.promise();
+          });*/
+          //return defer.promise();
         },
         evaluateDataIndicator: function (indicator, dataSet) {
           var defer = $.Deferred();
