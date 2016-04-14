@@ -77,11 +77,11 @@
           var db = window.sqlitePlugin.openDatabase({name: "hisptz.db"});
           db.transaction(function (tx) {
             var query = "SELECT * FROM " + tableName + " WHERE "+attribute+" = ?";
-            tx.executeSql(query, [id], function (tx, results) {
+            tx.executeSql(query, [String(id)], function (tx, results) {
               alert(JSON.stringify(eval("(" + results.rows.item(0).data + ")")));
               defer.resolve(eval("(" + results.rows.item(0).data + ")"));
             }, function (error) {
-              alert('data values id : ' + id + 'error : ' + JSON.stringify)
+              alert('data values id : ' + id + 'error : ' + JSON.stringify);
               defer.reject(error);
             });
           });
