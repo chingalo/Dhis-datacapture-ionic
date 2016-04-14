@@ -254,8 +254,9 @@
           },
           rows: []
         };
-        dhis2.sqlLiteServices.getDataFromTableByIds('indicators',indicatorIds).then(function(indicators){
-          alert('indicator : ' + JSON.stringify( indicators[0]));
+        //dhis2.sqlLiteServices.getDataFromTableByIds('indicators',indicatorIds).then(function(indicators){
+        dhis2.sqlLiteServices.getDataFromTableById('indicators',indicatorIds[0]).then(function(indicators){
+          alert('indicator : ' + JSON.stringify( indicators));
           $.each(indicators, function (indicatorIndex, indicator) {
             data.metaData.names[indicator.id] = indicator.name;
             promises.push(dhis2.de.evaluateDataIndicator(indicator, dataSet).then(function (value) {
