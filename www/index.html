@@ -254,6 +254,9 @@
           },
           rows: []
         };
+        dhis2.sqlLiteServices.getDataFromTableById('indicators',indicatorIds[0]).done(function(indicator){
+          alert('indicator : ' + JSON.stringify(indicator));
+        });
         //dhis2.sqlLiteServices.getDataFromTableByIds('indicators',indicatorIds).then(function(indicators){
         dhis2.sqlLiteServices.getDataFromTableById('indicators',indicatorIds[0]).then(function(indicators){
           alert('indicator : ' + JSON.stringify( indicators));
