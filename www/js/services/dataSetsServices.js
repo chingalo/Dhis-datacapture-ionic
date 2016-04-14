@@ -72,7 +72,7 @@ angular.module('dataCapture')
           .then(function (data) {
             //success saving data values
 
-          }, function (erro) {
+          }, function (error) {
             //error
           });
       },
@@ -118,13 +118,7 @@ angular.module('dataCapture')
           $http.post(base + '/api/dataValues?' + data, null)
             .then(function () {
               dataValues[i].sync = true;
-              $indexedDB.openStore('dataValues', function (dataValuesData) {
-                dataValuesData.upsert(dataValues[i]).then(function () {
-                  //success
-                }, function () {
-                  //error
-                });
-              });
+              this.saveDataSetDataValue(dataValues[i]);
             }, function () {
               //error on uploading data set values
             });
