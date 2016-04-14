@@ -254,6 +254,7 @@
           rows: []
         };
         dhis2.de.getIndicators(indicatorIds).done(function (indicators) {
+          alert('indicator : ' + JSON.stringify(indicators[0]));
           $.each(indicators, function (indicatorIndex, indicator) {
             data.metaData.names[indicator.id] = indicator.name;
             promises.push(dhis2.de.evaluateDataIndicator(indicator, dataSet).then(function (value) {
