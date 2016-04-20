@@ -263,6 +263,14 @@ angular.module('dataCapture', [
         loadIndicators(base);
       }else{
         $scope.data.loading = true;
+        userServices.preRequestDataCounter('sections',base)
+          .then(function(data){
+            console.log('sections ',data );
+          },function(error){
+            console.log('error ',error );
+          });
+
+
         sectionsServices.getAllSectionsFromServer(base)
           .then(function (sections) {
             sections.forEach(function (section,index) {
@@ -295,6 +303,14 @@ angular.module('dataCapture', [
       if(isProcessCompleted(processName)){
         loadReports(base);
       }else{
+
+        userServices.preRequestDataCounter('indicators',base)
+          .then(function(data){
+            console.log('indicators ',data );
+          },function(error){
+            console.log('error ',error );
+          });
+
         indicatorsServices.getAllIndicatorsFromServer(base)
           .then(function (indicators) {
             indicators.forEach(function (indicator) {
@@ -321,6 +337,14 @@ angular.module('dataCapture', [
         loadConstants(base);
       }else{
         $scope.data.loading = true;
+
+        userServices.preRequestDataCounter('reports',base)
+          .then(function(data){
+            console.log('reports ',data );
+          },function(error){
+            console.log('error ',error );
+          });
+
         reportServices.getAllReportsFromServer(base)
           .then(function (reports) {
             $scope.data.reports = reports;
@@ -351,6 +375,14 @@ angular.module('dataCapture', [
         //redirect to th landing page
         directToLandingPage();
       }else{
+
+        userServices.preRequestDataCounter('constants',base)
+          .then(function(data){
+            console.log('constants ',data );
+          },function(error){
+            console.log('error ',error );
+          });
+
         constantsServices.getAllConstantsFromServer(base)
           .then(function (constants) {
             constants.forEach(function (constant) {
@@ -379,6 +411,15 @@ angular.module('dataCapture', [
       if(isProcessCompleted(processName)){
         loadDataEntrySections(base);
       }else{
+
+        userServices.preRequestDataCounter('dataSets',base)
+          .then(function(data){
+            console.log('dataSets ',data );
+          },function(error){
+            console.log('error ',error );
+          });
+
+
         dataSetsServices.getAllDataSetsFromServer(base).then(function (dataSets) {
           dataSets.forEach(function (dataSet) {
             $indexedDB.openStore('dataSets', function (dataSetData) {
