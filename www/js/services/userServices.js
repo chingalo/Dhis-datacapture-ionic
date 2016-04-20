@@ -52,6 +52,24 @@ angular.module('dataCapture')
           defer.reject('error');
         });
         return defer.promise;
+      },
+      initiateLogOutProcess : function(){
+        var defer = $q.defer();
+        $ionicHistory.clearCache().then(function() {
+          $ionicHistory.clearHistory();
+          $ionicHistory.nextViewOptions({ disableBack: true, historyRoot: true });
+          delete $localStorage.loginUser;
+          delete $localStorage.dataEntryData;
+          delete $localStorage.loginUserData;
+          delete $localStorage.selectedReport;
+          delete $localStorage.dataDownLoadingStatus;
+          delete $localStorage.dataDownLoadingTracker;
+          delete $localStorage.allowDataEntrySync;
+          defer.resolve();
+        },function(){
+          defer.reject();
+        });
+        return defer.promise;
       }
     };
 
