@@ -43,17 +43,17 @@ angular.module('dataCapture')
     function unBlockUi(){
       $ionicLoading.hide();
     }
-    $scope.navigateToNewPage = function(pageNumber,type){
+    $scope.navigateToNewPage = function (pageNumber, type) {
       $scope.data.loading = true;
-      if(type == 'last'){
-        if($localStorage.dataEntryData.formType == 'SECTION'){
-          $scope.currentPage = $scope.data.selectedDataEntryForm.dataSet.sections.length - 1;
+      if (type == 'last') {
+        if ($localStorage.dataEntryData.formType == 'SECTION') {
+          $scope.currentPage = $scope.numberOfPagesSection() - 1;
           $scope.data.loading = false;
-        }else{
-          $scope.currentPage = parseInt($scope.data.selectedDataEntryForm.dataSet.dataElements.length/$scope.pageSizeDefault);
+        } else {
+          $scope.currentPage = $scope.numberOfPagesDefault() - 1;
           $scope.data.loading = false;
         }
-      }else{
+      } else {
         $scope.currentPage = pageNumber;
         $scope.data.loading = false;
       }
