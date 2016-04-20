@@ -95,7 +95,7 @@ angular.module('dataCapture')
         var defer = $q.defer();
         $http.get(baseUrl + '/api/'+resourceObject+'.json?&fields=:none&pageSize=1')
           .success(function (results) {
-            defer.resolve(results);
+            defer.resolve(results.pager.total);
           })
           .error(function () {
             defer.reject();

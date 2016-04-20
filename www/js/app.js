@@ -257,196 +257,185 @@ angular.module('dataCapture', [
 
     //function to fetching date entry sections
     function loadDataEntrySections(base) {
-      $scope.data.dataDownLoadingMessage.push('Download form sections');
-      var processName = "dataEntrySection";
-      if(isProcessCompleted(processName)){
-        loadIndicators(base);
-      }else{
-        $scope.data.loading = true;
-        userServices.preRequestDataCounter('sections',base)
-          .then(function(data){
-            console.log('sections ',data );
-          },function(error){
-            console.log('error ',error );
-          });
-
-
-        sectionsServices.getAllSectionsFromServer(base)
-          .then(function (sections) {
-            sections.forEach(function (section,index) {
-              $indexedDB.openStore('sections', function (dataSetData) {
-                dataSetData.upsert(section).then(function () {
-                  //success
-                }, function () {
-                  //error
-                });
-              });
-            });
-            //loading indicators
+      $scope.data.loading = true;
+      userServices.preRequestDataCounter('sections',base)
+        .then(function(sectionsCounter){
+          $scope.data.dataDownLoadingMessage.push('Download '+ sectionsCounter+' sections' );
+          var processName = "dataEntrySection";
+          if(isProcessCompleted(processName)){
             loadIndicators(base);
-            $localStorage.dataDownLoadingTracker.push(processName);
-          }, function () {
-            //error
-            var message = "Fail to download form sections";
-            progressTopMessage(message);
-            $scope.data.loading = false;
-          });
-      }
-
+          }else{
+            sectionsServices.getAllSectionsFromServer(base)
+              .then(function (sections) {
+                sections.forEach(function (section,index) {
+                  $indexedDB.openStore('sections', function (dataSetData) {
+                    dataSetData.upsert(section).then(function () {
+                      //success
+                    }, function () {
+                      //error
+                    });
+                  });
+                });
+                //loading indicators
+                loadIndicators(base);
+                $localStorage.dataDownLoadingTracker.push(processName);
+              }, function () {
+                //error
+                var message = "Fail to download form sections";
+                progressTopMessage(message);
+                $scope.data.loading = false;
+              });
+          }
+        },function(){
+          var message = "Fail to determine number form sections";
+          progressTopMessage(message);
+          $scope.data.loading = false;
+        });
     }
 
     //function to fetching indicators
     function loadIndicators(base) {
-      $scope.data.loading = true;
-      $scope.data.dataDownLoadingMessage.push('Download indicators');
-      var processName = "indicators";
-      if(isProcessCompleted(processName)){
-        loadReports(base);
-      }else{
-
-        userServices.preRequestDataCounter('indicators',base)
-          .then(function(data){
-            console.log('indicators ',data );
-          },function(error){
-            console.log('error ',error );
-          });
-
-        indicatorsServices.getAllIndicatorsFromServer(base)
-          .then(function (indicators) {
-            indicators.forEach(function (indicator) {
-              indicatorsServices.saveIndicatorIntoIndexDb(indicator);
-            });
-            //loading reports
+      userServices.preRequestDataCounter('indicators',base)
+        .then(function(indicatorsCounter){
+          $scope.data.loading = true;
+          $scope.data.dataDownLoadingMessage.push('Download '+indicatorsCounter+' indicators');
+          var processName = "indicators";
+          if(isProcessCompleted(processName)){
             loadReports(base);
-            $localStorage.dataDownLoadingTracker.push(processName);
-          }, function () {
-            //error
-            var message = "Fail to download indicators";
-            progressTopMessage(message);
-            $scope.data.loading = false;
-          });
-      }
-
+          }else{
+            indicatorsServices.getAllIndicatorsFromServer(base)
+              .then(function (indicators) {
+                indicators.forEach(function (indicator) {
+                  indicatorsServices.saveIndicatorIntoIndexDb(indicator);
+                });
+                //loading reports
+                loadReports(base);
+                $localStorage.dataDownLoadingTracker.push(processName);
+              }, function () {
+                //error
+                var message = "Fail to download indicators";
+                progressTopMessage(message);
+                $scope.data.loading = false;
+              });
+          }
+        },function(){
+          var message = "Fail to determine number indicators";
+          progressTopMessage(message);
+          $scope.data.loading = false;
+        });
     }
 
     //function to fetching reports from the server
     function loadReports(base) {
-      var processName = 'reports';
-      $scope.data.dataDownLoadingMessage.push('Download reports');
-      if(isProcessCompleted(processName)){
-        loadConstants(base);
-      }else{
-        $scope.data.loading = true;
-
-        userServices.preRequestDataCounter('reports',base)
-          .then(function(data){
-            console.log('reports ',data );
-          },function(error){
-            console.log('error ',error );
-          });
-
-        reportServices.getAllReportsFromServer(base)
-          .then(function (reports) {
-            $scope.data.reports = reports;
-            reportServices.saveReportToIndexDb(reports);
-            reports.forEach(function (report) {
-              reportServices.saveReportToIndexDb(report);
-            });
-            //loading all constants
+      userServices.preRequestDataCounter('reports',base)
+        .then(function(reportCounter){
+          var processName = 'reports';
+          $scope.data.dataDownLoadingMessage.push('Download '+reportCounter+' reports');
+          if(isProcessCompleted(processName)){
             loadConstants(base);
-            $localStorage.dataDownLoadingTracker.push(processName);
-          }, function () {
-            //error
-            var message = "Fail to download reports";
-            progressTopMessage(message);
-            $scope.data.loading = false;
-          });
-      }
-
+          }else{
+            $scope.data.loading = true;
+            reportServices.getAllReportsFromServer(base)
+              .then(function (reports) {
+                $scope.data.reports = reports;
+                reportServices.saveReportToIndexDb(reports);
+                reports.forEach(function (report) {
+                  reportServices.saveReportToIndexDb(report);
+                });
+                //loading all constants
+                loadConstants(base);
+                $localStorage.dataDownLoadingTracker.push(processName);
+              }, function () {
+                //error
+                var message = "Fail to download reports";
+                progressTopMessage(message);
+                $scope.data.loading = false;
+              });
+          }
+        },function(){
+          var message = "Fail to determine number reports";
+          progressTopMessage(message);
+          $scope.data.loading = false;
+        });
     }
 
     //function to fetching all constants from the server
     function loadConstants(base) {
-      var processName = "constants";
-      $scope.data.dataDownLoadingMessage.push('Download constants for reports');
-      if(isProcessCompleted(processName)){
-        $scope.data.dataDownLoadingMessage.push('');
-        $localStorage.dataDownLoadingStatus = true;
-        //redirect to th landing page
-        directToLandingPage();
-      }else{
-
-        userServices.preRequestDataCounter('constants',base)
-          .then(function(data){
-            console.log('constants ',data );
-          },function(error){
-            console.log('error ',error );
-          });
-
-        constantsServices.getAllConstantsFromServer(base)
-          .then(function (constants) {
-            constants.forEach(function (constant) {
-              constantsServices.saveConstantIntoIndexDb(constant);
-            });
+      userServices.preRequestDataCounter('constants',base)
+        .then(function(constantCounter){
+          var processName = "constants";
+          $scope.data.dataDownLoadingMessage.push('Download '+constantCounter+' constants for reports');
+          if(isProcessCompleted(processName)){
             $scope.data.dataDownLoadingMessage.push('');
             $localStorage.dataDownLoadingStatus = true;
-            $localStorage.dataDownLoadingTracker.push(processName);
             //redirect to th landing page
             directToLandingPage();
-          }, function () {
-            $scope.data.loading = false;
-            var message = "Fail to download constants for reports";
-            progressTopMessage(message);
-          });
-      }
-
+          }else{
+            constantsServices.getAllConstantsFromServer(base)
+              .then(function (constants) {
+                constants.forEach(function (constant) {
+                  constantsServices.saveConstantIntoIndexDb(constant);
+                });
+                $scope.data.dataDownLoadingMessage.push('');
+                $localStorage.dataDownLoadingStatus = true;
+                $localStorage.dataDownLoadingTracker.push(processName);
+                //redirect to th landing page
+                directToLandingPage();
+              }, function () {
+                $scope.data.loading = false;
+                var message = "Fail to download constants for reports";
+                progressTopMessage(message);
+              });
+          }
+        },function(){
+          var message = "Fail to determine number of constants for reports";
+          progressTopMessage(message);
+          $scope.data.loading = false;
+        });
     }
 
     //function to fetching all forms from the server
     function loadDataSets(base) {
-      $localStorage.baseUrl = base;
-      $scope.data.loading = true;
-      var processName = "dataSets";
-      $scope.data.dataDownLoadingMessage.push('Download data entry forms');
-      if(isProcessCompleted(processName)){
-        loadDataEntrySections(base);
-      }else{
-
-        userServices.preRequestDataCounter('dataSets',base)
-          .then(function(data){
-            console.log('dataSets ',data );
-          },function(error){
-            console.log('error ',error );
-          });
-
-
-        dataSetsServices.getAllDataSetsFromServer(base).then(function (dataSets) {
-          dataSets.forEach(function (dataSet) {
-            $indexedDB.openStore('dataSets', function (dataSetData) {
-              dataSetData.upsert(dataSet).then(function () {
-                //success
-              }, function () {
-                //error getting individual data set
+      userServices.preRequestDataCounter('dataSets',base)
+        .then(function(dataSetsCounter){
+          $localStorage.baseUrl = base;
+          $scope.data.loading = true;
+          var processName = "dataSets";
+          $scope.data.dataDownLoadingMessage.push('Download '+dataSetsCounter+' data entry forms');
+          if(isProcessCompleted(processName)){
+            loadDataEntrySections(base);
+          }else{
+            dataSetsServices.getAllDataSetsFromServer(base).then(function (dataSets) {
+              dataSets.forEach(function (dataSet) {
+                $indexedDB.openStore('dataSets', function (dataSetData) {
+                  dataSetData.upsert(dataSet).then(function () {
+                    //success
+                  }, function () {
+                    //error getting individual data set
+                  });
+                })
               });
-            })
-          });
-          //load all data entry sections forms
-          $localStorage.dataDownLoadingTracker.push(processName);
-          loadDataEntrySections(base);
-        }, function () {
-          //error getting data sets from server
-          var message = "Fail to download data entry forms";
+              //load all data entry sections forms
+              $localStorage.dataDownLoadingTracker.push(processName);
+              loadDataEntrySections(base);
+            }, function () {
+              //error getting data sets from server
+              var message = "Fail to download data entry forms";
+              progressTopMessage(message);
+              $scope.data.loading = false;
+            });
+          }
+        },function(){
+          var message = "Fail to determine number of data entry forms";
           progressTopMessage(message);
           $scope.data.loading = false;
         });
-      }
-
     }
 
     //function to fetch all orgUnits assigned to the user from server
     function addAssignedOrgUnit(orgUnits, baseUrl) {
       var processName = "orgUnits";
-      $scope.data.dataDownLoadingMessage.push('Fetch assigned Organisation ');
+      $scope.data.dataDownLoadingMessage.push('Fetch assigned Organisation ' + orgUnits.length);
       if(! isProcessCompleted(processName)){
         orgUnits.forEach(function (orgUnit,index) {
           userServices.getAssignedOrgUnitChildrenFromServer(orgUnit.id, baseUrl).then(function (OrgUnitChildrenData) {
