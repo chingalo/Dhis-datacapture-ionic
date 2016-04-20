@@ -11,6 +11,8 @@
               <h2>{{ key }}</h2>
               <p>{{ data.appInfo[key] }}</p>
             </div>
+            <h2>Local Storage Information</h2>
+            <p>Synced : {{ data.appStorageStatus.synced.value }} Not synced : {{ data.appStorageStatus.unSynced.value }}</p>
           </div>
           <div class="item item-divider">
             <h2 align="center">Server Information</h2>
