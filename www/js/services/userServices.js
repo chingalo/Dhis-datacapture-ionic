@@ -70,6 +70,17 @@ angular.module('dataCapture')
           defer.reject();
         });
         return defer.promise;
+      },
+      preRequestDataCounter : function(resourceObject,baseUrl){
+        var defer = $q.defer();
+        $http.get(baseUrl + '/api/'+resourceObject+'.json?&fields=:none&pageSize=1')
+          .success(function (results) {
+            defer.resolve(results.pager.total);
+          })
+          .error(function () {
+            defer.reject();
+          });
+        return defer.promise;
       }
     };
 
