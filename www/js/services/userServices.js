@@ -2,7 +2,7 @@
  * Created by joseph on 2/4/16.
  */
 angular.module('dataCapture')
-  .factory('userServices', function ($http, $q, $localStorage, $indexedDB, Base64) {
+  .factory('userServices', function ($http, $q, $localStorage, $indexedDB, Base64,$ionicHistory) {
     var userServices = {
       authenticateUser: function (username, password) {
         var base = $localStorage.baseUrl;
@@ -43,7 +43,7 @@ angular.module('dataCapture')
             //error
             defer.reject();
           })
-        })
+        });
         return defer.promise;
       },
       getAssignedOrgUnitFromIndexDb: function () {
@@ -72,6 +72,24 @@ angular.module('dataCapture')
             });
           })
         });
+      },
+      initiateLogOutProcess : function(){
+        var defer = $q.defer();
+        $ionicHistory.clearCache().then(function() {
+          $ionicHistory.clearHistory();
+          $ionicHistory.nextViewOptions({ disableBack: true, historyRoot: true });
+          delete $localStorage.loginUser;
+          delete $localStorage.dataEntryData;
+          delete $localStorage.loginUserData;
+          delete $localStorage.selectedReport;
+          delete $localStorage.dataDownLoadingStatus;
+          delete $localStorage.dataDownLoadingTracker;
+          delete $localStorage.allowDataEntrySync;
+          defer.resolve();
+        },function(){
+          defer.reject();
+        });
+        return defer.promise;
       }
     };
 

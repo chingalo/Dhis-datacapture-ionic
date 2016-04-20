@@ -28,8 +28,8 @@ angular.module('dataCapture')
       },
       deleteAllConstants : function(){
         var defer = $q.defer();
-        $indexedDB.openStore('constants', function (reports) {
-          reports.clear().then(function () {
+        $indexedDB.openStore('constants', function (constants) {
+          constants.clear().then(function () {
             //success
             defer.resolve();
           }, function () {
