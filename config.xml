@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<widget id="com.hipstz.dhis2.dhis2touch" version="0.1.6" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
+<widget id="com.hipstz.dhis2.dhis2touch" version="0.1.8" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
   <name>Dhis 2 Touch</name>
   <description>
     An Ionic Framework and Cordova project for Mobile app for Custom Data entry forms and Reports.
@@ -32,12 +32,6 @@
 
   <plugin name="io.litehelpers.cordova.sqlitestorage" spec="0.7.5" source="pgb" />
   <gap:plugin name="org.apache.cordova.battery-status" source = "pgb"/>
-  <!--<gap:plugin name="org.apache.cordova.device" source = "pgb"/>
-  <gap:plugin name="org.apache.cordova.device-motion" source = "pgb"/>
-  <gap:plugin name="org.apache.cordova.device-orientation" source = "pgb"/>
-  <gap:plugin name="org.apache.cordova.geolocation" source = "pgb"/>
-  <gap:plugin name="org.apache.cordova.inappbrowser" source = "pgb"/>
-  <gap:plugin name="org.apache.cordova.media" source = "pgb"/>-->
   <gap:plugin name="org.apache.cordova.network-information" source = "pgb" />
 
   <gap:plugin name="cordova-plugin-whitelist" source="npm" version="~1" />
