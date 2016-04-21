@@ -148,7 +148,7 @@ angular.module('dataCapture')
       });
       $q.all(promises).then(function(){
         unBlockUi();
-        progressMessageStick('100% to completion');
+        progressMessage('100% to completion');
       },function(){
         unBlockUi();
         progressMessage('Fail to load all data values from server');
