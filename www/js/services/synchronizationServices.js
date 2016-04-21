@@ -37,7 +37,7 @@ angular.module('dataCapture')
       dataSetsServices.getSavedDataValuesFromIndexDbForSync()
         .then(function(dataValues){
           var formattedDataValues = formatDataValues(dataValues);
-          dataSetsServices.uploadDataValuesToTheServer(formattedDataValues,dataValues);//.then(function(){},function(){});
+          dataSetsServices.uploadDataValuesToTheServer(formattedDataValues,dataValues);
       },function(){
           //fail to get data for sync
         });
