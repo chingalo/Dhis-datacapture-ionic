@@ -17,6 +17,15 @@ angular.module('dataCapture')
       unSynced : {value : 0,data : false}
     };
 
+
+    $scope.getSystemInfoName = function(key){
+      return (key.charAt(0).toUpperCase() + key.slice(1)).replace(/([A-Z])/g, ' $1').trim();
+    };
+
+    $scope.reloadLocalStorageStatus = function(){
+      getSyncedDataValues();
+      getUnSyncedDataValues();
+    };
     getSyncedDataValues();
     getUnSyncedDataValues();
     function getSyncedDataValues(){
@@ -38,11 +47,6 @@ angular.module('dataCapture')
             data :true
           }
         },function(){})
-    }
-
-
-    $scope.getSystemInfoName = function(key){
-      return (key.charAt(0).toUpperCase() + key.slice(1)).replace(/([A-Z])/g, ' $1').trim();
     }
 
   });

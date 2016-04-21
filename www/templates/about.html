@@ -1,5 +1,9 @@
 <ion-view view-title="About">
   <ion-content>
+    <ion-refresher
+      pulling-text="Pull to refresh local storage status"
+      on-refresh="reloadLocalStorageStatus()">
+    </ion-refresher>
     <ion-list>
       <div class="row">
         <div class="col col-100">
