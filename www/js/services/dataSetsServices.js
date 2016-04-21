@@ -2,7 +2,7 @@
  * Created by joseph on 1/30/16.
  */
 angular.module('dataCapture')
-  .factory('dataSetsServices', function ($http, $q, $localStorage, sqlLiteServices) {
+  .factory('dataSetsServices', function ($http, $q, $localStorage, sqlLiteServices,ionicToast) {
 
     var dataSetsServices = {
 
@@ -111,6 +111,9 @@ angular.module('dataCapture')
         return defer.promise;
       },
       uploadDataValuesToTheServer: function (formattedDataValues, dataValues) {
+        if(formattedDataValues.length > 0){
+          ionicToast.show('Uploading data values to the server', 'top', false, 3000);
+        }
         var base = $localStorage.baseUrl;
         var i = -1;
         formattedDataValues.forEach(function (data) {
