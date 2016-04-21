@@ -148,7 +148,7 @@ angular.module('dataCapture')
       });
       $q.all(promises).then(function(){
         unBlockUi();
-        progressMessage('100% to completion');
+        ionicToast.show('100% to completion', 'top', false, 700);
       },function(){
         unBlockUi();
         progressMessage('Fail to load all data values from server');
