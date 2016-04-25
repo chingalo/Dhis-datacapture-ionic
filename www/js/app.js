@@ -213,7 +213,7 @@ angular.module('dataCapture', [
           withCredentials: true,
           useDefaultXhrHeader: false,
           success: function () {
-            var fields = "fields=[:all],userCredentials[userRoles[dataSets[id,name]]";
+            var fields = "fields=[:all],userCredentials[userRoles[name,dataSets[id,name]]";
             //call checking if user is available
             Ext.Ajax.request({
               url: base + '/api/me.json?' + fields,
