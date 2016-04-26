@@ -32,11 +32,11 @@ angular.module('dataCapture', [
     });
   })
 
-  .controller('mainController', function ($scope, $window, $interval, $state,$http,Base64,
+  .controller('mainController', function ($scope, $window, $interval, $state, $http, Base64,
                                           userServices, synchronizationServices,
                                           $ionicHistory, $ionicModal, ionicToast,
                                           indicatorsServices, reportServices, constantsServices,
-                                          $localStorage, dataSetsServices,
+                                          $localStorage, dataSetsServices, programManagerServices,
                                           sectionsServices, $indexedDB) {
 
     //initial variables
@@ -52,7 +52,7 @@ angular.module('dataCapture', [
       ionicToast.show(message, 'top', false, 3500);
     }
 
-    $scope.deleteLocalStorageData = function (){
+    $scope.deleteLocalStorageData = function () {
       delete $localStorage.allowDataEntrySync;
     };
     //initialization of base url for an app to access as well as auto login for logged in user
@@ -85,20 +85,20 @@ angular.module('dataCapture', [
     }
 
     //initialize data downloading on login process
-    if(angular.isUndefined($scope.data.dataDownLoadingMessage)){
+    if (angular.isUndefined($scope.data.dataDownLoadingMessage)) {
       $scope.data.dataDownLoadingMessage = [];
     }
 
     //function to get data downloading percentage
     var numberOfProcess = 9;
-    $scope.getDataDownLoadingPercentage = function(){
-      return(Math.ceil(($scope.data.dataDownLoadingMessage.length/numberOfProcess) * 100))
+    $scope.getDataDownLoadingPercentage = function () {
+      return (Math.ceil(($scope.data.dataDownLoadingMessage.length / numberOfProcess) * 100))
     };
 
-    if(angular.isUndefined($localStorage.dataDownLoadingStatus)){
+    if (angular.isUndefined($localStorage.dataDownLoadingStatus)) {
       $localStorage.dataDownLoadingStatus = false;
     }
-    if(angular.isUndefined($localStorage.dataDownLoadingTracker)){
+    if (angular.isUndefined($localStorage.dataDownLoadingTracker)) {
       $localStorage.dataDownLoadingTracker = [];
     }
 
@@ -126,12 +126,12 @@ angular.module('dataCapture', [
     //function for log out from the system
     $scope.logOut = function () {
       //TODO some logic flow during log out process as reset all data on setting
-      userServices.initiateLogOutProcess().then(function(){
+      userServices.initiateLogOutProcess().then(function () {
         delete $localStorage.loginUser;
         $state.go('login');
         //$window.location.reload();
         $scope.data.loading = false;
-      },function(){
+      }, function () {
         progressMessage("The app fail to empty some data during logout");
       });
     };
@@ -246,7 +246,7 @@ angular.module('dataCapture', [
     function loadSystemInfo(base) {
       var processName = "systemInfo";
       $scope.data.dataDownLoadingMessage.push('Load system information');
-      if(! isProcessCompleted(processName)){
+      if (!isProcessCompleted(processName)) {
         userServices.getSystemInfo(base).then(function (systemInfo) {
           $localStorage.systemInfo = systemInfo;
           $localStorage.dataDownLoadingTracker.push(processName);
@@ -259,16 +259,16 @@ angular.module('dataCapture', [
     //function to fetching date entry sections
     function loadDataEntrySections(base) {
       $scope.data.loading = true;
-      userServices.preRequestDataCounter('sections',base)
-        .then(function(sectionsCounter){
-          $scope.data.dataDownLoadingMessage.push('Download '+ sectionsCounter+' sections' );
+      userServices.preRequestDataCounter('sections', base)
+        .then(function (sectionsCounter) {
+          $scope.data.dataDownLoadingMessage.push('Download ' + sectionsCounter + ' sections');
           var processName = "dataEntrySection";
-          if(isProcessCompleted(processName)){
+          if (isProcessCompleted(processName)) {
             loadIndicators(base);
-          }else{
+          } else {
             sectionsServices.getAllSectionsFromServer(base)
               .then(function (sections) {
-                sections.forEach(function (section,index) {
+                sections.forEach(function (section, index) {
                   $indexedDB.openStore('sections', function (dataSetData) {
                     dataSetData.upsert(section).then(function () {
                       //success
@@ -287,7 +287,7 @@ angular.module('dataCapture', [
                 $scope.data.loading = false;
               });
           }
-        },function(){
+        }, function () {
           var message = "Fail to determine number form sections";
           progressTopMessage(message);
           $scope.data.loading = false;
@@ -296,14 +296,14 @@ angular.module('dataCapture', [
 
     //function to fetching indicators
     function loadIndicators(base) {
-      userServices.preRequestDataCounter('indicators',base)
-        .then(function(indicatorsCounter){
+      userServices.preRequestDataCounter('indicators', base)
+        .then(function (indicatorsCounter) {
           $scope.data.loading = true;
-          $scope.data.dataDownLoadingMessage.push('Download '+indicatorsCounter+' indicators');
+          $scope.data.dataDownLoadingMessage.push('Download ' + indicatorsCounter + ' indicators');
           var processName = "indicators";
-          if(isProcessCompleted(processName)){
+          if (isProcessCompleted(processName)) {
             loadReports(base);
-          }else{
+          } else {
             indicatorsServices.getAllIndicatorsFromServer(base)
               .then(function (indicators) {
                 indicators.forEach(function (indicator) {
@@ -319,7 +319,7 @@ angular.module('dataCapture', [
                 $scope.data.loading = false;
               });
           }
-        },function(){
+        }, function () {
           var message = "Fail to determine number indicators";
           progressTopMessage(message);
           $scope.data.loading = false;
@@ -328,13 +328,13 @@ angular.module('dataCapture', [
 
     //function to fetching reports from the server
     function loadReports(base) {
-      userServices.preRequestDataCounter('reports',base)
-        .then(function(reportCounter){
+      userServices.preRequestDataCounter('reports', base)
+        .then(function (reportCounter) {
           var processName = 'reports';
-          $scope.data.dataDownLoadingMessage.push('Download '+reportCounter+' reports');
-          if(isProcessCompleted(processName)){
+          $scope.data.dataDownLoadingMessage.push('Download ' + reportCounter + ' reports');
+          if (isProcessCompleted(processName)) {
             loadConstants(base);
-          }else{
+          } else {
             $scope.data.loading = true;
             reportServices.getAllReportsFromServer(base)
               .then(function (reports) {
@@ -353,7 +353,7 @@ angular.module('dataCapture', [
                 $scope.data.loading = false;
               });
           }
-        },function(){
+        }, function () {
           var message = "Fail to determine number reports";
           progressTopMessage(message);
           $scope.data.loading = false;
@@ -362,16 +362,16 @@ angular.module('dataCapture', [
 
     //function to fetching all constants from the server
     function loadConstants(base) {
-      userServices.preRequestDataCounter('constants',base)
-        .then(function(constantCounter){
+      userServices.preRequestDataCounter('constants', base)
+        .then(function (constantCounter) {
           var processName = "constants";
-          $scope.data.dataDownLoadingMessage.push('Download '+constantCounter+' constants for reports');
-          if(isProcessCompleted(processName)){
+          $scope.data.dataDownLoadingMessage.push('Download ' + constantCounter + ' constants for reports');
+          if (isProcessCompleted(processName)) {
             $scope.data.dataDownLoadingMessage.push('');
             $localStorage.dataDownLoadingStatus = true;
             //redirect to th landing page
             directToLandingPage();
-          }else{
+          } else {
             constantsServices.getAllConstantsFromServer(base)
               .then(function (constants) {
                 constants.forEach(function (constant) {
@@ -388,24 +388,35 @@ angular.module('dataCapture', [
                 progressTopMessage(message);
               });
           }
-        },function(){
+        }, function () {
           var message = "Fail to determine number of constants for reports";
           progressTopMessage(message);
           $scope.data.loading = false;
         });
     }
 
+    //function to load all programs from the server
+    function loadPrograms(base) {
+      programManagerServices.getAllProgramsFromServer(base)
+        .then(function (data) {
+          programManagerServices.saveProgramsToLocalStorage(data);
+        }, function () {
+
+        });
+    }
+
     //function to fetching all forms from the server
     function loadDataSets(base) {
-      userServices.preRequestDataCounter('dataSets',base)
-        .then(function(dataSetsCounter){
+      loadPrograms(base);
+      userServices.preRequestDataCounter('dataSets', base)
+        .then(function (dataSetsCounter) {
           $localStorage.baseUrl = base;
           $scope.data.loading = true;
           var processName = "dataSets";
-          $scope.data.dataDownLoadingMessage.push('Download '+dataSetsCounter+' data entry forms');
-          if(isProcessCompleted(processName)){
+          $scope.data.dataDownLoadingMessage.push('Download ' + dataSetsCounter + ' data entry forms');
+          if (isProcessCompleted(processName)) {
             loadDataEntrySections(base);
-          }else{
+          } else {
             dataSetsServices.getAllDataSetsFromServer(base).then(function (dataSets) {
               dataSets.forEach(function (dataSet) {
                 $indexedDB.openStore('dataSets', function (dataSetData) {
@@ -426,7 +437,7 @@ angular.module('dataCapture', [
               $scope.data.loading = false;
             });
           }
-        },function(){
+        }, function () {
           var message = "Fail to determine number of data entry forms";
           progressTopMessage(message);
           $scope.data.loading = false;
@@ -437,8 +448,8 @@ angular.module('dataCapture', [
     function addAssignedOrgUnit(orgUnits, baseUrl) {
       var processName = "orgUnits";
       $scope.data.dataDownLoadingMessage.push('Fetch assigned Organisation ' + orgUnits.length);
-      if(! isProcessCompleted(processName)){
-        orgUnits.forEach(function (orgUnit,index) {
+      if (!isProcessCompleted(processName)) {
+        orgUnits.forEach(function (orgUnit, index) {
           userServices.getAssignedOrgUnitChildrenFromServer(orgUnit.id, baseUrl).then(function (OrgUnitChildrenData) {
             $indexedDB.openStore('orgUnits', function (orgUnitsData) {
               orgUnitsData.upsert(OrgUnitChildrenData).then(function () {
@@ -447,7 +458,7 @@ angular.module('dataCapture', [
                 //error
               });
             });
-            if(index == (orgUnits.length -1)){
+            if (index == (orgUnits.length - 1)) {
               $localStorage.dataDownLoadingTracker.push(processName);
             }
           }, function () {
@@ -467,10 +478,10 @@ angular.module('dataCapture', [
     }
 
     //function to checking state of process
-    function isProcessCompleted(processName){
+    function isProcessCompleted(processName) {
       var processStatus = false;
-      $localStorage.dataDownLoadingTracker.forEach(function(process){
-        if(process == processName){
+      $localStorage.dataDownLoadingTracker.forEach(function (process) {
+        if (process == processName) {
           processStatus = true;
         }
       });
@@ -478,60 +489,60 @@ angular.module('dataCapture', [
     }
 
     //flexibility for form
-    $scope.isInteger = function(key){
-      if(key == "NUMBER" || key == "INTEGER"){
+    $scope.isInteger = function (key) {
+      if (key == "NUMBER" || key == "INTEGER") {
         return true;
-      }else{
+      } else {
         return false;
       }
     };
-    $scope.isTrueOnly = function(key){
-      if(key == "TRUE_ONLY"){
+    $scope.isTrueOnly = function (key) {
+      if (key == "TRUE_ONLY") {
         return true;
-      }else{
+      } else {
         return false;
       }
     };
-    $scope.isIntegerZeroOrPositive = function(key){
-      if(key == "INTEGER_ZERO_OR_POSITIVE"){
+    $scope.isIntegerZeroOrPositive = function (key) {
+      if (key == "INTEGER_ZERO_OR_POSITIVE") {
         return true;
-      }else{
+      } else {
         return false;
       }
     };
-    $scope.isDate = function(key){
-      if(key == "DATE"){
+    $scope.isDate = function (key) {
+      if (key == "DATE") {
         return true;
-      }else{
+      } else {
         return false;
       }
     };
-    $scope.isString = function(key){
-      if(key == "TEXT" || key == "LONG_TEXT"){
+    $scope.isString = function (key) {
+      if (key == "TEXT" || key == "LONG_TEXT") {
         return true;
-      }else{
+      } else {
         return false;
       }
     };
-    $scope.isBoolean = function(key){
-      if(key == "BOOLEAN"){
+    $scope.isBoolean = function (key) {
+      if (key == "BOOLEAN") {
         return true;
-      }else{
+      } else {
         return false;
       }
     };
-    $scope.hasDataSets = function(dataElement){
+    $scope.hasDataSets = function (dataElement) {
 
-      if(dataElement.optionSet != undefined){
+      if (dataElement.optionSet != undefined) {
         return true;
-      }else{
+      } else {
         return false;
       }
     };
-    $scope.getOptionSets = function(dataElement){
-      if(dataElement.optionSet){
+    $scope.getOptionSets = function (dataElement) {
+      if (dataElement.optionSet) {
         return dataElement.optionSet.options;
-      }else{
+      } else {
         return false;
       }
     };
@@ -568,8 +579,10 @@ angular.module('dataCapture', [
         dataSets.createIndex('id_index', 'id', {unique: true});
       })
       .upgradeDatabase(3, function (event, db, tx) {
-        var dataSets = db.createObjectStore('constants', {keyPath: 'id'});
-        dataSets.createIndex('id_index', 'id', {unique: true});
+        var constants = db.createObjectStore('constants', {keyPath: 'id'});
+        constants.createIndex('id_index', 'id', {unique: true});
+        var programs = db.createObjectStore('programs', {keyPath: 'id'});
+        programs.createIndex('id_index', 'id', {unique: true});
       });
 
     $stateProvider

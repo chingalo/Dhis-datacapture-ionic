@@ -2,10 +2,10 @@
  * Created by chingalo on 3/24/16.
  */
 angular.module('dataCapture')
-  .controller('eventCaptureController',function($scope,$localStorage,userServices,$filter){
+  .controller('eventCaptureController',function($scope,$localStorage,userServices,$filter,programManagerServices){
 
     $scope.data = {};
-
+    $scope.data.programs =[];
 
     //function to get all user assigned orgUnit for tree
     getAllAssignedOrgUnits();
@@ -43,6 +43,14 @@ angular.module('dataCapture')
         });
       }
       return parentOrgUnit;
+    }
+
+    getAllPrograms();
+    function getAllPrograms(){
+      programManagerServices.getAllPrograms()
+        .then(function(programs){
+          $scope.data.programs.push(programs);
+        },function(){});
     }
 
   });
