@@ -6,22 +6,51 @@
           <h2 align="center">Event Capture</h2>
         </div>
         <div class="item item-text-wrap">
-
-          <div class="row" >
+          <div class="row">
             <div class="col col-100">
               <b>Organisation Unit</b>
               <multi-select-tree data-input-model="data.orgUnits" multi-select="false"
                                  data-output-model="data.orgUnit"
                                  data-default-label="Touch here to Select Organisation Unit"
-                                 data-callback = "selectOnly1Or2(item, selectedItems)">
+                                 data-callback="selectOnly1Or2(item, selectedItems)">
               </multi-select-tree>
             </div>
           </div>
+          <div class="row">
+            <div class="col col-100">
+              <b>Programs</b>
+              <div class="item item-input item-select">
+                <div class="input-label">
+                </div>
+                <select disabled ng-if="!data.orgUnit[0].name  || data.programs.length == 0">
+                  <option value="">There is no program available</option>
+                </select>
+                <select ng-if="data.orgUnit[0].name && data.programs.length > 0" ng-model="data.programId">
+                  <option value="">Touch to choose program</option>
+                  <option ng-repeat="program in data.programs " value="{{ program.id }}">{{ program.name }}</option>
+                </select>
+              </div>
+            </div>
+          </div>
 
-          <br>
-          Event Capture coming !!!<br>
-          {{ data.programs.length }}
+          <div ng-if="data.programId" class="row">
+            <div class="col col-100">
+              <div class="item item-text-wrap">
+                <h3>Event List </h3>
+                program id from select : {{ data.programId }}
+                program id from data : {{ data.selectedProgram.id}}
+              </div>
+            </div>
+          </div>
+
         </div>
+      </div>
+    </div>
+
+
+    <div class="row" ng-if="data.loading" style="text-align: center;font-size: 14px;">
+      <div class="col col-100">
+        <three-bounce-spinner></three-bounce-spinner>
       </div>
     </div>
   </ion-content>

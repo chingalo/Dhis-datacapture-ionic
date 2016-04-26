@@ -56,6 +56,6 @@
   </platform>
   <platform name="winphone" />
 
-  <icon src="ic_launcher.png" width="170" height="170" />
+  <icon src="ic_launcher.png"/>
 
 </widget>
