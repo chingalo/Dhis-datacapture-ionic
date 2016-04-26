@@ -32,7 +32,7 @@ angular.module('dataCapture', [
 
   .controller('mainController', function ($scope, $window, $interval, $state,$http,Base64,
                                           userServices, synchronizationServices,
-                                          $ionicHistory, $ionicModal, ionicToast,
+                                          $ionicHistory, $ionicModal, ionicToast,programManagerServices,
                                           indicatorsServices, reportServices, constantsServices,
                                           $localStorage, dataSetsServices, sqlLiteServices, $q,
                                           sectionsServices) {
@@ -52,7 +52,7 @@ angular.module('dataCapture', [
       document.addEventListener("deviceready", onDeviceReady, false);
       function onDeviceReady() {
         var db = window.sqlitePlugin.openDatabase({name: "hisptz.db"});
-        var tables = ['dataSets', 'reports', 'sections', 'orgUnits', 'indicators', 'constants'];
+        var tables = ['dataSets', 'reports', 'sections', 'orgUnits', 'indicators', 'constants','programs'];
         tables.forEach(function (table) {
           db.transaction(function (tx) {
             tx.executeSql('CREATE TABLE IF NOT EXISTS ' + table + ' (id TEXT primary key, data LONGTEXT)', [],
@@ -117,7 +117,7 @@ angular.module('dataCapture', [
       $scope.data.dataDownLoadingMessage = [];
     }
     //function to get data downloading percentage
-    var numberOfProcess = 15;
+    var numberOfProcess = 17;
     $scope.getDataDownLoadingPercentage = function(){
       return(Math.ceil(($scope.data.dataDownLoadingMessage.length/numberOfProcess) * 100))
     };
@@ -286,7 +286,7 @@ angular.module('dataCapture', [
           $scope.data.dataDownLoadingMessage.push('Downloading '+sectionCounter+' form sections');
           var processName = "dataEntrySection";
           if (isProcessCompleted(processName)) {
-            loadIndicators(base);
+            loadPrograms(base);
           } else {
             $scope.data.loading = true;
             sectionsServices.getAllSectionsFromServer(base)
@@ -306,8 +306,8 @@ angular.module('dataCapture', [
                   )
                 });
                 $q.all(promises).then(function () {
-                  //loading indicators
-                  loadIndicators(base);
+                  //loading programs
+                  loadPrograms(base);
                   $localStorage.dataDownLoadingTracker.push(processName);
                 }, function () {
                   var message = "Fail to save sections";
@@ -323,6 +323,54 @@ angular.module('dataCapture', [
           }
         },function(){
           var message = "Fail to determine number of sections from the server";
+          progressTopMessage(message);
+          $scope.data.loading = false;
+        });
+    }
+
+    function loadPrograms(base){
+      userServices.preRequestDataCounter('programs',base)
+        .then(function(programCounter){
+          $scope.data.loading = true;
+          $scope.data.dataDownLoadingMessage.push('Downloading '+programCounter+' programs');
+          var processName = "programs";
+          if (isProcessCompleted(processName)) {
+            loadIndicators(base);
+          } else {
+            programManagerServices.getAllProgramsFromServer(base)
+              .then(function (programs) {
+                var promises = [];
+                var tableName = "programs";
+                $scope.data.dataDownLoadingMessage.push('Saving '+programCounter+' programs');
+                programs.forEach(function (program) {
+                  var id = program.id;
+                  promises.push(
+                    sqlLiteServices.insertData(tableName, id, program)
+                      .then(function (pass) {
+                        //success
+                      }, function (fail) {
+                        //fail
+                      })
+                  )
+                });
+                $q.all(promises).then(function () {
+                  //loading indicators
+                  loadIndicators(base);
+                  $localStorage.dataDownLoadingTracker.push(processName);
+                }, function () {
+                  var message = "Fail to save programs";
+                  progressTopMessage(message);
+                  $scope.data.loading = false;
+                });
+              }, function () {
+                //error
+                var message = "Fail to download programs";
+                progressTopMessage(message);
+                $scope.data.loading = false;
+              });
+          }
+        },function(){
+          var message = "Fail to determine number of programs from the server";
           progressTopMessage(message);
           $scope.data.loading = false;
         });

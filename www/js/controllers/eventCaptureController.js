@@ -2,7 +2,9 @@
  * Created by chingalo on 3/24/16.
  */
 angular.module('dataCapture')
-  .controller('eventCaptureController',function($scope,$localStorage,userServices,$filter){
+  .controller('eventCaptureController',function($scope,$localStorage,programManagerServices,
+                                                userServices,
+                                                $filter){
 
     $scope.data = {};
 
@@ -43,6 +45,12 @@ angular.module('dataCapture')
         });
       }
       return parentOrgUnit;
+    }
+    getAllPrograms();
+    function getAllPrograms(){
+      programManagerServices.getAllPrograms().then(function(programs){
+        alert('Programs Counter : '+programs.length);
+      },function(){})
     }
 
   });
