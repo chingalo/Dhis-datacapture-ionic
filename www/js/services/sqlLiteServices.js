@@ -71,7 +71,12 @@ angular.module('dataCapture')
         db.transaction(function (tx) {
           var query = "SELECT * FROM " + tableName + " WHERE id = ?;";
           tx.executeSql(query, [id], function (tx, results) {
-            defer.resolve(eval("(" + results.rows.item(0).data + ")"));
+            var len = results.rows.length;
+            var data = [];
+            for (var i = 0; i < len; i++) {
+              data.push(eval("(" + results.rows.item(i).data + ")"));
+            }
+            defer.resolve(data[0]);
           }, function (error) {
             defer.reject(error);
           });
