@@ -78,7 +78,6 @@ angular.module('dataCapture')
         $ionicHistory.clearCache().then(function() {
           $ionicHistory.clearHistory();
           $ionicHistory.nextViewOptions({ disableBack: true, historyRoot: true });
-          delete $localStorage.loginUser;
           delete $localStorage.dataEntryData;
           delete $localStorage.loginUserData;
           delete $localStorage.selectedReport;

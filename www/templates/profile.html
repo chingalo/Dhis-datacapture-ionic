@@ -23,6 +23,37 @@
             </div>
           </div>
         </div>
+
+        <div class="item item-divider">
+          Assigned Organisation Units
+        </div>
+        <div class="item item-text-wrap">
+          <span ng-if="getUserAssignedOrgUnits().length == 0">
+            There is no Organisation unit  assigned to you
+          </span>
+          <div ng-repeat="orgUnit in getUserAssignedOrgUnits()">{{ $index + 1}}.&nbsp;{{ orgUnit }}</div>
+        </div>
+
+        <div class="item item-divider">
+          Assigned Roles
+        </div>
+        <div class="item item-text-wrap">
+          <span ng-if="getUserRoles().length == 0">
+            There is no role assigned to you
+          </span>
+          <div ng-repeat="role in getUserRoles()">{{ $index + 1}}.&nbsp;{{ role }}</div>
+        </div>
+
+        <div class="item item-divider">
+          Assigned Forms
+        </div>
+        <div class="item item-text-wrap">
+          <span ng-if="getUserAssignedForms().length == 0">
+            There is no form assigned to you
+          </span>
+          <div ng-repeat="form in getUserAssignedForms()">{{ $index + 1}}.&nbsp;{{ form.name }}</div>
+        </div>
+
       </div>
     </div>
   </ion-content>
