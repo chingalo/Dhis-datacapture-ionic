@@ -8,7 +8,7 @@ angular.module('dataCapture')
     $scope.data.systemInfo = $localStorage.systemInfo;
     $scope.data.appInfo = {
       Name : 'Dhis 2 Touch',
-      Version : '0.18',
+      Version : '0.19',
       'App revision' : '513f7124'
 
 
