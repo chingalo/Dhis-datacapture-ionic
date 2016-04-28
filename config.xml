@@ -23,7 +23,7 @@
   <preference name="disable-cursor" value="false" />
   <preference name="android-installLocation" value="auto" />
   <preference name="UIWebViewBounce" value="false"/>
-  <preference name="android-minSdkVersion" value="10"/>
+  <preference name="android-minSdkVersion" value="15"/>
   <preference name="BackupWebStorage" value="none"/>
 
   <feature name="StatusBar">
