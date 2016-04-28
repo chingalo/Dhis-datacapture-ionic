@@ -102,12 +102,4 @@ angular.module('dataCapture')
       return parentOrgUnit;
     }
 
-    getAllPrograms();
-    function getAllPrograms() {
-      programManagerServices.getAllPrograms().then(function (programs) {
-        alert('Programs Counter : ' + programs.length);
-      }, function () {
-      })
-    }
-
   });
