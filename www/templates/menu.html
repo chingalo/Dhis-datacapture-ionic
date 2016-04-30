@@ -3,7 +3,6 @@
     <ion-nav-bar class="bar-stable bar-header bar-positive">
       <ion-nav-back-button>
       </ion-nav-back-button>
-
       <ion-nav-buttons side="left">
         <button class="button button-icon button-clear ion-navicon" menu-toggle="left">
         </button>
@@ -11,40 +10,39 @@
     </ion-nav-bar>
     <ion-nav-view name="menuContent"></ion-nav-view>
   </ion-side-menu-content>
-
   <ion-side-menu side="left">
     <ion-header-bar class="bar-positive">
       <h1 class="title">Menu</h1>
     </ion-header-bar>
     <ion-content>
       <ion-list>
-        <ion-item menu-close ng-click="deleteLocalStorageData()" href="#/app/data-entry">
+        <ion-item menu-close ui-sref="app.dataEntry">
           <i class="icon ion-edit"> &nbsp;</i>Data Entry
         </ion-item>
-        <!--<ion-item menu-close ng-click="deleteLocalStorageData()" href="#/app/dashboard">
+        <!--<ion-item menu-close ui-sref="app.dashboard">
           <i class="icon ion-ios-speedometer"> &nbsp;</i> Dashboard
         </ion-item>-->
-        <!--<ion-item menu-close ng-click="deleteLocalStorageData()" href="#/app/event-capture">
+        <!--<ion-item menu-close ui-sref="app.eventCapture">
           <i class="icon ion-ios-color-wand"> &nbsp;</i>Event Capture
         </ion-item>-->
-        <!--<ion-item menu-close ng-click="deleteLocalStorageData()" href="#/app/tracker-capture">
+        <!--<ion-item menu-close ui-sref="app.trackerCapture">
           <i class="icon ion-ios-list"> &nbsp;</i>Tracker Capture
         </ion-item>-->
-        <ion-item menu-close ng-click="deleteLocalStorageData()" href="#/app/reports">
+        <ion-item menu-close ui-sref="app.reports">
           <i class="icon ion-document-text"> &nbsp;</i>Html Reports
         </ion-item>
-        <ion-item menu-close ng-click="deleteLocalStorageData()" href="#/app/profile">
+        <ion-item menu-close ui-sref="app.profile">
           <i class="icon ion-person"> &nbsp;</i>Profile
         </ion-item>
-        <ion-item  menu-close ng-click="deleteLocalStorageData()" href="#/app/settings">
+        <ion-item menu-close ui-sref="app.settings">
           <i class="icon ion-ios-gear"> &nbsp;</i>Settings
         </ion-item>
-        <ion-item menu-close ng-click="deleteLocalStorageData()" href="#/app/help">
+        <ion-item menu-close ui-sref="app.help">
           <i class="icon ion-information-circled"> &nbsp;</i> Help
         </ion-item>
-        <ion-item menu-close ng-click="deleteLocalStorageData()" href="#/app/about">
-        <i class="icon ion-information"> &nbsp;</i> About
-      </ion-item>
+        <ion-item menu-close ui-sref="app.about">
+          <i class="icon ion-information"> &nbsp;</i> About
+        </ion-item>
         <ion-item menu-close ng-click="logOut()">
           <i class="icon ion-log-out"> &nbsp;</i>Log out
         </ion-item>
