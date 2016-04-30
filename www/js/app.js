@@ -193,6 +193,7 @@ angular.module('dataCapture', [
     function authenticateUser(username, password) {
       $scope.data.loading = true;
       var base = formatBaseUrl($scope.data.baseUrl);
+      $scope.deleteLocalStorageData();
       $localStorage.baseUrl = base;
       if ($localStorage.loginUser && $localStorage.dataDownLoadingStatus) {
         if ($localStorage.loginUser.password == password && $localStorage.loginUser.username == username) {
