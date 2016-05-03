@@ -68,8 +68,6 @@ angular.module('dataCapture', [
         $scope.data.baseUrl = $localStorage.baseUrl;
         $scope.data.username = username;
         $scope.data.password = password;
-        var message = 'Please waiting...';
-        progressMessage(message);
         startSyncProcess($localStorage.loginUser);
         authenticateUser(username, password);
       }
@@ -138,7 +136,6 @@ angular.module('dataCapture', [
 
     //function redirect the landing page f the app
     function directToLandingPage() {
-      progressTopMessage("It's ready, kindly enjoy the offline support");
       startSyncProcess($localStorage.loginUser);
       $state.go('app.dataEntry', {}, {location: "replace", reload: true});
     }
