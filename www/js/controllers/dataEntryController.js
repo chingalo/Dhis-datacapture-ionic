@@ -27,6 +27,9 @@ angular.module('dataCapture')
     };
     $scope.periodChoices = [];
     $scope.currentPeriodOffset = 0;
+    dhis2.period.format = 'yyyy-mm-dd';
+    dhis2.period.calendar = $.calendars.instance('gregorian');
+    dhis2.period.generator = new dhis2.period.PeriodGenerator(dhis2.period.calendar, dhis2.period.format);
 
     if(angular.isUndefined($scope.data.isDataSetCompleted)){
       $scope.data.isDataSetCompleted = false;
