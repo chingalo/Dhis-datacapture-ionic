@@ -11,7 +11,6 @@ angular.module('dataCapture')
       Version : '0.20',
       'App revision' : '2cdd204',
       'Release status' : 'Snapshot'
-
     };
 
     $scope.getSystemInfoName = function(key){
