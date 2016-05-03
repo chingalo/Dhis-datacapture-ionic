@@ -71,9 +71,10 @@ angular.module('dataCapture')
         sqlLiteServices.insertDataValues('dataValues', data.id, data, status)
           .then(function (data) {
             //success saving data values
-
+            console.log('saving  success: ',data);
           }, function (error) {
             //error
+            console.log('saving  fail: ',data,'error : ',JSON.stringify(error));
           });
       },
       deleteAllDataValues: function () {
@@ -121,7 +122,9 @@ angular.module('dataCapture')
           $http.post(base + '/api/dataValues?' + data, null)
             .then(function () {
               dataValues[i].sync = true;
+              console.log('before update : ',data.sync,dataValues[i].sync);
               this.saveDataSetDataValue(dataValues[i]);
+              console.log('after update : ',data.sync,dataValues[i].sync);
             }, function () {
               //error on uploading data set values
             });
