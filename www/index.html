@@ -48,13 +48,13 @@
   <script src="js/services/dataValueSetServices.js"></script>
   <script src="js/services/indicatorsServices.js"></script>
   <script src="js/services/constantsServices.js"></script>
-  <script src="js/services/sqlLiteServices.js"></script>
   <script src="js/services/programManagerServices.js"></script>
 
   <!-- helpful library for app -->
   <script type="application/javascript" src="library/localStorage/ngStorage.js"></script>
   <script type="text/javascript" src="library/third-party-scripts/ext-all.js"></script>
   <script type="text/javascript" src="library/third-party-scripts/table.js"></script>
+  <script src="library/angular-indexedDB/angular-indexed-db.js"></script>
   <script type="text/javascript" src="library/jquery-ui/jqueryui-1.11.4/jquery-ui.js"></script>
   <script type="text/javascript" src="library/ui-date/date.js"></script>
   <script type="text/javascript" src="library/reports/highcharts.js"></script>
@@ -62,88 +62,13 @@
   <script type="text/javascript" src="library/reports/highcharts-more.js"></script>
   <script src="library/tooltipster/jquery.tooltipster.js"></script>
   <script src="library/angular-spinkit/angular-spinkit.min.js"></script>
-  <script type="text/javascript" src="library/dhis2/jQuery/calendars/jquery.calendars.min.js"></script>
-  <script type="text/javascript" src="library/dhis2/jQuery/calendars/jquery.calendars.picker.min.js"></script>
-  <script type="text/javascript" src="library/dhis2/jQuery/calendars/jquery.calendars.plus.min.js"></script>
-  <script type="text/javascript" src="library/dhis2/jQuery/calendars/jquery.calendars.picker.ext.js"></script>
-
-  <script type="text/javascript" src="library/dhis2/jQuery/calendars/jquery.calendars.coptic.min.js"></script>
-  <script type="text/javascript" src="library/dhis2/jQuery/calendars/jquery.calendars.ethiopian.min.js"></script>
-  <script type="text/javascript" src="library/dhis2/jQuery/calendars/jquery.calendars.islamic.min.js"></script>
-  <script type="text/javascript" src="library/dhis2/jQuery/calendars/jquery.calendars.julian.min.js"></script>
-  <script type="text/javascript" src="library/dhis2/jQuery/calendars/jquery.calendars.nepali.min.js"></script>
-  <script type="text/javascript" src="library/dhis2/jQuery/calendars/jquery.calendars.thai.min.js"></script>
-  <script src="library/dhis2/dhis2.util.js"></script>
-  <script src="library/dhis2/dhis2.period.js"></script>
-
   <script>
+
     var dhis2 = {
       validation: {
         isNumber: function (value) {
           var regex = /^(-?0|-?[1-9]\d*)(\.\d+)?(E\d+)?$/;
           return regex.test(value);
-        }
-      },
-      sqlLiteServices: {
-        getDataFromTableById: function(tableName,id){
-          var defer = $.Deferred();
-          var attribute = "id";
-          var db = window.sqlitePlugin.openDatabase({name: "hisptz.db"});
-          db.transaction(function (tx) {
-            var query = "SELECT * FROM " + tableName + " WHERE "+attribute+" = ?";
-            tx.executeSql(query, [id], function (tx, results) {
-              var len = results.rows.length;
-              var data = [];
-              for (var i = 0; i < len; i++) {
-                data.push(eval("(" + results.rows.item(i).data + ")"));
-              }
-              defer.resolve(data[0]);
-            }, function (error) {
-              defer.reject(error);
-            });
-          });
-          return defer.promise();
-        },
-        getDataFromTableByIds: function(tableName,ids){
-          var defer = $.Deferred();
-          var attribute = "id";
-          var db = window.sqlitePlugin.openDatabase({name: "hisptz.db"});
-          var questionMarks = "?";
-          for(var i = 1; i < ids.length;i++){
-            questionMarks += ",?";
-          }
-          db.transaction(function (tx) {
-            var query = "SELECT * FROM " + tableName + " WHERE "+attribute+" IN (" + questionMarks + ")";
-            tx.executeSql(query, ids, function (tx, results) {
-              var len = results.rows.length;
-              var data = [];
-              for (var i = 0; i < len; i++) {
-                data.push(eval("(" + results.rows.item(i).data + ")"));
-              }
-              defer.resolve(data);
-            }, function (error) {
-              defer.reject(error);
-            });
-          });
-          return defer.promise();
-        },
-        getAllDataFromTable: function(tableName){
-          var defer = $.Deferred();
-          var db = window.sqlitePlugin.openDatabase({name: "hisptz.db"});
-          db.transaction(function (tx) {
-            var query = "SELECT * FROM " + tableName + ";";
-            tx.executeSql(query, [], function (tx, results) {
-              var len = results.rows.length;
-              var data = [];
-              for (var i = 0; i < len; i++) {
-                data.push(eval("(" + results.rows.item(i).data + ")"));
-              }
-              defer.resolve(data);
-            }, function (error) {
-              defer.reject(error);
-            });
-          });
-          return defer.promise();
         }
       },
       report: {}
@@ -172,38 +97,44 @@
       },
       getDataElementValue: function (de, coc, dataSet, match) {
         var defer = $.Deferred();
-
-        var dataValuesId = dataSet + "-" + de + "-" + coc + "-" + dhis2.report.period + "-" + dhis2.report.organisationUnit.id;
-        dhis2.sqlLiteServices.getDataFromTableById('dataValues',dataValuesId)
-          .done(function(item){
-            if (item) {
-              var val = item.value;
-              if (val && dhis2.validation.isNumber(val)) {
-                defer.resolve(new Number(item.value), match);
-              } else {
-                defer.resolve(new Number("0"), match);
-              }
+        var dataValuesStore = $.indexedDB("hisptz").objectStore("dataValues");
+        var promise = dataValuesStore.get(dataSet + "-" + de + "-" + coc + "-" + dhis2.report.period + "-" + dhis2.report.organisationUnit.id);
+        promise.done(function (item, event) {
+          if (item) {
+            var val = item.value;
+            if (val && dhis2.validation.isNumber(val)) {
+              defer.resolve(new Number(item.value), match);
             } else {
               defer.resolve(new Number("0"), match);
             }
-          });
+          } else {
+            defer.resolve(new Number("0"), match);
+          }
+        });
+        promise.fail(function (error, event) {
+          defer.reject(error);
+        });
         return defer.promise();
       },
-      getConstantValue: function (constantId, match) {
+      getConstantValue: function (constantId, dataSet, match) {
         var defer = $.Deferred();
-        dhis2.sqlLiteServices.getDataFromTableById('constants',constantId)
-          .done(function(constant){
-            if (constant) {
-              var val = constant.value;
-              if (val && dhis2.validation.isNumber(val)) {
-                defer.resolve(new Number(constant.value), match);
-              } else {
-                defer.resolve(new Number(0), match);
-              }
+        var dataValuesStore = $.indexedDB("hisptz").objectStore("constants");
+        var promise = dataValuesStore.get(constantId);
+        promise.done(function (constant, event) {
+          if (constant) {
+            var val = constant.value;
+            if (val && dhis2.validation.isNumber(val)) {
+              defer.resolve(new Number(constant.value), match);
             } else {
               defer.resolve(new Number(0), match);
             }
-          });
+          } else {
+            defer.resolve(new Number(0), match);
+          }
+        });
+        promise.fail(function (error, event) {
+          defer.reject(error);
+        });
         return defer.promise();
       },
       generateExpression: function (expression, dataSet) {
@@ -217,10 +148,9 @@
           var operand = match.replace(/[#\{\}]/g, '');
           var isTotal = !!( operand.indexOf(dhis2.de.cst.separator) == -1 );
           if (isTotal) {
-            //alert('is total');
-            /*deferreds.push(dhis2.de.getDataElementTotalValue(operand, dataSet, match).done(function (sum, matchRef) {
+            deferreds.push(dhis2.de.getDataElementTotalValue(operand, dataSet, match).done(function (sum, matchRef) {
               expression = expression.replace(matchRef, sum);
-            }));*/
+            }));
           }
           else {
             var de = operand.substring(0, operand.indexOf(dhis2.de.cst.separator));
@@ -235,12 +165,12 @@
           var match = cMatcher[k];
           // Remove brackets from expression to simplify extraction of identifiers
           var operand = match.replace(/[C\{\}]/g, '');
-          deferreds.push(dhis2.de.getConstantValue(operand, match).done(function (sum, matchRef) {
+          deferreds.push(dhis2.de.getConstantValue(operand, dataSet, match).done(function (sum, matchRef) {
             expression = expression.replace(matchRef, sum);
           }));
         }
         $.when.apply($, deferreds).then(function () {
-          if (expression == "0") {
+          if(expression == "0"){
             expression = 0;
           }
           defer.resolve(eval('(' + expression + ')'));
@@ -248,11 +178,27 @@
         return defer.promise();
       },
       //Get indicators from indexdb by id
-      getIndicators: function (indicatorIds) {
+      getIndicators: function (indicatorIds, callback) {
         var defer = $.Deferred();
-        //sample testing on sqlLite services
-        dhis2.sqlLiteServices.getDataFromTableByIds('indicators',indicatorIds).done(function(data){
-          defer.resolve(data);
+        var indicators = []
+        var indicatorsStore = $.indexedDB("hisptz").objectStore("indicators");
+        //Fetch indicators
+        var deferreds = [];
+        $.each(indicatorIds, function (indicatorIndex, indicatorId) {
+          var indicatorPromise = indicatorsStore.get(indicatorId);
+          deferreds.push(indicatorPromise.done(function (result, event) {
+            if(result){
+              indicators.push(result);
+            }else{
+              console.log("Indicator Does not exist:",indicatorId, event)
+            }
+          }));
+          indicatorPromise.fail(function (error, event) {
+
+          });
+        });
+        $.when.apply($, deferreds).then(function () {
+          defer.resolve(indicators);
         });
         return defer.promise();
       },
@@ -303,9 +249,6 @@
         separator: "."
       }
     };
-    dhis2.period.format = 'yyyy-mm-dd';
-    dhis2.period.calendar = $.calendars.instance('gregorian');
-    dhis2.period.generator = new dhis2.period.PeriodGenerator(dhis2.period.calendar, dhis2.period.format);
     var reportParams = {
       ou: "",
       pe: ""
@@ -314,6 +257,24 @@
   <script type="text/javascript" src="library/angular-multi-select-tree/angular-multi-select-tree-0.1.0.js"></script>
   <script type="text/javascript"
           src="library/angular-multi-select-tree/angular-multi-select-tree-0.1.0.tpl.js"></script>
+  <script type="text/javascript" src="library/dhis2/jQuery/calendars/jquery.calendars.min.js"></script>
+  <script type="text/javascript" src="library/dhis2/jQuery/calendars/jquery.calendars.picker.min.js"></script>
+  <script type="text/javascript" src="library/dhis2/jQuery/calendars/jquery.calendars.plus.min.js"></script>
+  <script type="text/javascript" src="library/dhis2/jQuery/calendars/jquery.calendars.picker.ext.js"></script>
+
+  <script type="text/javascript" src="library/dhis2/jQuery/calendars/jquery.calendars.coptic.min.js"></script>
+  <script type="text/javascript" src="library/dhis2/jQuery/calendars/jquery.calendars.ethiopian.min.js"></script>
+  <script type="text/javascript" src="library/dhis2/jQuery/calendars/jquery.calendars.islamic.min.js"></script>
+  <script type="text/javascript" src="library/dhis2/jQuery/calendars/jquery.calendars.julian.min.js"></script>
+  <script type="text/javascript" src="library/dhis2/jQuery/calendars/jquery.calendars.nepali.min.js"></script>
+  <script type="text/javascript" src="library/dhis2/jQuery/calendars/jquery.calendars.thai.min.js"></script>
+  <script src="library/dhis2/dhis2.util.js"></script>
+  <script src="library/dhis2/dhis2.period.js"></script>
+  <script>
+    dhis2.period.format = 'yyyy-mm-dd';
+    dhis2.period.calendar = $.calendars.instance('gregorian');
+    dhis2.period.generator = new dhis2.period.PeriodGenerator(dhis2.period.calendar, dhis2.period.format);
+  </script>
 
 </head>
 
