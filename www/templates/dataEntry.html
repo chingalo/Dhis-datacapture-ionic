@@ -96,12 +96,18 @@
     </div>
 
     <div class="row" ng-if="data.formSelectVisibility">
-      <div class="col col-50">
-        <button class="button button-full button-positive" ng-click="generateDefaultDataEntryForm()">Default</button>
+
+      <div class="col col-10"></div>
+      <div class="col col-80">
+        <button class="button button-full button-positive" ng-click="dataEntryFormSelection()">Data Entry</button>
       </div>
-      <div class="col col-50">
-        <button class="button button-full button-positive" ng-click="generateSectionDataEntryForm()">Section</button>
-      </div>
+      <div class="col col-10"></div>
+      <!--<div class="col col-50">-->
+        <!--<button class="button button-full button-positive" ng-click="generateDefaultDataEntryForm()">Default</button>-->
+      <!--</div>-->
+      <!--<div class="col col-50">-->
+        <!--<button class="button button-full button-positive" ng-click="generateSectionDataEntryForm()">Section</button>-->
+      <!--</div>-->
     </div>
 
     <div class="row" ng-if = "data.loading" style="text-align: center;font-size: 14px;">

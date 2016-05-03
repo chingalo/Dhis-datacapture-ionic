@@ -472,6 +472,16 @@ angular.module('dataCapture')
       return date;
     }
 
+    //function handle date entry form selection
+    $scope.dataEntryFormSelection = function(){
+      console.log($localStorage.dataEntryData.formType);
+      if($localStorage.dataEntryData.formType == 'SECTION'){
+        $scope.generateSectionDataEntryForm();
+      }else{
+        $scope.generateDefaultDataEntryForm();
+      }
+    };
+
     //function to generate default data entry form
     $scope.generateDefaultDataEntryForm = function () {
       $scope.data.loading = true;
@@ -508,22 +518,6 @@ angular.module('dataCapture')
       });
     }
 
-    //function to generate custom data entry form
-    $scope.generateCustomDataEntryForm = function () {
-      $scope.data.loading = true;
-      var checkResults = checkingAndSetDataEntryForm('CUSTOM');
-      if (checkResults) {
-        var message = "Please wait...";
-        ionicToast.show(message, 'bottom', false, 2500);
-        $localStorage.dataEntryData.formType = 'CUSTOM';
-        $scope.data.loading = false;
-        $state.go('app.dataEntryForm');
-      } else {
-        var message = 'Custom data entry form for ' + $localStorage.dataEntryData.dataSet.name + ' form has not been defined';
-        progressMessage(message);
-        $scope.data.loading = false;
-      }
-    };
 
     //function to generate section data entry form
     $scope.generateSectionDataEntryForm = function () {
@@ -596,7 +590,7 @@ angular.module('dataCapture')
         period: $scope.data.period,
         periodDisplayName: $scope.getPeriodDisplayValue($scope.data.period),
         numberOfFields: dataElements.length,
-        formType: '',
+        formType: $scope.data.selectedDataSet.sections.length >0 ? 'SECTION':'DEFAULT',
         categoryOptionCombosId: categoryOptionCombosId
       };
       $scope.data.formSelectVisibility = true;
