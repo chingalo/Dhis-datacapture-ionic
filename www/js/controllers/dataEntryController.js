@@ -262,19 +262,30 @@ angular.module('dataCapture')
     }
 
     //checking changes on data entry form
-    $scope.$watch('data.dataSetId', function() {
+    $scope.$watch('data.dataSetId', function () {
       $localStorage.allowDataEntrySync = true;
       $scope.data.loading = true;
       $scope.data.formSelectVisibility = false;
       $scope.data.selectedData = null;
       $scope.data.period = null;
       $scope.data.hasCategoryComboOptions = false;
-      dataSetsServices.getDataSetById($scope.data.dataSetId,$scope.data.dataSets)
-        .then(function(data){
+      dataSetsServices.getDataSetById($scope.data.dataSetId, $scope.data.dataSets)
+        .then(function (data) {
           $scope.data.selectedDataSet = data;
           $scope.data.loading = false;
-          periodOption(data);
-        },function(){
+
+          $scope.periodChoices = [];
+          var periods = dhis2.period.generator.generateReversedPeriods(data.periodType, 0);
+          periods = dhis2.period.generator.filterOpenPeriods(data.periodType, periods, data.openFuturePeriods);
+          $scope.periodChoices = periods;
+          $scope.data.periodOption = [];
+          periods.forEach(function(period){
+            $scope.data.periodOption.push({
+              displayValue : period.name,
+              periodValue : period.iso
+            })
+          });
+        }, function () {
           $scope.data.loading = false;
         })
     });
