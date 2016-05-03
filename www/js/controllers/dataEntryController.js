@@ -280,10 +280,17 @@ angular.module('dataCapture')
           $scope.data.selectedDataSet = data;
           $scope.data.loading = false;
 
+          $scope.periodChoices = [];
           var periods = dhis2.period.generator.generateReversedPeriods(data.periodType, 0);
           periods = dhis2.period.generator.filterOpenPeriods(data.periodType, periods, data.openFuturePeriods);
-          console.log(periods)
-          periodOption(data);
+          $scope.periodChoices = periods;
+          $scope.data.periodOption = [];
+          periods.forEach(function(period){
+            $scope.data.periodOption.push({
+              displayValue : period.name,
+              periodValue : period.iso
+            })
+          });
         }, function () {
           $scope.data.loading = false;
         })
@@ -550,21 +557,9 @@ angular.module('dataCapture')
       }
     };
 
-    //function to handle pop up modal
-    $ionicModal.fromTemplateUrl('templates/modal.html', {
-      scope: $scope
-    }).then(function (modal) {
-      $scope.modal = modal;
-    });
-
-    //function to close pop up model
-    $scope.close = function () {
-      $scope.modal.hide();
-    };
 
     //function to handle selection of date entry period selection
     $scope.periodSelect = function () {
-      //$scope.close();
       if ($scope.data.selectedDataSet.categoryCombo.categoryOptionCombos[0].name != 'default') {
         $scope.data.hasCategoryComboOptions = true;
       } else {
@@ -652,12 +647,6 @@ angular.module('dataCapture')
         });
       }
       return parentOrgUnit;
-    }
-
-    //function for period selections
-    function periodOption(dataSet) {
-      var year = parseInt(new Date().getFullYear()) - 1;
-      $scope.data.periodOption = periodSelectionServices.getPeriodSelections(year, dataSet);
     }
 
     //function to check data entry form type

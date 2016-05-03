@@ -21,7 +21,7 @@
       <div class="row" >
         <div class="col col-100">
           <ion-list>
-            <ion-radio ng-click="periodSelect()" ng-model="data.period" ng-repeat="period in data.periodOption" ng-value="'{{period.periodValue}}'">{{period.displayValue}}</ion-radio>
+            <ion-radio ng-change="periodSelect()" ng-model="data.period" ng-repeat="period in data.periodOption" ng-value="'{{period.periodValue}}'">{{period.displayValue}}</ion-radio>
           </ion-list>
         </div>
       </div>
