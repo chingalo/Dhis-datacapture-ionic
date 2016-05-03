@@ -98,8 +98,6 @@ angular.module('dataCapture', [
         $scope.data.baseUrl = $localStorage.baseUrl;
         $scope.data.username = username;
         $scope.data.password = password;
-        var message = 'Please waiting...';
-        progressMessage(message);
         startSyncProcess($localStorage.loginUser);
         authenticateUser(username, password);
       }
