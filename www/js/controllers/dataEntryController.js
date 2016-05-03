@@ -25,6 +25,8 @@ angular.module('dataCapture')
       local : 0,
       online : 0
     };
+    $scope.periodChoices = [];
+    $scope.currentPeriodOffset = 0;
 
     if(angular.isUndefined($scope.data.isDataSetCompleted)){
       $scope.data.isDataSetCompleted = false;
@@ -213,6 +215,8 @@ angular.module('dataCapture')
       $scope.data.dataSets = null;
       $scope.data.formSelectVisibility = false;
       $scope.data.period = null;
+      $scope.periodChoices = [];
+      $scope.currentPeriodOffset = 0;
       $scope.data.hasCategoryComboOptions = false;
       if($scope.data.orgUnit.length > 0){
         var message = "Loading assigned data entry forms in " + $scope.data.orgUnit[0].name;
@@ -263,32 +267,37 @@ angular.module('dataCapture')
 
     //checking changes on data entry form
     $scope.$watch('data.dataSetId', function () {
+      $scope.currentPeriodOffset = 0;
       $localStorage.allowDataEntrySync = true;
       $scope.data.loading = true;
       $scope.data.formSelectVisibility = false;
       $scope.data.selectedData = null;
       $scope.data.period = null;
+      $scope.periodChoices = [];
       $scope.data.hasCategoryComboOptions = false;
       dataSetsServices.getDataSetById($scope.data.dataSetId, $scope.data.dataSets)
         .then(function (data) {
           $scope.data.selectedDataSet = data;
           $scope.data.loading = false;
-
-          $scope.periodChoices = [];
-          var periods = dhis2.period.generator.generateReversedPeriods(data.periodType, 0);
-          periods = dhis2.period.generator.filterOpenPeriods(data.periodType, periods, data.openFuturePeriods);
-          $scope.periodChoices = periods;
-          $scope.data.periodOption = [];
-          periods.forEach(function(period){
-            $scope.data.periodOption.push({
-              displayValue : period.name,
-              periodValue : period.iso
-            })
-          });
+          setPeriodChoices();
         }, function () {
           $scope.data.loading = false;
         })
     });
+
+    //function to set period options values for data entry
+    function setPeriodChoices(){
+      var periods = dhis2.period.generator.generateReversedPeriods($scope.data.selectedDataSet, $scope.currentPeriodOffset);
+      periods = dhis2.period.generator.filterOpenPeriods($scope.data.selectedDataSet.periodType, periods, $scope.data.selectedDataSet.openFuturePeriods);
+      $scope.periodChoices = periods;
+      $scope.data.periodOption = [];
+      periods.forEach(function(period){
+        $scope.data.periodOption.push({
+          displayValue : period.name,
+          periodValue : period.iso
+        })
+      });
+    }
 
     $scope.$watch('data.categoryOptionCombos', function(){
       if($scope.data.categoryOptionCombos){
