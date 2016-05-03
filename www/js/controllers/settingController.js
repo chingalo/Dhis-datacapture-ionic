@@ -18,6 +18,7 @@ angular.module('dataCapture')
         sorting : 'name'
       }
     };
+    console.log('inside setting controller');
     $scope.data = $localStorage.appSetting;
     $scope.data.formLabelPreference = $localStorage.formLabelPreference;
 
@@ -26,7 +27,7 @@ angular.module('dataCapture')
       ionicToast.show(message, 'top', false, 2500);
     }
 
-    //functions to checking changes setting page
+   /* //functions to checking changes setting page
     $scope.$watch('data.defaultForm.sorting',function(){
       $localStorage.appSetting = $scope.data;
     });
@@ -45,7 +46,7 @@ angular.module('dataCapture')
     //todo handling placeholder options
     $scope.$watch('data.formLabelPreference.label',function(){
       $localStorage.formLabelPreference = $scope.data.formLabelPreference;
-    });
+    });*/
 
     //function to change sync time for an app
     function changeSyncTime(){
@@ -121,7 +122,7 @@ angular.module('dataCapture')
       $scope.data.loading = true;
       dataSetsServices.deleteAllDataValues()
         .then(function(){
-          createDataValuesTable()
+          createDataValuesTable();
           $scope.data.loading = false;
           progressMessage("Data Entry values has been reset successfully");
         },function(){

@@ -713,6 +713,7 @@ angular.module('dataCapture', [
 
       .state('app.about', {
         url: '/about',
+        cache:false,
         views: {
           'menuContent': {
             templateUrl: 'templates/about.html',
@@ -733,6 +734,7 @@ angular.module('dataCapture', [
 
       .state('app.eventCapture', {
         url: '/event-capture',
+        cache:false,
         views: {
           'menuContent': {
             templateUrl: 'templates/eventCaptureHome.html',
@@ -772,6 +774,7 @@ angular.module('dataCapture', [
 
       .state('app.reports', {
         url: '/reports',
+        cache:false,
         views: {
           'menuContent': {
             templateUrl: 'templates/reportsList.html',
@@ -810,6 +813,7 @@ angular.module('dataCapture', [
 
       .state('app.settings', {
         url: '/settings',
+        cache:false,
         views: {
           'menuContent': {
             templateUrl: 'templates/settings.html',
