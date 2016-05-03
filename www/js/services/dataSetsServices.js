@@ -123,7 +123,7 @@ angular.module('dataCapture')
             .then(function () {
               dataValues[i].sync = true;
               console.log('before update : ',data.sync,dataValues[i].sync);
-              this.saveDataSetDataValue(dataValues[i]);
+              dataSetsServices.saveDataSetDataValue(dataValues[i]);
               console.log('after update : ',data.sync,dataValues[i].sync);
             }, function () {
               //error on uploading data set values

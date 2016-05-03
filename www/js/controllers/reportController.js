@@ -77,7 +77,6 @@ angular.module('dataCapture')
               reportServices.saveReportToIndexDb(report);
             });
             $scope.$broadcast('scroll.refreshComplete');
-            $scope.$apply();
           }
           $scope.data.loading = false;
         },function(){

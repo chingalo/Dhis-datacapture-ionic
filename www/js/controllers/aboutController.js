@@ -25,6 +25,7 @@ angular.module('dataCapture')
     $scope.reloadLocalStorageStatus = function(){
       getSyncedDataValues();
       getUnSyncedDataValues();
+      $scope.$broadcast('scroll.refreshComplete');
     };
     getSyncedDataValues();
     getUnSyncedDataValues();

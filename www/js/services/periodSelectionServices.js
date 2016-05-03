@@ -12,20 +12,20 @@ angular.module('dataCapture')
     var mainServices = {
       getPeriodSelections : function(year,dataSet){
         var periodSelection = [];
-        var allowedFutureValue = this.getAllowedFuturePeriod(dataSet);
+        var allowedFutureValue = mainServices.getAllowedFuturePeriod(dataSet);
         switch(dataSet.periodType){
           case 'Monthly':
-            periodSelection = this.getMonthlyPeriodSectionOptions(year,allowedFutureValue);
+            periodSelection = mainServices.getMonthlyPeriodSectionOptions(year,allowedFutureValue);
             break;
           case 'Quarterly':
-            periodSelection = this.getQuarterlyPeriodSectionOptions(year,allowedFutureValue);
+            periodSelection = mainServices.getQuarterlyPeriodSectionOptions(year,allowedFutureValue);
             break;
           case 'Weekly':
             break;
           /*case '':
            break;*/
           case 'Yearly':
-            periodSelection = this.getYearlyPeriodSectionOptions(year,allowedFutureValue);
+            periodSelection = mainServices.getYearlyPeriodSectionOptions(year,allowedFutureValue);
             break;
           default :
             periodSelection = [];
