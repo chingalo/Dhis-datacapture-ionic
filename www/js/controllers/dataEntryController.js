@@ -26,6 +26,7 @@ angular.module('dataCapture')
       online: 0
     };
     $scope.periodChoices = [];
+    $scope.currentPeriodOffset = 0;
     if (angular.isUndefined($scope.data.isDataSetCompleted)) {
       $scope.data.isDataSetCompleted = false;
     }
@@ -220,6 +221,7 @@ angular.module('dataCapture')
       $scope.data.formSelectVisibility = false;
       $scope.data.period = null;
       $scope.periodChoices = [];
+      $scope.currentPeriodOffset = 0;
       $scope.data.hasCategoryComboOptions = false;
       if ($scope.data.orgUnit.length > 0) {
         var message = "Loading assigned data entry forms in " + $scope.data.orgUnit[0].name;
@@ -276,12 +278,14 @@ angular.module('dataCapture')
       $scope.data.selectedData = null;
       $scope.data.period = null;
       $scope.periodChoices = [];
+      $scope.currentPeriodOffset = 0;
       $scope.data.hasCategoryComboOptions = false;
+      var vm = this;
       dataSetsServices.getDataSetById($scope.data.dataSetId, $scope.data.dataSets)
         .then(function (data) {
           $scope.data.selectedDataSet = data;
           $scope.data.loading = false;
-          var periods = dhis2.period.generator.generateReversedPeriods(data.periodType, 0);
+          var periods = dhis2.period.generator.generateReversedPeriods(data.periodType, $scope.currentPeriodOffset);
           periods = dhis2.period.generator.filterOpenPeriods(data.periodType, periods, data.openFuturePeriods);
           $scope.periodChoices = periods;
           $scope.data.periodOption = [];
@@ -541,17 +545,29 @@ angular.module('dataCapture')
 
     //function to handle period option changes
     $scope.changePeriodInterval = function (type) {
-      var yearInput = String($scope.data.periodOption[0].periodValue);
-      var year = yearInput.substring(0, 4);
       if (type == 'next') {
-        year = parseInt(year) + 1;
+        $scope.currentPeriodOffset = $scope.currentPeriodOffset + 1;
       } else {
-        year = parseInt(year) - 1;
+        $scope.currentPeriodOffset = $scope.currentPeriodOffset - 1;
       }
-      var periodOptions = periodSelectionServices.getPeriodSelections(year, $scope.data.selectedDataSet);
-      if (periodOptions.length > 0) {
-        $scope.data.periodOption = periodOptions;
+      var periods = dhis2.period.generator.generateReversedPeriods($scope.data.selectedDataSet .periodType, $scope.currentPeriodOffset);
+      periods = dhis2.period.generator.filterOpenPeriods($scope.data.selectedDataSet .periodType, periods, $scope.data.selectedDataSet .openFuturePeriods);
+
+      if (periods.length > 0) {
+        $scope.periodChoices = periods;
+        $scope.data.periodOption = [];
+        periods.forEach(function(period){
+          $scope.data.periodOption.push({
+            displayValue : period.name,
+            periodValue : period.iso
+          })
+        });
       } else {
+        if(type == 'next'){
+          $scope.currentPeriodOffset = $scope.currentPeriodOffset - 1;
+        }else{
+          $scope.currentPeriodOffset = $scope.currentPeriodOffset + 1;
+        }
         var message = "There no period option further than this at moment";
         ionicToast.show(message, 'top', false, 1500);
       }
