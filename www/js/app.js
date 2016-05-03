@@ -42,7 +42,6 @@ angular.module('dataCapture', [
     //initial variables
     $scope.data = {};
     var url = 'http://41.217.202.50:8080/dhis';
-
     //function for toaster messages
     function progressMessage(message) {
       ionicToast.show(message, 'bottom', false, 2500);

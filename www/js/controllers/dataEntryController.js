@@ -279,6 +279,10 @@ angular.module('dataCapture')
         .then(function (data) {
           $scope.data.selectedDataSet = data;
           $scope.data.loading = false;
+
+          var periods = dhis2.period.generator.generateReversedPeriods(data.periodType, 0);
+          periods = dhis2.period.generator.filterOpenPeriods(data.periodType, periods, data.openFuturePeriods);
+          console.log(periods)
           periodOption(data);
         }, function () {
           $scope.data.loading = false;
