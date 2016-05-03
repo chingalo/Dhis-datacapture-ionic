@@ -47,10 +47,10 @@
                   <div class="item item-input item-select" >
                     <div class="input-label" >
                     </div>
-                    <select disabled ng-if = "!data.orgUnit[0].name  || data.dataSets.length == 0">
+                    <select disabled ng-if = "!(periodChoices.length > 0)">
                       <option value="">There is no period choice available</option>
                     </select>
-                    <select ng-if = "data.orgUnit[0].name && data.dataSets.length > 0 " ng-model="data.period" ng-change="periodSelect()">
+                    <select ng-if = "data.orgUnit[0].name && data.dataSets.length > 0 && periodChoices.length > 0 " ng-model="data.period" ng-change="periodSelect()">
                       <option value="">Touch to choose period</option>
                       <option  ng-repeat="periodChoice in periodChoices " value="{{ periodChoice.iso }}">{{ periodChoice.name }}</option>
                     </select>

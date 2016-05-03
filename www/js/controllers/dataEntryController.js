@@ -25,7 +25,7 @@ angular.module('dataCapture')
       local: 0,
       online: 0
     };
-
+    $scope.periodChoices = [];
     if (angular.isUndefined($scope.data.isDataSetCompleted)) {
       $scope.data.isDataSetCompleted = false;
     }
@@ -219,6 +219,7 @@ angular.module('dataCapture')
       $scope.data.dataSets = null;
       $scope.data.formSelectVisibility = false;
       $scope.data.period = null;
+      $scope.periodChoices = [];
       $scope.data.hasCategoryComboOptions = false;
       if ($scope.data.orgUnit.length > 0) {
         var message = "Loading assigned data entry forms in " + $scope.data.orgUnit[0].name;
@@ -274,13 +275,12 @@ angular.module('dataCapture')
       $scope.data.formSelectVisibility = false;
       $scope.data.selectedData = null;
       $scope.data.period = null;
+      $scope.periodChoices = [];
       $scope.data.hasCategoryComboOptions = false;
       dataSetsServices.getDataSetById($scope.data.dataSetId, $scope.data.dataSets)
         .then(function (data) {
           $scope.data.selectedDataSet = data;
           $scope.data.loading = false;
-
-          $scope.periodChoices = [];
           var periods = dhis2.period.generator.generateReversedPeriods(data.periodType, 0);
           periods = dhis2.period.generator.filterOpenPeriods(data.periodType, periods, data.openFuturePeriods);
           $scope.periodChoices = periods;
