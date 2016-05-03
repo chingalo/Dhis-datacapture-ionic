@@ -81,7 +81,9 @@ angular.module('dataCapture', [
     }
 
     $scope.deleteLocalStorageData = function () {
-      delete $localStorage.allowDataEntrySync;
+      if($localStorage.allowDataEntrySync){
+        delete $localStorage.allowDataEntrySync;
+      }
     };
     //initialization of base url for an app to access as well as auto login for logged in user
     if (!$localStorage.baseUrl) {
@@ -691,6 +693,7 @@ angular.module('dataCapture', [
     $stateProvider
       .state('login', {
         url: '/login',
+        cache:false,
         templateUrl: 'templates/login.html',
         controller: 'mainController'
       })
@@ -734,7 +737,6 @@ angular.module('dataCapture', [
 
       .state('app.eventCapture', {
         url: '/event-capture',
-        cache:false,
         views: {
           'menuContent': {
             templateUrl: 'templates/eventCaptureHome.html',
@@ -813,7 +815,6 @@ angular.module('dataCapture', [
 
       .state('app.settings', {
         url: '/settings',
-        cache:false,
         views: {
           'menuContent': {
             templateUrl: 'templates/settings.html',
