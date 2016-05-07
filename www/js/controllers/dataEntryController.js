@@ -25,8 +25,6 @@ angular.module('dataCapture')
       local : 0,
       online : 0
     };
-    $scope.periodChoices = [];
-    $scope.currentPeriodOffset = 0;
 
     if(angular.isUndefined($scope.data.isDataSetCompleted)){
       $scope.data.isDataSetCompleted = false;
@@ -215,8 +213,6 @@ angular.module('dataCapture')
       $scope.data.dataSets = null;
       $scope.data.formSelectVisibility = false;
       $scope.data.period = null;
-      $scope.periodChoices = [];
-      $scope.currentPeriodOffset = 0;
       $scope.data.hasCategoryComboOptions = false;
       if($scope.data.orgUnit.length > 0){
         var message = "Loading assigned data entry forms in " + $scope.data.orgUnit[0].name;
@@ -266,30 +262,19 @@ angular.module('dataCapture')
     }
 
     //checking changes on data entry form
-    $scope.$watch('data.dataSetId', function () {
+    $scope.$watch('data.dataSetId', function() {
       $localStorage.allowDataEntrySync = true;
       $scope.data.loading = true;
       $scope.data.formSelectVisibility = false;
       $scope.data.selectedData = null;
       $scope.data.period = null;
-      $scope.periodChoices = [];
-      $scope.currentPeriodOffset = 0;
       $scope.data.hasCategoryComboOptions = false;
-      dataSetsServices.getDataSetById($scope.data.dataSetId, $scope.data.dataSets)
-        .then(function (data) {
+      dataSetsServices.getDataSetById($scope.data.dataSetId,$scope.data.dataSets)
+        .then(function(data){
           $scope.data.selectedDataSet = data;
           $scope.data.loading = false;
-          var periods = dhis2.period.generator.generateReversedPeriods($scope.data.selectedDataSet, $scope.currentPeriodOffset);
-          periods = dhis2.period.generator.filterOpenPeriods($scope.data.selectedDataSet.periodType, periods, $scope.data.selectedDataSet.openFuturePeriods);
-          $scope.periodChoices = periods;
-          $scope.data.periodOption = [];
-          periods.forEach(function(period){
-            $scope.data.periodOption.push({
-              displayValue : period.name,
-              periodValue : period.iso
-            })
-          });
-        }, function () {
+          periodOption(data);
+        },function(){
           $scope.data.loading = false;
         })
     });
@@ -519,30 +504,18 @@ angular.module('dataCapture')
     };
 
     //function to handle period option changes
-    $scope.changePeriodInterval = function (type) {
-      if (type == 'next') {
-        $scope.currentPeriodOffset = $scope.currentPeriodOffset + 1;
-      } else {
-        $scope.currentPeriodOffset = $scope.currentPeriodOffset - 1;
+    $scope.changePeriodInterval = function(type){
+      var yearInput = String($scope.data.periodOption[0].periodValue);
+      var year = yearInput.substring(0, 4);
+      if(type =='next'){
+        year = parseInt(year) + 1;
+      }else{
+        year = parseInt(year) - 1;
       }
-      var periods = dhis2.period.generator.generateReversedPeriods($scope.data.selectedDataSet .periodType, $scope.currentPeriodOffset);
-      periods = dhis2.period.generator.filterOpenPeriods($scope.data.selectedDataSet .periodType, periods, $scope.data.selectedDataSet .openFuturePeriods);
-
-      if (periods.length > 0) {
-        $scope.periodChoices = periods;
-        $scope.data.periodOption = [];
-        periods.forEach(function(period){
-          $scope.data.periodOption.push({
-            displayValue : period.name,
-            periodValue : period.iso
-          })
-        });
-      } else {
-        if(type == 'next'){
-          $scope.currentPeriodOffset = $scope.currentPeriodOffset - 1;
-        }else{
-          $scope.currentPeriodOffset = $scope.currentPeriodOffset + 1;
-        }
+      var periodOptions = periodSelectionServices.getPeriodSelections(year,$scope.data.selectedDataSet);
+      if(periodOptions.length > 0){
+        $scope.data.periodOption = periodOptions;
+      }else{
         var message = "There no period option further than this at moment";
         ionicToast.show(message, 'top', false, 1500);
       }
@@ -562,7 +535,7 @@ angular.module('dataCapture')
 
     //function to handle selection of date entry period selection
     $scope.periodSelect = function(){
-      //$scope.close();
+      $scope.modal.hide();
       if($scope.data.selectedDataSet.categoryCombo.categoryOptionCombos[0].name != 'default'){
         $scope.data.hasCategoryComboOptions = true;
       }else{
