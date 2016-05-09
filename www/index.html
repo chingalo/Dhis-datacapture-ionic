@@ -99,6 +99,7 @@
           for (var i = 1; i < ids.length; i++) {
             questionMarks += ",?";
           }
+          console.log("Indicator DataElements Length:" + ids.length);
           db.transaction(function (tx) {
             var query = "SELECT * FROM " + tableName + " WHERE " + attribute + " IN (" + questionMarks + ")";
             tx.executeSql(query, ids, function (tx, results) {
@@ -109,9 +110,8 @@
                 var index = ids.indexOf(json.id);
                 ids.splice(index, 1);
                 data.push(json);
-                console.log("Dataelements IDS:" + ids.length);
               }
-
+              console.log("Indicator Length:" + data.length);
               defer.resolve(data, ids);
             }, function (error) {
               defer.reject(error);
