@@ -174,7 +174,7 @@
               }
             } else {
               console.log("DataElement if2:" + dataValuesId + ":" + val);
-              defer.resolve(new Number("0"), match);
+              defer.resolve(undefined, match);
             }
           });
         return defer.promise();
@@ -224,7 +224,11 @@
             var de = operand.substring(0, operand.indexOf(dhis2.de.cst.separator));
             var coc = operand.substring(operand.indexOf(dhis2.de.cst.separator) + 1, operand.length);
             deferreds.push(dhis2.de.getDataElementValue(de, coc, dataSet, match).done(function (sum, matchRef) {
-              expression = expression.replace(matchRef, sum);
+              if(sum){
+                expression = expression.replace(matchRef, sum);
+              }else{
+                expression = undefined;
+              }
               console.log("DataDimension notTotal:" + initialExpression + ":" + expression);
             }));
           }
@@ -243,10 +247,15 @@
         }
         $.when.apply($, deferreds).then(function () {
 
-          if (expression == "0") {
-            expression = 0;
+          if(expression){
+            if (expression == "0") {
+              expression = 0;
+            }
+            defer.resolve(eval('(' + expression + ')'));
+          }else{
+            defer.resolve(undefined);
           }
-          defer.resolve(eval('(' + expression + ')'));
+
         });
         return defer.promise();
       },
