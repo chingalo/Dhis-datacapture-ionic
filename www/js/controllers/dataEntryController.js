@@ -44,6 +44,7 @@ angular.module('dataCapture')
       $ionicLoading.hide();
     }
     $scope.navigateToNewPage = function (pageNumber, type) {
+      console.log('navigation testing::pageNumber',pageNumber);
       $scope.data.loading = true;
       if (type == 'last') {
         if ($localStorage.dataEntryData.formType == 'SECTION') {
