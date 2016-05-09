@@ -175,6 +175,7 @@
           }));
         }
         $.when.apply($, deferreds).then(function () {
+          console.log(initialExpression, ":All:",expression);
           if(expression == "0"){
             expression = 0;
           }
