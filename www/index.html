@@ -191,11 +191,11 @@
                 defer.resolve(new Number(constant.value), match);
               } else {
                 console.log("DataDimension ConstanctFuncValue2:" + constantId + ": Zero");
-                defer.resolve(new Number(0), match);
+                defer.resolve(new Number(0), match,1);
               }
             } else {
               console.log("DataDimension ConstanctFuncValue3:" + constantId + ": Zero");
-              defer.resolve(new Number(0), match);
+              defer.resolve(new Number(0), match,1);
             }
           });
         return defer.promise();
@@ -232,9 +232,11 @@
           var match = cMatcher[k];
           // Remove brackets from expression to simplify extraction of identifiers
           var operand = match.replace(/[C\{\}]/g, '');
-          deferreds.push(dhis2.de.getConstantValue(operand, match).done(function (sum, matchRef) {
+          deferreds.push(dhis2.de.getConstantValue(operand, match).done(function (sum, matchRef,num) {
             expression = expression.replace(matchRef, sum);
-            console.log("DataDimension Constant:" + initialExpression + ":" + expression);
+            if(num){
+              console.log("DataDimension Constant:" + initialExpression + ":" + expression);
+            }
           }));
         }
         $.when.apply($, deferreds).then(function () {
