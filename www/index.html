@@ -72,12 +72,12 @@
         }
       },
       sqlLiteServices: {
-        getDataFromTableById: function(tableName,id){
+        getDataFromTableById: function (tableName, id) {
           var defer = $.Deferred();
           var attribute = "id";
           var db = window.sqlitePlugin.openDatabase({name: "hisptz.db"});
           db.transaction(function (tx) {
-            var query = "SELECT * FROM " + tableName + " WHERE "+attribute+" = ?";
+            var query = "SELECT * FROM " + tableName + " WHERE " + attribute + " = ?";
             tx.executeSql(query, [id], function (tx, results) {
               var len = results.rows.length;
               var data = [];
@@ -91,16 +91,16 @@
           });
           return defer.promise();
         },
-        getDataFromTableByIds: function(tableName,ids){
+        getDataFromTableByIds: function (tableName, ids) {
           var defer = $.Deferred();
           var attribute = "id";
           var db = window.sqlitePlugin.openDatabase({name: "hisptz.db"});
           var questionMarks = "?";
-          for(var i = 1; i < ids.length;i++){
+          for (var i = 1; i < ids.length; i++) {
             questionMarks += ",?";
           }
           db.transaction(function (tx) {
-            var query = "SELECT * FROM " + tableName + " WHERE "+attribute+" IN (" + questionMarks + ")";
+            var query = "SELECT * FROM " + tableName + " WHERE " + attribute + " IN (" + questionMarks + ")";
             tx.executeSql(query, ids, function (tx, results) {
               var len = results.rows.length;
               var data = [];
@@ -112,20 +112,20 @@
                 console.log("Dataelements IDS:" + ids.length);
               }
 
-              defer.resolve(data,ids);
+              defer.resolve(data, ids);
             }, function (error) {
               defer.reject(error);
             });
           });
           return defer.promise();
         },
-        searchDataFromTableByIds: function(tableName,ids){
+        searchDataFromTableByIds: function (tableName, ids) {
           var defer = $.Deferred();
           var attribute = "id";
           var db = window.sqlitePlugin.openDatabase({name: "hisptz.db"});
-          var questionMarks = "id LIKE '%" + ids[0] +"%'";
-          for(var i = 1; i < ids.length;i++){
-            questionMarks += " OR id LIKE '%" + ids[i] +"%'";
+          var questionMarks = "id LIKE '%" + ids[0] + "%'";
+          for (var i = 1; i < ids.length; i++) {
+            questionMarks += " OR id LIKE '%" + ids[i] + "%'";
           }
           db.transaction(function (tx) {
             var query = "SELECT * FROM " + tableName + " WHERE " + questionMarks;
@@ -136,7 +136,7 @@
                 var json = eval("(" + results.rows.item(i).data + ")");
                 data.push(json);
               }
-              console.log("Search Success" );
+              console.log("Search Success");
               defer.resolve(data);
             }, function (error) {
               console.log("Search Error:" + JSON.stringify(error));
@@ -145,7 +145,7 @@
           });
           return defer.promise();
         },
-        getAllDataFromTable: function(tableName){
+        getAllDataFromTable: function (tableName) {
           var defer = $.Deferred();
           var db = window.sqlitePlugin.openDatabase({name: "hisptz.db"});
           db.transaction(function (tx) {
@@ -192,8 +192,8 @@
         var defer = $.Deferred();
 
         var dataValuesId = dataSet + "-" + de + "-" + coc + "-" + dhis2.report.period + "-" + dhis2.report.organisationUnit.id;
-        dhis2.sqlLiteServices.getDataFromTableById('dataValues',dataValuesId)
-          .done(function(item){
+        dhis2.sqlLiteServices.getDataFromTableById('dataValues', dataValuesId)
+          .done(function (item) {
             if (item) {
               var val = item.value;
               if (val && dhis2.validation.isNumber(val)) {
@@ -209,17 +209,17 @@
       },
       getConstantValue: function (constantId, match) {
         var defer = $.Deferred();
-        dhis2.sqlLiteServices.getDataFromTableById('constants',constantId)
-          .done(function(constant){
+        dhis2.sqlLiteServices.getDataFromTableById('constants', constantId)
+          .done(function (constant) {
             if (constant) {
               var val = constant.value;
               if (val && dhis2.validation.isNumber(val)) {
                 defer.resolve(new Number(constant.value), match);
               } else {
-                defer.resolve(new Number(1), match,"Zeror");
+                defer.resolve(new Number(1), match, "Zeror");
               }
             } else {
-              defer.resolve(new Number(1), match,"Zeror");
+              defer.resolve(new Number(1), match, "Zeror");
             }
           });
         return defer.promise();
@@ -238,17 +238,17 @@
           if (isTotal) {
             //alert('is total');
             deferreds.push(dhis2.de.getDataElementTotalValue(operand, dataSet, match).done(function (sum, matchRef) {
-             expression = expression.replace(matchRef, sum);
+              expression = expression.replace(matchRef, sum);
               console.log("DataDimension Total:" + initialExpression + ":" + expression);
-             }));
+            }));
           }
           else {
             var de = operand.substring(0, operand.indexOf(dhis2.de.cst.separator));
             var coc = operand.substring(operand.indexOf(dhis2.de.cst.separator) + 1, operand.length);
             deferreds.push(dhis2.de.getDataElementValue(de, coc, dataSet, match).done(function (sum, matchRef) {
-              if(sum){
+              if (sum) {
                 expression = expression.replace(matchRef, sum);
-              }else{
+              } else {
                 expression = undefined;
               }
               console.log("DataDimension notTotal:" + initialExpression + ":" + expression);
@@ -260,21 +260,21 @@
           var match = cMatcher[k];
           // Remove brackets from expression to simplify extraction of identifiers
           var operand = match.replace(/[C\{\}]/g, '');
-          deferreds.push(dhis2.de.getConstantValue(operand, match).done(function (sum, matchRef,num) {
+          deferreds.push(dhis2.de.getConstantValue(operand, match).done(function (sum, matchRef, num) {
             expression = expression.replace(matchRef, sum);
-            if(num){
+            if (num) {
               console.log("DataDimension Constant Zeror:" + initialExpression + ":" + expression);
             }
           }));
         }
         $.when.apply($, deferreds).then(function () {
 
-          if(expression){
+          if (expression) {
             if (expression == "0") {
               expression = 0;
             }
             defer.resolve(eval('(' + expression + ')'));
-          }else{
+          } else {
             defer.resolve(undefined);
           }
 
@@ -285,9 +285,9 @@
       getIndicators: function (indicatorIds) {
         var defer = $.Deferred();
         //sample testing on sqlLite services
-        dhis2.sqlLiteServices.getDataFromTableByIds('indicators',indicatorIds).done(function(data,ids){
+        dhis2.sqlLiteServices.getDataFromTableByIds('indicators', indicatorIds).done(function (data, ids) {
           console.log('getIndicators : ' + data.length);
-          defer.resolve(data,ids);
+          defer.resolve(data, ids);
         });
         return defer.promise();
       },
@@ -300,7 +300,7 @@
           },
           rows: []
         };
-        dhis2.de.getIndicators(indicatorIds).done(function (indicators,dataElements) {
+        dhis2.de.getIndicators(indicatorIds).done(function (indicators, dataElements) {
           console.log("DataElements:" + dataElements.length);
           $.each(indicators, function (indicatorIndex, indicator) {
             data.metaData.names[indicator.id] = indicator.name;
@@ -311,20 +311,23 @@
             }));
           });
           $.when.apply($, promises).then(function () {
-            var ids = [];
-            $.each(dataElements, function (dataElementIndex, dataElement) {
-              ids.push(dataSet + "-" + dataElement + "-%-" + dhis2.report.period +"-"+dhis2.report.organisationUnit.id);
-            });
-            dhis2.de.sqlLiteServices.searchDataFromTableByIds("dataValues",dataElements).done(function(items){
-              console.log('DataElements From DataValues : ' + items.length);
-              //data.metaData.names[indicator.id] = indicator.name;
-              //defer.resolve(data);
-              $.each(items, function (dataElementIndex, dataElement) {
-                data.rows.push([dataElement.de, dhis2.report.period, dataElement.value]);
+            if (dataElements.length > 0) {
+              var ids = [];
+              $.each(dataElements, function (dataElementIndex, dataElement) {
+                ids.push(dataSet + "-" + dataElement + "-%-" + dhis2.report.period + "-" + dhis2.report.organisationUnit.id);
               });
+              dhis2.de.sqlLiteServices.searchDataFromTableByIds("dataValues", dataElements).done(function (items) {
+                console.log('DataElements From DataValues : ' + items.length);
+                //data.metaData.names[indicator.id] = indicator.name;
+                //defer.resolve(data);
+                $.each(items, function (dataElementIndex, dataElement) {
+                  data.rows.push([dataElement.de, dhis2.report.period, dataElement.value]);
+                });
+                defer.resolve(data);
+              });
+            } else {
               defer.resolve(data);
-            });
-
+            }
           });
         });
         return defer.promise();
