@@ -3,7 +3,7 @@
  */
 angular.module('dataCapture')
 
-  .factory('programManagerServices', function ($q,$http,$indexedDB) {
+  .factory('programManagerServices', function ($q,$http,sqlLiteServices) {
 
     var programManagerServices = {
       getAllProgramsFromServer : function(baseUrl){
@@ -14,31 +14,17 @@ angular.module('dataCapture')
             defer.resolve(results.programs);
           })
           .error(function(){
-            defer.reject('');
+            defer.reject();
           });
         return defer.promise;
       },
-      saveProgramsToLocalStorage:function(programs){
-        programs.forEach(function(program){
-          $indexedDB.openStore('programs', function (programsData) {
-            programsData.upsert(program).then(function () {
-              //success
-            }, function () {
-              //error
-            });
-          });
-        })
-      },
       getAllPrograms : function(){
         var defer = $q.defer();
-        $indexedDB.openStore('programs', function (programsData) {
-          programsData.getAll().then(function (programs) {
-            //success
-            defer.resolve(programs);
-          }, function () {
-            //error
-            defer.reject();
-          });
+        sqlLiteServices.getAllData('programs').
+        then(function(programs){
+          defer.resolve(programs);
+        },function(){
+          defer.reject();
         });
         return defer.promise;
       }

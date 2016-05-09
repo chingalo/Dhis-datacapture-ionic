@@ -2,7 +2,7 @@
  * Created by joseph on 2/2/16.
  */
 angular.module('dataCapture')
-  .factory('sectionsServices',function($http,$q,$localStorage,$indexedDB){
+  .factory('sectionsServices',function($http,$q,$localStorage,sqlLiteServices){
 
 
     var sectionsServices = {
@@ -20,25 +20,21 @@ angular.module('dataCapture')
       },
       getAllDataEntryFormSection : function(){
         var defer = $q.defer();
-        $indexedDB.openStore('sections',function(sectionsData){
-          sectionsData.getAll().then(function(data){
-            defer.resolve(data);
-          },function(){
-            defer.reject('error');
-          });
+        sqlLiteServices.getAllData('sections').then(function(data){
+          defer.resolve(data);
+        },function(){
+          defer.reject('error');
         });
         return defer.promise;
       },
       deleteAllSections: function(){
         var defer = $q.defer();
-        $indexedDB.openStore('sections', function (sections) {
-          sections.clear().then(function () {
-            //success
-            defer.resolve();
-          }, function () {
-            //error
-            defer.reject();
-          })
+        sqlLiteServices.dropTable('sections').then(function () {
+          //success
+          defer.resolve();
+        }, function () {
+          //error
+          defer.reject();
         });
         return defer.promise;
       }

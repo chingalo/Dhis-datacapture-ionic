@@ -3,8 +3,8 @@
  */
 angular.module('dataCapture')
   .factory('synchronizationServices',function($http,$q,$localStorage,userServices,
-                                              ionicToast,
-                                              $indexedDB,$interval,dataSetsServices){
+                                              ionicToast
+                                              ,$interval,dataSetsServices){
     var syncCtr,userSyncCtr;
 
     var synchronizationServices = {
@@ -54,26 +54,6 @@ angular.module('dataCapture')
         data.push(formParameter);
       });
       return data;
-    }
-    function syncAllDataProcess(){
-      dataSetsServices.getAllDataSetsFromServer()
-        .then(function(dataSets){
-          dataSets.forEach(function(dataSet){
-            dataSetsServices.getIndividualDataSetFromServer(dataSet.id,$localStorage.baseUrl).then(function (data) {
-              $indexedDB.openStore('dataSets', function (dataSetData) {
-                dataSetData.upsert(data).then(function () {
-                  //success
-                }, function () {
-                  //error getting individual data set
-                });
-              })
-            }, function () {
-              //error
-            });
-          });
-        },function(){
-
-        });
     }
     return synchronizationServices;
   });

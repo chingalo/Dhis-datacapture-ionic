@@ -34,37 +34,16 @@
             </div>
             <div>
 
-              <div class="row" style="padding-top: 1%;">
-                <div class="col col-100">
+              <div class="row" ng-click="openModal('Period')" style="padding-top: 1%;">
+                <div class="col col-90">
                   <b>Period</b> :
                   <span ng-if = "data.period"></span>{{ getPeriodDisplayValue(data.period) }}
+                  <span ng-if = "! data.period">Touch here to select Period</span>
+                </div>
+                <div class="col col-10">
+                  <i class="icon ion-calendar"></i>
                 </div>
               </div>
-              <div class="row" ng-if = "data.orgUnit[0].name && data.dataSets.length > 0 && periodChoices.length > 0" >
-                <div class="col col-50">
-                  <button class="button button-full button-positive" ng-click="changePeriodInterval('previous')">Previous</button>
-                </div>
-                <div class="col col-50">
-                  <button class="button button-full button-positive" ng-click="changePeriodInterval('next')">Next</button>
-                </div>
-              </div>
-
-              <div style="padding-top: 1%;" class="row">
-                <div class="col col-100">
-                  <div class="item item-input item-select" >
-                    <div class="input-label" >
-                    </div>
-                    <select disabled ng-if = "!(periodChoices.length > 0)">
-                      <option value="">There is no period choice available</option>
-                    </select>
-                    <select ng-if = "data.orgUnit[0].name && data.dataSets.length > 0 && periodChoices.length > 0 " ng-model="data.period" ng-change="periodSelect()">
-                      <option value="">Touch to choose period</option>
-                      <option  ng-repeat="periodChoice in periodChoices " value="{{ periodChoice.iso }}">{{ periodChoice.name }}</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-
             </div>
             <div ng-if = 'data.period' class="row">
               <div class="col col-100" ng-if="data.selectedDataSet.categoryCombo.categoryOptionCombos[0].name != 'default'|| data.hasCategoryComboOptions == true">
@@ -96,18 +75,12 @@
     </div>
 
     <div class="row" ng-if="data.formSelectVisibility">
-
-      <div class="col col-10"></div>
-      <div class="col col-80">
-        <button class="button button-full button-positive" ng-click="dataEntryFormSelection()">Data Entry</button>
+      <div class="col col-50">
+        <button class="button button-full button-positive" ng-click="generateDefaultDataEntryForm()">Default</button>
       </div>
-      <div class="col col-10"></div>
-      <!--<div class="col col-50">-->
-        <!--<button class="button button-full button-positive" ng-click="generateDefaultDataEntryForm()">Default</button>-->
-      <!--</div>-->
-      <!--<div class="col col-50">-->
-        <!--<button class="button button-full button-positive" ng-click="generateSectionDataEntryForm()">Section</button>-->
-      <!--</div>-->
+      <div class="col col-50">
+        <button class="button button-full button-positive" ng-click="generateSectionDataEntryForm()">Section</button>
+      </div>
     </div>
 
     <div class="row" ng-if = "data.loading" style="text-align: center;font-size: 14px;">

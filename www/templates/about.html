@@ -1,5 +1,9 @@
 <ion-view view-title="About">
   <ion-content>
+    <ion-refresher
+      pulling-text="Pull to refresh local storage status"
+      on-refresh="reloadLocalStorageStatus()">
+    </ion-refresher>
     <ion-list>
       <div class="row">
         <div class="col col-100">
@@ -11,6 +15,8 @@
               <h2>{{ key }}</h2>
               <p>{{ data.appInfo[key] }}</p>
             </div>
+            <h2>Local Storage Information</h2>
+            <p>Synced : {{ data.appStorageStatus.synced.value }} Not synced : {{ data.appStorageStatus.unSynced.value }}</p>
           </div>
           <div class="item item-divider">
             <h2 align="center">Server Information</h2>

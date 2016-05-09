@@ -2,7 +2,7 @@
  * Created by chingalo on 2/17/16.
  */
 angular.module('dataCapture')
-  .factory('dataValueSetServices',function($http,$q,$localStorage,$indexedDB){
+  .factory('dataValueSetServices',function($http,$q,$localStorage,sqlLiteServices){
     var baseUrl = $localStorage.baseUrl;
     var dataValueSetServices = {
       getDataValueSet:function(dataSet,period,orgUnit){
@@ -31,13 +31,11 @@ angular.module('dataCapture')
       },
       getDataValuesFromIndexDb : function(){
         var defer = $q.defer();
-        $indexedDB.openStore('dataValues',function(dataValuesData){
-          dataValuesData.getAll().then(function(dataValues){
-            defer.resolve(dataValues);
-          },function(){
-            //error get all data values from indexDB
-            defer.reject();
-          });
+        sqlLiteServices.getAllData('dataValues').then(function(dataValues){
+          defer.resolve(dataValues);
+        },function(){
+          //error get all data values from indexDB
+          defer.reject();
         });
         return defer.promise;
       },

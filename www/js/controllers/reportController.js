@@ -4,7 +4,7 @@
 angular.module('dataCapture')
   .controller('reportController',function($scope,$state,ionicToast,$filter,
                                           $localStorage,reportServices,
-                                          periodSelectionServices,
+                                          periodSelectionServices,sqlLiteServices,
                                           userServices,$ionicModal){
 
     //variable for reports
@@ -34,6 +34,7 @@ angular.module('dataCapture')
       loadReportsFromIndexDb();
     }else{
       $scope.data.selectedReport = $localStorage.selectedReport;
+      loadReportsFromIndexDb();
     }
 
     //function for toaster messages
@@ -52,10 +53,8 @@ angular.module('dataCapture')
 
     //function to load reports from index db
     function loadReportsFromIndexDb(){
-      reportServices.getAllReportsFromIndexDb()
+      sqlLiteServices.getAllData("reports")
         .then(function(reports){
-          var reportLength = angular.isUndefined(reports.length)? 0: reports.length;
-          progressMessage('There are '+ reportLength + ' report(s) available at the moment on Offline storage');
           $scope.data.reports =reports;
           $scope.data.loading = false;
         },function(){
@@ -74,7 +73,6 @@ angular.module('dataCapture')
           progressMessage('There are '+ reportLength + ' report(s) available at the moment from server');
           if(! angular.isUndefined(reports)){
             $scope.data.reports = reports;
-            reportServices.saveReportToIndexDb(reports);
             reports.forEach(function(report){
               reportServices.saveReportToIndexDb(report);
             });
@@ -98,6 +96,7 @@ angular.module('dataCapture')
     };
 
     //function to get report details
+    //todo use sql to speed it up
     function getReportDetails(reportId){
       $scope.data.loading = true;
       reportServices.getAllReportsFromIndexDb()

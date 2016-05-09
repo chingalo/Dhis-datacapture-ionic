@@ -8,7 +8,6 @@ angular.module('dataCapture', [
     'ionic',
     'ionic-toast',
     'ngStorage',
-    'indexedDB',
     'ngSanitize',
     'ui.date',
     'multi-select-tree',
@@ -23,7 +22,6 @@ angular.module('dataCapture', [
       if (window.cordova && window.cordova.plugins.Keyboard) {
         cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
         cordova.plugins.Keyboard.disableScroll(true);
-
       }
       if (window.StatusBar) {
         // org.apache.cordova.statusbar required
@@ -32,19 +30,50 @@ angular.module('dataCapture', [
     });
   })
 
-  .controller('mainController', function ($scope, $window, $interval, $state, $http, Base64,
+  .controller('mainController', function ($scope, $window, $interval, $state,$http,Base64,
                                           userServices, synchronizationServices,
-                                          $ionicHistory, $ionicModal, ionicToast,
+                                          $ionicHistory, $ionicModal, ionicToast,programManagerServices,
                                           indicatorsServices, reportServices, constantsServices,
-                                          $localStorage, dataSetsServices, programManagerServices,
-                                          sectionsServices, $indexedDB) {
+                                          $localStorage, dataSetsServices, sqlLiteServices, $q,
+                                          sectionsServices) {
 
     //initial variables
     $scope.data = {};
     var url = 'http://41.217.202.50:8080/dhis';
+
     //function for toaster messages
     function progressMessage(message) {
       ionicToast.show(message, 'bottom', false, 2500);
+    }
+
+    //creation of database for an app
+    initDatabase();
+    function initDatabase() {
+      document.addEventListener("deviceready", onDeviceReady, false);
+      function onDeviceReady() {
+        var db = window.sqlitePlugin.openDatabase({name: "hisptz.db"});
+        var tables = ['dataSets', 'reports', 'sections', 'orgUnits', 'indicators', 'constants','programs'];
+        tables.forEach(function (table) {
+          db.transaction(function (tx) {
+            tx.executeSql('CREATE TABLE IF NOT EXISTS ' + table + ' (id TEXT primary key, data LONGTEXT)', [],
+              function (tx, result) {
+                //alert("Table "+table+" created successfully");
+              },
+              function (error) {
+                //alert("Error occurred while creating the table "+table+".");
+              });
+          });
+        });
+        db.transaction(function (tx) {
+          tx.executeSql('CREATE TABLE IF NOT EXISTS dataValues (id TEXT primary key, data LONGTEXT, isSync INTEGER)', [],
+            function (tx, result) {
+              //alert("Table dataValues created successfully");
+            },
+            function (error) {
+              //alert("Error occurred while creating the table dataValues.");
+            });
+        });
+      }
     }
 
     function progressTopMessage(message) {
@@ -52,7 +81,9 @@ angular.module('dataCapture', [
     }
 
     $scope.deleteLocalStorageData = function () {
-      delete $localStorage.allowDataEntrySync;
+      if($localStorage.allowDataEntrySync){
+        delete $localStorage.allowDataEntrySync;
+      }
     };
     //initialization of base url for an app to access as well as auto login for logged in user
     if (!$localStorage.baseUrl) {
@@ -85,13 +116,11 @@ angular.module('dataCapture', [
     if (angular.isUndefined($scope.data.dataDownLoadingMessage)) {
       $scope.data.dataDownLoadingMessage = [];
     }
-
     //function to get data downloading percentage
-    var numberOfProcess = 9;
-    $scope.getDataDownLoadingPercentage = function () {
-      return (Math.ceil(($scope.data.dataDownLoadingMessage.length / numberOfProcess) * 100))
+    var numberOfProcess = 17;
+    $scope.getDataDownLoadingPercentage = function(){
+      return(Math.ceil(($scope.data.dataDownLoadingMessage.length/numberOfProcess) * 100))
     };
-
     if (angular.isUndefined($localStorage.dataDownLoadingStatus)) {
       $localStorage.dataDownLoadingStatus = false;
     }
@@ -108,7 +137,6 @@ angular.module('dataCapture', [
           $scope.data.dataDownLoadingMessage = [];
           $localStorage.dataDownLoadingStatus = false;
           $scope.data.dataDownLoadingMessage.push('Authenticating user');
-
           authenticateUser($scope.data.username, $scope.data.password);
         } else {
           message = 'Please Enter both username and password.';
@@ -123,12 +151,11 @@ angular.module('dataCapture', [
     //function for log out from the system
     $scope.logOut = function () {
       //TODO some logic flow during log out process as reset all data on setting
-      userServices.initiateLogOutProcess().then(function () {
-        delete $localStorage.loginUser;
+      userServices.initiateLogOutProcess().then(function(){
         $state.go('login');
-        //$window.location.reload();
+        $window.location.reload();
         $scope.data.loading = false;
-      }, function () {
+      },function(){
         progressMessage("The app fail to empty some data during logout");
       });
     };
@@ -241,7 +268,7 @@ angular.module('dataCapture', [
     //function to load system info
     function loadSystemInfo(base) {
       var processName = "systemInfo";
-      $scope.data.dataDownLoadingMessage.push('Load system information');
+      $scope.data.dataDownLoadingMessage.push('Loading system information');
       if (!isProcessCompleted(processName)) {
         userServices.getSystemInfo(base).then(function (systemInfo) {
           $localStorage.systemInfo = systemInfo;
@@ -254,28 +281,39 @@ angular.module('dataCapture', [
 
     //function to fetching date entry sections
     function loadDataEntrySections(base) {
-      $scope.data.loading = true;
-      userServices.preRequestDataCounter('sections', base)
-        .then(function (sectionsCounter) {
-          $scope.data.dataDownLoadingMessage.push('Download ' + sectionsCounter + ' sections');
+      userServices.preRequestDataCounter('sections',base)
+        .then(function(sectionCounter){
+          $scope.data.dataDownLoadingMessage.push('Downloading '+sectionCounter+' form sections');
           var processName = "dataEntrySection";
           if (isProcessCompleted(processName)) {
-            loadIndicators(base);
+            loadPrograms(base);
           } else {
+            $scope.data.loading = true;
             sectionsServices.getAllSectionsFromServer(base)
               .then(function (sections) {
-                sections.forEach(function (section, index) {
-                  $indexedDB.openStore('sections', function (dataSetData) {
-                    dataSetData.upsert(section).then(function () {
-                      //success
-                    }, function () {
-                      //error
-                    });
-                  });
+                var tableName = 'sections';
+                var promises = [];
+                $scope.data.dataDownLoadingMessage.push('Saving '+sectionCounter+' form sections');
+                sections.forEach(function (section) {
+                  var id = section.id;
+                  promises.push(
+                    sqlLiteServices.insertData(tableName, id, section)
+                      .then(function (pass) {
+                        //alert('success : ' + JSON.stringify(pass));
+                      }, function (fail) {
+                        //alert('Fail : ' + JSON.stringify(fail));
+                      })
+                  )
                 });
-                //loading indicators
-                loadIndicators(base);
-                $localStorage.dataDownLoadingTracker.push(processName);
+                $q.all(promises).then(function () {
+                  //loading programs
+                  loadPrograms(base);
+                  $localStorage.dataDownLoadingTracker.push(processName);
+                }, function () {
+                  var message = "Fail to save sections";
+                  progressTopMessage(message);
+                  $scope.data.loading = false;
+                });
               }, function () {
                 //error
                 var message = "Fail to download form sections";
@@ -283,8 +321,56 @@ angular.module('dataCapture', [
                 $scope.data.loading = false;
               });
           }
-        }, function () {
-          var message = "Fail to determine number form sections";
+        },function(){
+          var message = "Fail to determine number of sections from the server";
+          progressTopMessage(message);
+          $scope.data.loading = false;
+        });
+    }
+
+    function loadPrograms(base){
+      userServices.preRequestDataCounter('programs',base)
+        .then(function(programCounter){
+          $scope.data.loading = true;
+          $scope.data.dataDownLoadingMessage.push('Downloading '+programCounter+' programs');
+          var processName = "programs";
+          if (isProcessCompleted(processName)) {
+            loadIndicators(base);
+          } else {
+            programManagerServices.getAllProgramsFromServer(base)
+              .then(function (programs) {
+                var promises = [];
+                var tableName = "programs";
+                $scope.data.dataDownLoadingMessage.push('Saving '+programCounter+' programs');
+                programs.forEach(function (program) {
+                  var id = program.id;
+                  promises.push(
+                    sqlLiteServices.insertData(tableName, id, program)
+                      .then(function (pass) {
+                        //success
+                      }, function (fail) {
+                        //fail
+                      })
+                  )
+                });
+                $q.all(promises).then(function () {
+                  //loading indicators
+                  loadIndicators(base);
+                  $localStorage.dataDownLoadingTracker.push(processName);
+                }, function () {
+                  var message = "Fail to save programs";
+                  progressTopMessage(message);
+                  $scope.data.loading = false;
+                });
+              }, function () {
+                //error
+                var message = "Fail to download programs";
+                progressTopMessage(message);
+                $scope.data.loading = false;
+              });
+          }
+        },function(){
+          var message = "Fail to determine number of programs from the server";
           progressTopMessage(message);
           $scope.data.loading = false;
         });
@@ -292,22 +378,39 @@ angular.module('dataCapture', [
 
     //function to fetching indicators
     function loadIndicators(base) {
-      userServices.preRequestDataCounter('indicators', base)
-        .then(function (indicatorsCounter) {
+      userServices.preRequestDataCounter('indicators',base)
+        .then(function(indicatorCounter){
           $scope.data.loading = true;
-          $scope.data.dataDownLoadingMessage.push('Download ' + indicatorsCounter + ' indicators');
+          $scope.data.dataDownLoadingMessage.push('Downloading '+indicatorCounter+' indicators');
           var processName = "indicators";
           if (isProcessCompleted(processName)) {
             loadReports(base);
           } else {
             indicatorsServices.getAllIndicatorsFromServer(base)
               .then(function (indicators) {
+                var promises = [];
+                var tableName = "indicators";
+                $scope.data.dataDownLoadingMessage.push('Saving '+indicatorCounter+' indicators');
                 indicators.forEach(function (indicator) {
-                  indicatorsServices.saveIndicatorIntoIndexDb(indicator);
+                  var id = indicator.id;
+                  promises.push(
+                    sqlLiteServices.insertData(tableName, id, indicator)
+                      .then(function (pass) {
+                        //alert('success : ' + JSON.stringify(pass));
+                      }, function (fail) {
+                        //alert('Fail : ' + JSON.stringify(fail));
+                      })
+                  )
                 });
-                //loading reports
-                loadReports(base);
-                $localStorage.dataDownLoadingTracker.push(processName);
+                $q.all(promises).then(function () {
+                  //loading reports
+                  loadReports(base);
+                  $localStorage.dataDownLoadingTracker.push(processName);
+                }, function () {
+                  var message = "Fail to save indicators";
+                  progressTopMessage(message);
+                  $scope.data.loading = false;
+                });
               }, function () {
                 //error
                 var message = "Fail to download indicators";
@@ -315,8 +418,8 @@ angular.module('dataCapture', [
                 $scope.data.loading = false;
               });
           }
-        }, function () {
-          var message = "Fail to determine number indicators";
+        },function(){
+          var message = "Fail to determine number of indicators from the server";
           progressTopMessage(message);
           $scope.data.loading = false;
         });
@@ -324,10 +427,10 @@ angular.module('dataCapture', [
 
     //function to fetching reports from the server
     function loadReports(base) {
-      userServices.preRequestDataCounter('reports', base)
-        .then(function (reportCounter) {
+      userServices.preRequestDataCounter('reports',base)
+        .then(function(reportCounter){
           var processName = 'reports';
-          $scope.data.dataDownLoadingMessage.push('Download ' + reportCounter + ' reports');
+          $scope.data.dataDownLoadingMessage.push('Downloading '+reportCounter+' reports');
           if (isProcessCompleted(processName)) {
             loadConstants(base);
           } else {
@@ -335,13 +438,29 @@ angular.module('dataCapture', [
             reportServices.getAllReportsFromServer(base)
               .then(function (reports) {
                 $scope.data.reports = reports;
-                reportServices.saveReportToIndexDb(reports);
+                var promises = [];
+                var tableName = "reports";
+                $scope.data.dataDownLoadingMessage.push('Saving'+reportCounter+' reports');
                 reports.forEach(function (report) {
-                  reportServices.saveReportToIndexDb(report);
+                  var id = report.id;
+                  promises.push(
+                    sqlLiteServices.insertData(tableName, id, report)
+                      .then(function (pass) {
+                        //alert('success : ' + JSON.stringify(pass));
+                      }, function (fail) {
+                        //alert('Fail : ' + JSON.stringify(fail));
+                      })
+                  )
                 });
-                //loading all constants
-                loadConstants(base);
-                $localStorage.dataDownLoadingTracker.push(processName);
+                $q.all(promises).then(function () {
+                  //loading all constants
+                  loadConstants(base);
+                  $localStorage.dataDownLoadingTracker.push(processName);
+                }, function () {
+                  var message = "Fail to save reports";
+                  progressTopMessage(message);
+                  $scope.data.loading = false;
+                });
               }, function () {
                 //error
                 var message = "Fail to download reports";
@@ -349,19 +468,21 @@ angular.module('dataCapture', [
                 $scope.data.loading = false;
               });
           }
-        }, function () {
-          var message = "Fail to determine number reports";
+        },function(){
+          var message = "Fail to determine number of reports from the server";
           progressTopMessage(message);
           $scope.data.loading = false;
         });
+
+
     }
 
     //function to fetching all constants from the server
     function loadConstants(base) {
-      userServices.preRequestDataCounter('constants', base)
-        .then(function (constantCounter) {
+      userServices.preRequestDataCounter('constants',base)
+        .then(function(constantCounter){
           var processName = "constants";
-          $scope.data.dataDownLoadingMessage.push('Download ' + constantCounter + ' constants for reports');
+          $scope.data.dataDownLoadingMessage.push('Downloading '+constantCounter+' constants for reports');
           if (isProcessCompleted(processName)) {
             $scope.data.dataDownLoadingMessage.push('');
             $localStorage.dataDownLoadingStatus = true;
@@ -370,62 +491,79 @@ angular.module('dataCapture', [
           } else {
             constantsServices.getAllConstantsFromServer(base)
               .then(function (constants) {
+                $scope.data.dataDownLoadingMessage.push('Saving '+constantCounter+' constants for reports');
+                var promises = [];
+                var tableName = "constants";
                 constants.forEach(function (constant) {
-                  constantsServices.saveConstantIntoIndexDb(constant);
+                  var id = constant.id;
+                  promises.push(
+                    sqlLiteServices.insertData(tableName, id, constant)
+                      .then(function (pass) {
+                        //alert('success : ' + JSON.stringify(pass));
+                      }, function (fail) {
+                        //alert('Fail : ' + JSON.stringify(fail));
+                      })
+                  )
                 });
-                $scope.data.dataDownLoadingMessage.push('');
-                $localStorage.dataDownLoadingStatus = true;
-                $localStorage.dataDownLoadingTracker.push(processName);
-                //redirect to th landing page
-                directToLandingPage();
+                $q.all(promises).then(function () {
+                  $scope.data.dataDownLoadingMessage.push('');
+                  $localStorage.dataDownLoadingStatus = true;
+                  $localStorage.dataDownLoadingTracker.push(processName);
+                  //redirect to th landing page
+                  directToLandingPage();
+                }, function () {
+                  var message = "Fail to save constants";
+                  progressTopMessage(message);
+                  $scope.data.loading = false;
+                });
               }, function () {
                 $scope.data.loading = false;
                 var message = "Fail to download constants for reports";
                 progressTopMessage(message);
               });
           }
-        }, function () {
-          var message = "Fail to determine number of constants for reports";
+        },function(){
+          var message = "Fail to determine number of constants for reports from the server";
           progressTopMessage(message);
           $scope.data.loading = false;
         });
     }
 
-    //function to load all programs from the server
-    function loadPrograms(base) {
-      programManagerServices.getAllProgramsFromServer(base)
-        .then(function (data) {
-          programManagerServices.saveProgramsToLocalStorage(data);
-        }, function () {
-
-        });
-    }
-
     //function to fetching all forms from the server
     function loadDataSets(base) {
-      loadPrograms(base);
-      userServices.preRequestDataCounter('dataSets', base)
-        .then(function (dataSetsCounter) {
+      userServices.preRequestDataCounter('dataSets',base)
+        .then(function(dataSetsCounter){
           $localStorage.baseUrl = base;
           $scope.data.loading = true;
           var processName = "dataSets";
-          $scope.data.dataDownLoadingMessage.push('Download ' + dataSetsCounter + ' data entry forms');
+          $scope.data.dataDownLoadingMessage.push('Downloading '+dataSetsCounter+' data entry forms');
           if (isProcessCompleted(processName)) {
             loadDataEntrySections(base);
           } else {
             dataSetsServices.getAllDataSetsFromServer(base).then(function (dataSets) {
+              var promises = [];
+              var tableName = "dataSets";
+              $scope.data.dataDownLoadingMessage.push('saving '+dataSetsCounter+' data entry forms');
               dataSets.forEach(function (dataSet) {
-                $indexedDB.openStore('dataSets', function (dataSetData) {
-                  dataSetData.upsert(dataSet).then(function () {
-                    //success
-                  }, function () {
-                    //error getting individual data set
-                  });
-                })
+                var id = dataSet.id;
+                promises.push(
+                  sqlLiteServices.insertData(tableName, id, dataSet)
+                    .then(function (pass) {
+                      //alert('success : ' + JSON.stringify(pass));
+                    }, function (fail) {
+                      //alert('Fail : ' + JSON.stringify(fail));
+                    })
+                )
               });
-              //load all data entry sections forms
-              $localStorage.dataDownLoadingTracker.push(processName);
-              loadDataEntrySections(base);
+              $q.all(promises).then(function () {
+                //load all data entry sections forms
+                $localStorage.dataDownLoadingTracker.push(processName);
+                loadDataEntrySections(base);
+              }, function () {
+                var message = "Fail to save dataSets";
+                progressTopMessage(message);
+                $scope.data.loading = false;
+              });
             }, function () {
               //error getting data sets from server
               var message = "Fail to download data entry forms";
@@ -433,27 +571,30 @@ angular.module('dataCapture', [
               $scope.data.loading = false;
             });
           }
-        }, function () {
-          var message = "Fail to determine number of data entry forms";
+        },function(){
+          var message = "Fail to determine number of data entry forms from the server";
           progressTopMessage(message);
           $scope.data.loading = false;
         });
+
     }
 
     //function to fetch all orgUnits assigned to the user from server
     function addAssignedOrgUnit(orgUnits, baseUrl) {
       var processName = "orgUnits";
-      $scope.data.dataDownLoadingMessage.push('Fetch assigned Organisation ' + orgUnits.length);
+      $scope.data.dataDownLoadingMessage.push('Fetching '+orgUnits.length+' assigned Organisation ');
       if (!isProcessCompleted(processName)) {
         orgUnits.forEach(function (orgUnit, index) {
           userServices.getAssignedOrgUnitChildrenFromServer(orgUnit.id, baseUrl).then(function (OrgUnitChildrenData) {
-            $indexedDB.openStore('orgUnits', function (orgUnitsData) {
-              orgUnitsData.upsert(OrgUnitChildrenData).then(function () {
-                //success
-              }, function () {
-                //error
+            var tableName = "orgUnits";
+            var id = OrgUnitChildrenData.id;
+            sqlLiteServices.insertData(tableName, id, OrgUnitChildrenData)
+              .then(function (pass) {
+                //alert('success : ' + JSON.stringify(pass));
+              }, function (fail) {
+                //alert('Fail : ' + JSON.stringify(fail));
               });
-            });
+
             if (index == (orgUnits.length - 1)) {
               $localStorage.dataDownLoadingTracker.push(processName);
             }
@@ -545,45 +686,12 @@ angular.module('dataCapture', [
 
   })
 
-  .config(function ($stateProvider, $urlRouterProvider, $indexedDBProvider, $ionicConfigProvider) {
+  .config(function ($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
     $ionicConfigProvider.scrolling.jsScrolling(false);
-    $indexedDBProvider
-      .connection('hisptz')
-      .upgradeDatabase(1, function (event, db, tx) {
-
-        var dataSets = db.createObjectStore('dataSets', {keyPath: 'id'});
-        dataSets.createIndex('id_index', 'id', {unique: true});
-        dataSets.createIndex('name_index', 'name', {unique: false});
-
-        var dataSets = db.createObjectStore('reports', {keyPath: 'id'});
-        dataSets.createIndex('id_index', 'id', {unique: true});
-        dataSets.createIndex('name_index', 'name', {unique: false});
-
-        var dataSets = db.createObjectStore('sections', {keyPath: 'id'});
-        dataSets.createIndex('id_index', 'id', {unique: true});
-        dataSets.createIndex('name_index', 'name', {unique: false});
-
-        var dataSets = db.createObjectStore('orgUnits', {keyPath: 'id'});
-        dataSets.createIndex('id_index', 'id', {unique: true});
-
-        var dataSets = db.createObjectStore('dataValues', {keyPath: 'id'});
-        dataSets.createIndex('id_index', 'id', {unique: true});
-
-      })
-      .upgradeDatabase(2, function (event, db, tx) {
-        var dataSets = db.createObjectStore('indicators', {keyPath: 'id'});
-        dataSets.createIndex('id_index', 'id', {unique: true});
-      })
-      .upgradeDatabase(3, function (event, db, tx) {
-        var constants = db.createObjectStore('constants', {keyPath: 'id'});
-        constants.createIndex('id_index', 'id', {unique: true});
-        var programs = db.createObjectStore('programs', {keyPath: 'id'});
-        programs.createIndex('id_index', 'id', {unique: true});
-      });
-
     $stateProvider
       .state('login', {
         url: '/login',
+        cache:false,
         templateUrl: 'templates/login.html',
         controller: 'mainController'
       })
@@ -606,6 +714,7 @@ angular.module('dataCapture', [
 
       .state('app.about', {
         url: '/about',
+        cache:false,
         views: {
           'menuContent': {
             templateUrl: 'templates/about.html',
@@ -665,6 +774,7 @@ angular.module('dataCapture', [
 
       .state('app.reports', {
         url: '/reports',
+        cache:false,
         views: {
           'menuContent': {
             templateUrl: 'templates/reportsList.html',
