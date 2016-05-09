@@ -169,9 +169,11 @@
               if (val && dhis2.validation.isNumber(val)) {
                 defer.resolve(new Number(item.value), match);
               } else {
+                console.log("DataElement if1:" + dataValuesId + ":" + val);
                 defer.resolve(new Number("0"), match);
               }
             } else {
+              console.log("DataElement if2:" + dataValuesId + ":" + val);
               defer.resolve(new Number("0"), match);
             }
           });
