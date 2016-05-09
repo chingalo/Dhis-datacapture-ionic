@@ -140,6 +140,7 @@
       generateExpression: function (expression, dataSet) {
         var defer = $.Deferred();
         var deferreds = [];
+        var initialExpression = expression;
         var matcher = expression.match(dhis2.de.cst.formulaPattern);
         var cMatcher = expression.match(dhis2.de.cst.constantPattern);
         for (k in matcher) {
@@ -148,8 +149,10 @@
           var operand = match.replace(/[#\{\}]/g, '');
           var isTotal = !!( operand.indexOf(dhis2.de.cst.separator) == -1 );
           if (isTotal) {
+
             deferreds.push(dhis2.de.getDataElementTotalValue(operand, dataSet, match).done(function (sum, matchRef) {
               expression = expression.replace(matchRef, sum);
+              console.log(initialExpression, ":Total:",expression);
             }));
           }
           else {
@@ -157,6 +160,7 @@
             var coc = operand.substring(operand.indexOf(dhis2.de.cst.separator) + 1, operand.length);
             deferreds.push(dhis2.de.getDataElementValue(de, coc, dataSet, match).done(function (sum, matchRef) {
               expression = expression.replace(matchRef, sum);
+              console.log(initialExpression, ":Non Total:",expression);
             }));
           }
           // TODO signed numbers
@@ -167,6 +171,7 @@
           var operand = match.replace(/[C\{\}]/g, '');
           deferreds.push(dhis2.de.getConstantValue(operand, dataSet, match).done(function (sum, matchRef) {
             expression = expression.replace(matchRef, sum);
+            console.log(initialExpression, ":Constants:",expression);
           }));
         }
         $.when.apply($, deferreds).then(function () {
