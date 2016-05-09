@@ -134,8 +134,10 @@
                 var json = eval("(" + results.rows.item(i).data + ")");
                 data.push(json);
               }
+              console.log("Search Success" );
               defer.resolve(data);
             }, function (error) {
+              console.log("Search Error:" + JSON.stringify(error));
               defer.reject(error);
             });
           });
@@ -316,11 +318,20 @@
             }));
           });
           $.when.apply($, promises).then(function () {
-            dhis.de.sqlLiteServices.searchDataFromTableByIds("dataValues",dataElements).done(function(data){
-              console.log('DataElements From DataValues : ' + data.length);
-              //defer.resolve(data);
+            var ids = [];
+            $.each(dataElements, function (dataElementIndex, dataElement) {
+              ids.push(dataSet + "-" + dataElement + "-%-" + dhis2.report.period +"-"+dhis2.report.organisationUnit.id);
             });
-            defer.resolve(data);
+            dhis2.de.sqlLiteServices.searchDataFromTableByIds("dataValues",dataElements).done(function(items){
+              console.log('DataElements From DataValues : ' + items.length);
+              //data.metaData.names[indicator.id] = indicator.name;
+              //defer.resolve(data);
+              $.each(items, function (dataElementIndex, dataElement) {
+                data.rows.push([dataElement.de, dhis2.report.period, dataElement.value]);
+              });
+              defer.resolve(data);
+            });
+
           });
         });
         return defer.promise();
