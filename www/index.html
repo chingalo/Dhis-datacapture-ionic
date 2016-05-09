@@ -191,11 +191,11 @@
                 defer.resolve(new Number(constant.value), match);
               } else {
                 console.log("DataDimension ConstanctFuncValue2:" + constantId + ": Zero");
-                defer.resolve(new Number(0), match,"Zeror");
+                defer.resolve(new Number(1), match,"Zeror");
               }
             } else {
               console.log("DataDimension ConstanctFuncValue3:" + constantId + ": Zero");
-              defer.resolve(new Number(0), match,"Zeror");
+              defer.resolve(new Number(1), match,"Zeror");
             }
           });
         return defer.promise();
