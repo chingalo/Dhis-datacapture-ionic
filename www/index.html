@@ -292,9 +292,9 @@
       getIndicators: function (indicatorIds) {
         var defer = $.Deferred();
         //sample testing on sqlLite services
-        dhis2.sqlLiteServices.getDataFromTableByIds('indicators',indicatorIds).done(function(data){
+        dhis2.sqlLiteServices.getDataFromTableByIds('indicators',indicatorIds).done(function(data,ids){
           console.log('getIndicators : ' + data.length);
-          defer.resolve(data);
+          defer.resolve(data,ids);
         });
         return defer.promise();
       },
