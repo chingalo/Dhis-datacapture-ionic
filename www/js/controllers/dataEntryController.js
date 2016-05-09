@@ -358,6 +358,7 @@ angular.module('dataCapture')
 
     //function to save values from extended function
     function saveValue(dataElementId,categoryComboId,value){
+      console.log('saveValue',value);
       prepareDataValuesToIndexDb(dataElementId + "-" + categoryComboId,value,false);
     }
     //@todo modify based on  api on docs
