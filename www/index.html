@@ -247,7 +247,7 @@
             var de = operand.substring(0, operand.indexOf(dhis2.de.cst.separator));
             var coc = operand.substring(operand.indexOf(dhis2.de.cst.separator) + 1, operand.length);
             deferreds.push(dhis2.de.getDataElementValue(de, coc, dataSet, match).done(function (sum, matchRef) {
-              if (sum) {
+              if (sum && expression) {
                 expression = expression.replace(matchRef, sum);
               } else {
                 expression = undefined;
@@ -261,9 +261,10 @@
           // Remove brackets from expression to simplify extraction of identifiers
           var operand = match.replace(/[C\{\}]/g, '');
           deferreds.push(dhis2.de.getConstantValue(operand, match).done(function (sum, matchRef, num) {
-            expression = expression.replace(matchRef, sum);
-            if (num) {
-
+            if (sum && expression) {
+              expression = expression.replace(matchRef, sum);
+            }else{
+              expression = undefined;
             }
           }));
         }
@@ -340,14 +341,28 @@
         var numerator = 0;
         var denominator = 1;
         promises.push(dhis2.de.generateExpression(indicator.numerator, dataSet).then(function (numeratorResult) {
-          numerator = numeratorResult;
+          if(numeratorResult){
+            numerator = numeratorResult;
+          }else{
+            numerator = undefined;
+          }
+
         }));
         promises.push(dhis2.de.generateExpression(indicator.denominator, dataSet).then(function (denominatorResult) {
-          denominator = denominatorResult;
+          if(denominatorResult){
+            denominator = denominatorResult;
+          }else{
+            denominator = undefined;
+          }
         }));
         $.when.apply($, promises).then(function () {
-          var returnValue = (numerator / denominator) * indicator.indicatorType.factor;
-          defer.resolve(returnValue);
+          if(numerator != undefined && denominator != undefined){
+            var returnValue = (numerator / denominator) * indicator.indicatorType.factor;
+            defer.resolve(returnValue);
+          }else{
+            defer.resolve(undefined);
+          }
+
         });
         return defer.promise();
       },
