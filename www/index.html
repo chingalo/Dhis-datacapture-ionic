@@ -230,6 +230,7 @@
         var initialExpression = expression;
         var matcher = expression.match(dhis2.de.cst.formulaPattern);
         var cMatcher = expression.match(dhis2.de.cst.constantPattern);
+        console.log("DataDimension Start:" + expression);
         for (k in matcher) {
           var match = matcher[k];
           // Remove brackets from expression to simplify extraction of identifiers
@@ -239,7 +240,7 @@
             //alert('is total');
             deferreds.push(dhis2.de.getDataElementTotalValue(operand, dataSet, match).done(function (sum, matchRef) {
               expression = expression.replace(matchRef, sum);
-              console.log("DataDimension Total:" + initialExpression + ":" + expression);
+
             }));
           }
           else {
@@ -251,7 +252,6 @@
               } else {
                 expression = undefined;
               }
-              console.log("DataDimension notTotal:" + initialExpression + ":" + expression);
             }));
           }
           // TODO signed numbers
@@ -263,12 +263,12 @@
           deferreds.push(dhis2.de.getConstantValue(operand, match).done(function (sum, matchRef, num) {
             expression = expression.replace(matchRef, sum);
             if (num) {
-              console.log("DataDimension Constant Zeror:" + initialExpression + ":" + expression);
+
             }
           }));
         }
         $.when.apply($, deferreds).then(function () {
-
+          console.log("DataDimension Constant Zeror:" + initialExpression + ":" + expression);
           if (expression) {
             if (expression == "0") {
               expression = 0;
@@ -310,6 +310,7 @@
               }
             }));
           });
+          console.log("Looped through");
           $.when.apply($, promises).then(function () {
             if (dataElements.length > 0) {
               var ids = [];
