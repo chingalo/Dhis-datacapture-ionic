@@ -191,11 +191,11 @@
                 defer.resolve(new Number(constant.value), match);
               } else {
                 console.log("DataDimension ConstanctFuncValue2:" + constantId + ": Zero");
-                defer.resolve(new Number(0), match,1);
+                defer.resolve(new Number(0), match,"Zeror");
               }
             } else {
               console.log("DataDimension ConstanctFuncValue3:" + constantId + ": Zero");
-              defer.resolve(new Number(0), match,1);
+              defer.resolve(new Number(0), match,"Zeror");
             }
           });
         return defer.promise();
@@ -235,7 +235,7 @@
           deferreds.push(dhis2.de.getConstantValue(operand, match).done(function (sum, matchRef,num) {
             expression = expression.replace(matchRef, sum);
             if(num){
-              console.log("DataDimension Constant:" + initialExpression + ":" + expression);
+              console.log("DataDimension Constant Zeror:" + initialExpression + ":" + expression);
             }
           }));
         }
