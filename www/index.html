@@ -164,7 +164,7 @@
         dhis2.sqlLiteServices.getDataFromTableById('dataValues',dataValuesId)
           .done(function(item){
             if (item) {
-              console.log('getDataElementValue',item.value);
+              console.log('getDataElementValue : ' + item.value);
               var val = item.value;
               if (val && dhis2.validation.isNumber(val)) {
                 defer.resolve(new Number(item.value), match);
@@ -183,7 +183,7 @@
           .done(function(constant){
             if (constant) {
               var val = constant.value;
-              console.log('getConstantValue',constant.value);
+              console.log('getConstantValue : ' + constant.value);
               if (val && dhis2.validation.isNumber(val)) {
                 defer.resolve(new Number(constant.value), match);
               } else {
@@ -241,7 +241,7 @@
         var defer = $.Deferred();
         //sample testing on sqlLite services
         dhis2.sqlLiteServices.getDataFromTableByIds('indicators',indicatorIds).done(function(data){
-          console.log('getIndicators',data.length);
+          console.log('getIndicators : ' + data.length);
           defer.resolve(data);
         });
         return defer.promise();

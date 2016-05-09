@@ -44,7 +44,7 @@ angular.module('dataCapture')
       $ionicLoading.hide();
     }
     $scope.navigateToNewPage = function (pageNumber, type) {
-      console.log('navigation testing::pageNumber',pageNumber);
+      console.log('navigation testing::pageNumber ' +pageNumber);
       $scope.data.loading = true;
       if (type == 'last') {
         if ($localStorage.dataEntryData.formType == 'SECTION') {
@@ -358,7 +358,7 @@ angular.module('dataCapture')
 
     //function to save values from extended function
     function saveValue(dataElementId,categoryComboId,value){
-      console.log('saveValue',value);
+      console.log('saveValue' + value);
       prepareDataValuesToIndexDb(dataElementId + "-" + categoryComboId,value,false);
     }
     //@todo modify based on  api on docs
