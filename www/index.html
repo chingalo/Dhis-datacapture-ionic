@@ -109,7 +109,9 @@
                 var index = ids.indexOf(json.id);
                 ids.splice(index, 1);
                 data.push(json);
+                console.log("Dataelements IDS:" + ids.length);
               }
+
               defer.resolve(data,ids);
             }, function (error) {
               defer.reject(error);
@@ -193,16 +195,13 @@
         dhis2.sqlLiteServices.getDataFromTableById('dataValues',dataValuesId)
           .done(function(item){
             if (item) {
-              console.log('getDataElementValue : ' + item.value);
               var val = item.value;
               if (val && dhis2.validation.isNumber(val)) {
                 defer.resolve(new Number(item.value), match);
               } else {
-                console.log("DataElement if1:" + dataValuesId + ":" + val);
                 defer.resolve(new Number("0"), match);
               }
             } else {
-              console.log("DataElement if2:" + dataValuesId + ":" + val);
               defer.resolve(undefined, match);
             }
           });
@@ -212,20 +211,14 @@
         var defer = $.Deferred();
         dhis2.sqlLiteServices.getDataFromTableById('constants',constantId)
           .done(function(constant){
-            console.log("DataDimension ConstanctFunc:" + constantId + ":" + JSON.stringify(constant));
             if (constant) {
               var val = constant.value;
-              console.log('getConstantValue : ' + constant.value);
-
               if (val && dhis2.validation.isNumber(val)) {
-                console.log("DataDimension ConstanctFuncValue1:" + constantId + ":" + constant.value);
                 defer.resolve(new Number(constant.value), match);
               } else {
-                console.log("DataDimension ConstanctFuncValue2:" + constantId + ": Zero");
                 defer.resolve(new Number(1), match,"Zeror");
               }
             } else {
-              console.log("DataDimension ConstanctFuncValue3:" + constantId + ": Zero");
               defer.resolve(new Number(1), match,"Zeror");
             }
           });
