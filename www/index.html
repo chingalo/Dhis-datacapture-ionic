@@ -105,7 +105,34 @@
               var len = results.rows.length;
               var data = [];
               for (var i = 0; i < len; i++) {
-                data.push(eval("(" + results.rows.item(i).data + ")"));
+                var json = eval("(" + results.rows.item(i).data + ")");
+                var index = ids.indexOf(json.id);
+                ids.splice(index, 1);
+                data.push(json);
+              }
+              defer.resolve(data,ids);
+            }, function (error) {
+              defer.reject(error);
+            });
+          });
+          return defer.promise();
+        },
+        searchDataFromTableByIds: function(tableName,ids){
+          var defer = $.Deferred();
+          var attribute = "id";
+          var db = window.sqlitePlugin.openDatabase({name: "hisptz.db"});
+          var questionMarks = "id LIKE '%" + ids[0] +"%'";
+          for(var i = 1; i < ids.length;i++){
+            questionMarks += " OR id LIKE '%" + ids[i] +"%'";
+          }
+          db.transaction(function (tx) {
+            var query = "SELECT * FROM " + tableName + " WHERE " + questionMarks;
+            tx.executeSql(query, [], function (tx, results) {
+              var len = results.rows.length;
+              var data = [];
+              for (var i = 0; i < len; i++) {
+                var json = eval("(" + results.rows.item(i).data + ")");
+                data.push(json);
               }
               defer.resolve(data);
             }, function (error) {
@@ -278,7 +305,8 @@
           },
           rows: []
         };
-        dhis2.de.getIndicators(indicatorIds).done(function (indicators) {
+        dhis2.de.getIndicators(indicatorIds).done(function (indicators,dataElements) {
+          console.log("DataElements:" + dataElements.length);
           $.each(indicators, function (indicatorIndex, indicator) {
             data.metaData.names[indicator.id] = indicator.name;
             promises.push(dhis2.de.evaluateDataIndicator(indicator, dataSet).then(function (value) {
@@ -288,6 +316,10 @@
             }));
           });
           $.when.apply($, promises).then(function () {
+            dhis.de.sqlLiteServices.searchDataFromTableByIds("dataValues",dataElements).done(function(data){
+              console.log('DataElements From DataValues : ' + data.length);
+              //defer.resolve(data);
+            });
             defer.resolve(data);
           });
         });
