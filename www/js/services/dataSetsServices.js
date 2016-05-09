@@ -68,10 +68,10 @@ angular.module('dataCapture')
         if (data.sync) {
           status = 2;
         }
+        console.log('insertDataValues : '+ data.value +' ::status'+status);
         sqlLiteServices.insertDataValues('dataValues', data.id, data, status)
           .then(function (data) {
             //success saving data values
-            console.log('insertDataValues : '+ data.value +' ::status'+status);
           }, function (error) {
             //error
           });
