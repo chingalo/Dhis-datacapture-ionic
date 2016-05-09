@@ -324,7 +324,7 @@
                 //data.metaData.names[indicator.id] = indicator.name;
                 //defer.resolve(data);
                 $.each(items, function (dataElementIndex, dataElement) {
-                  data.rows.push([dataElement.de, dhis2.report.period, dataElement.value]);
+                  data.rows.push([dataElement.de, dhis2.report.period, dataElement.value + ""]);
                 });
                 defer.resolve(data);
               });
@@ -357,7 +357,7 @@
         }));
         $.when.apply($, promises).then(function () {
           if(numerator != undefined && denominator != undefined){
-            var returnValue = (numerator / denominator) * indicator.indicatorType.factor;
+            var returnValue = (parseFloat(numerator) / parseFloat(denominator)) * parseFloat(indicator.indicatorType.factor);
             defer.resolve(returnValue);
           }else{
             defer.resolve(undefined);
