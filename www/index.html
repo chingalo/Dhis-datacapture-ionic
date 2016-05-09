@@ -275,6 +275,7 @@
             }
             defer.resolve(eval('(' + expression + ')'));
           } else {
+            console.log("DataDimension Error:" + initialExpression);
             defer.resolve(undefined);
           }
 
