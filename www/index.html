@@ -199,10 +199,10 @@
               if (val && dhis2.validation.isNumber(val)) {
                 defer.resolve(new Number(item.value), match);
               } else {
-                defer.resolve(new Number("0"), match);
+                defer.resolve(new Number(0), match);
               }
             } else {
-              defer.resolve(undefined, match);
+              defer.resolve(new Number(0), match);
             }
           });
         return defer.promise();
