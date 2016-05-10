@@ -20,6 +20,35 @@ angular.module('dataCapture')
         });
         return defer.promise;
       },
+      insertBatchData:function(tableName,data) {
+        var defer = $q.defer();
+        db = window.sqlitePlugin.openDatabase({name: "my.db"});
+        var query = "INSERT OR REPLACE INTO " + tableName + " (id,data) VALUES";
+        var counter = 0;
+        data.forEach(function (dataVales) {
+          if(counter ==0){
+            query = query+ "("+JSON.stringify(dataVales.id)+",'"+JSON.stringify(dataVales)+"')";
+          }
+          else {
+            query = query + ",("+JSON.stringify(dataVales.id)+",'"+JSON.stringify(dataVales)+"')";
+          }
+          counter ++;
+
+        });
+        if(data.length > 0){
+          db.transaction(function (tx) {
+            tx.executeSql(query,[], function (tx, res) {
+              //success adding data
+              defer.resolve(res);
+            }, function (e) {
+              defer.reject(e);
+            });
+          });
+        }else{
+          defer.resolve();
+        }
+        return defer.promise;
+      },
       insertDataValues : function (tableName,id,data,status) {
         var defer = $q.defer();
         db = window.sqlitePlugin.openDatabase({name: "hisptz.db"});
