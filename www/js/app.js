@@ -292,16 +292,28 @@ angular.module('dataCapture', [
             sectionsServices.getAllSectionsFromServer(base)
               .then(function (sections) {
                 var tableName = 'sections';
+                var promises = [];
                 $scope.data.dataDownLoadingMessage.push('Saving '+sectionCounter+' form sections');
-                sqlLiteServices.insertBatchData(tableName,sections)
-                  .then(function (pass) {
-                    loadPrograms(base);
-                    $localStorage.dataDownLoadingTracker.push(processName);
-                  }, function (fail) {
-                    var message = "Fail to save sections";
-                    progressTopMessage(message);
-                    $scope.data.loading = false;
-                  });
+                sections.forEach(function (section) {
+                  var id = section.id;
+                  promises.push(
+                    sqlLiteServices.insertData(tableName, id, section)
+                      .then(function (pass) {
+                        //alert('success : ' + JSON.stringify(pass));
+                      }, function (fail) {
+                        //alert('Fail : ' + JSON.stringify(fail));
+                      })
+                  )
+                });
+                $q.all(promises).then(function () {
+                  //loading programs
+                  loadPrograms(base);
+                  $localStorage.dataDownLoadingTracker.push(processName);
+                }, function () {
+                  var message = "Fail to save sections";
+                  progressTopMessage(message);
+                  $scope.data.loading = false;
+                });
               }, function () {
                 //error
                 var message = "Fail to download form sections";
@@ -327,17 +339,29 @@ angular.module('dataCapture', [
           } else {
             programManagerServices.getAllProgramsFromServer(base)
               .then(function (programs) {
+                var promises = [];
                 var tableName = "programs";
                 $scope.data.dataDownLoadingMessage.push('Saving '+programCounter+' programs');
-                sqlLiteServices.insertBatchData(tableName,programs)
-                  .then(function (pass) {
-                    loadIndicators(base);
-                    $localStorage.dataDownLoadingTracker.push(processName);
-                  }, function (fail) {
-                    var message = "Fail to save programs";
-                    progressTopMessage(message);
-                    $scope.data.loading = false;
-                  });
+                programs.forEach(function (program) {
+                  var id = program.id;
+                  promises.push(
+                    sqlLiteServices.insertData(tableName, id, program)
+                      .then(function (pass) {
+                        //success
+                      }, function (fail) {
+                        //fail
+                      })
+                  )
+                });
+                $q.all(promises).then(function () {
+                  //loading indicators
+                  loadIndicators(base);
+                  $localStorage.dataDownLoadingTracker.push(processName);
+                }, function () {
+                  var message = "Fail to save programs";
+                  progressTopMessage(message);
+                  $scope.data.loading = false;
+                });
               }, function () {
                 //error
                 var message = "Fail to download programs";
@@ -364,18 +388,29 @@ angular.module('dataCapture', [
           } else {
             indicatorsServices.getAllIndicatorsFromServer(base)
               .then(function (indicators) {
+                var promises = [];
                 var tableName = "indicators";
                 $scope.data.dataDownLoadingMessage.push('Saving '+indicatorCounter+' indicators');
-                sqlLiteServices.insertBatchData(tableName,indicators)
-                  .then(function (pass) {
-                    //loading reports
-                    loadReports(base);
-                    $localStorage.dataDownLoadingTracker.push(processName);
-                  }, function (fail) {
-                    var message = "Fail to save indicators";
-                    progressTopMessage(message);
-                    $scope.data.loading = false;
-                  });
+                indicators.forEach(function (indicator) {
+                  var id = indicator.id;
+                  promises.push(
+                    sqlLiteServices.insertData(tableName, id, indicator)
+                      .then(function (pass) {
+                        //alert('success : ' + JSON.stringify(pass));
+                      }, function (fail) {
+                        //alert('Fail : ' + JSON.stringify(fail));
+                      })
+                  )
+                });
+                $q.all(promises).then(function () {
+                  //loading reports
+                  loadReports(base);
+                  $localStorage.dataDownLoadingTracker.push(processName);
+                }, function () {
+                  var message = "Fail to save indicators";
+                  progressTopMessage(message);
+                  $scope.data.loading = false;
+                });
               }, function () {
                 //error
                 var message = "Fail to download indicators";
@@ -403,17 +438,29 @@ angular.module('dataCapture', [
             reportServices.getAllReportsFromServer(base)
               .then(function (reports) {
                 $scope.data.reports = reports;
+                var promises = [];
                 var tableName = "reports";
                 $scope.data.dataDownLoadingMessage.push('Saving'+reportCounter+' reports');
-                sqlLiteServices.insertBatchData(tableName,reports)
-                  .then(function (pass) {
-                    loadConstants(base);
-                    $localStorage.dataDownLoadingTracker.push(processName);
-                  }, function (fail) {
-                    var message = "Fail to save reports";
-                    progressTopMessage(message);
-                    $scope.data.loading = false;
-                  });
+                reports.forEach(function (report) {
+                  var id = report.id;
+                  promises.push(
+                    sqlLiteServices.insertData(tableName, id, report)
+                      .then(function (pass) {
+                        //alert('success : ' + JSON.stringify(pass));
+                      }, function (fail) {
+                        //alert('Fail : ' + JSON.stringify(fail));
+                      })
+                  )
+                });
+                $q.all(promises).then(function () {
+                  //loading all constants
+                  loadConstants(base);
+                  $localStorage.dataDownLoadingTracker.push(processName);
+                }, function () {
+                  var message = "Fail to save reports";
+                  progressTopMessage(message);
+                  $scope.data.loading = false;
+                });
               }, function () {
                 //error
                 var message = "Fail to download reports";
@@ -447,16 +494,28 @@ angular.module('dataCapture', [
                 $scope.data.dataDownLoadingMessage.push('Saving '+constantCounter+' constants for reports');
                 var promises = [];
                 var tableName = "constants";
-                sqlLiteServices.insertBatchData(tableName,constants)
-                  .then(function (pass) {
-                    $scope.data.dataDownLoadingMessage.push('');
-                    $localStorage.dataDownLoadingStatus = true;
-                    $localStorage.dataDownLoadingTracker.push(processName);
-                  }, function (fail) {
-                    var message = "Fail to save constants";
-                    progressTopMessage(message);
-                    $scope.data.loading = false;
-                  });
+                constants.forEach(function (constant) {
+                  var id = constant.id;
+                  promises.push(
+                    sqlLiteServices.insertData(tableName, id, constant)
+                      .then(function (pass) {
+                        //alert('success : ' + JSON.stringify(pass));
+                      }, function (fail) {
+                        //alert('Fail : ' + JSON.stringify(fail));
+                      })
+                  )
+                });
+                $q.all(promises).then(function () {
+                  $scope.data.dataDownLoadingMessage.push('');
+                  $localStorage.dataDownLoadingStatus = true;
+                  $localStorage.dataDownLoadingTracker.push(processName);
+                  //redirect to th landing page
+                  directToLandingPage();
+                }, function () {
+                  var message = "Fail to save constants";
+                  progressTopMessage(message);
+                  $scope.data.loading = false;
+                });
               }, function () {
                 $scope.data.loading = false;
                 var message = "Fail to download constants for reports";
@@ -485,16 +544,26 @@ angular.module('dataCapture', [
               var promises = [];
               var tableName = "dataSets";
               $scope.data.dataDownLoadingMessage.push('saving '+dataSetsCounter+' data entry forms');
-              sqlLiteServices.insertBatchData(tableName,dataSets)
-                .then(function (pass) {
-                  //load all data entry sections forms
-                  $localStorage.dataDownLoadingTracker.push(processName);
-                  loadDataEntrySections(base);
-                }, function (fail) {
-                  var message = "Fail to save dataSets";
-                  progressTopMessage(message);
-                  $scope.data.loading = false;
-                });
+              dataSets.forEach(function (dataSet) {
+                var id = dataSet.id;
+                promises.push(
+                  sqlLiteServices.insertData(tableName, id, dataSet)
+                    .then(function (pass) {
+                      //alert('success : ' + JSON.stringify(pass));
+                    }, function (fail) {
+                      //alert('Fail : ' + JSON.stringify(fail));
+                    })
+                )
+              });
+              $q.all(promises).then(function () {
+                //load all data entry sections forms
+                $localStorage.dataDownLoadingTracker.push(processName);
+                loadDataEntrySections(base);
+              }, function () {
+                var message = "Fail to save dataSets";
+                progressTopMessage(message);
+                $scope.data.loading = false;
+              });
             }, function () {
               //error getting data sets from server
               var message = "Fail to download data entry forms";
