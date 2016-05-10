@@ -153,7 +153,7 @@ angular.module('dataCapture', [
       //TODO some logic flow during log out process as reset all data on setting
       userServices.initiateLogOutProcess().then(function(){
         $state.go('login');
-        $window.location.reload();
+        //$window.location.reload();
         $scope.data.loading = false;
       },function(){
         progressMessage("The app fail to empty some data during logout");
@@ -233,8 +233,7 @@ angular.module('dataCapture', [
                   $localStorage.loginUserData = userData;
                   addAssignedOrgUnit($localStorage.loginUserData.organisationUnits, base);
                   loadSystemInfo(base);
-                  //loadDataSets(base);
-                  directToLandingPage();
+                  loadDataSets(base);
                 } catch (e) {
                   var message = 'Fail to login, please check your username or password';
                   progressMessage(message);

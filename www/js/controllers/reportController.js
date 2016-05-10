@@ -90,7 +90,7 @@ angular.module('dataCapture')
     //function to handle selected report
     $scope.selectReport = function(reportId){
       delete $localStorage.selectedReport;
-      var message = "Please waiting for report's details are being loaded";
+      var message = "Please wait while report's details are being loaded";
       progressMessage(message);
       getReportDetails(reportId);
     };
@@ -224,7 +224,7 @@ angular.module('dataCapture')
               period :$scope.data.period
             }
           };
-          message = "Please waiting to load report data";
+          message = "Please wait while load report data";
           topProgressMessage(message);
           $state.go('app.generatedReport');
         }else{
@@ -233,7 +233,7 @@ angular.module('dataCapture')
         }
       }
       else{
-        message = "Please waiting to load report data";
+        message = "Please wait while load report data";
         topProgressMessage(message);
         $state.go('app.generatedReport');
       }
