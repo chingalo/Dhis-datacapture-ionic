@@ -146,14 +146,10 @@ angular.module('dataCapture')
 
     //function to delete all data
     function deleteAllData() {
-      sqlLiteServices.dropDataBase().then(function () {
-        var message = "Offline storage has been reset successfully";
-        progressMessage(message);
-        logOutUser();
-      }, function () {
-        var message = "Fail to Reset Offline storage";
-        progressMessage(message);
-      });
+      sqlLiteServices.dropDataBase();
+      var message = "Offline storage has been reset successfully";
+      progressMessage(message);
+      logOutUser();
     }
 
     //function to log out after delete all data
