@@ -233,7 +233,7 @@ angular.module('dataCapture', [
                   $localStorage.loginUserData = userData;
                   addAssignedOrgUnit($localStorage.loginUserData.organisationUnits, base);
                   loadSystemInfo(base);
-                  loadDataSets(base);
+                  //loadDataSets(base);
                 } catch (e) {
                   var message = 'Fail to login, please check your username or password';
                   progressMessage(message);
