@@ -234,6 +234,7 @@ angular.module('dataCapture', [
                   addAssignedOrgUnit($localStorage.loginUserData.organisationUnits, base);
                   loadSystemInfo(base);
                   //loadDataSets(base);
+                  directToLandingPage();
                 } catch (e) {
                   var message = 'Fail to login, please check your username or password';
                   progressMessage(message);
