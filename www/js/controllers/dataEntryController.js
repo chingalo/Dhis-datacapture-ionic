@@ -352,7 +352,7 @@ angular.module('dataCapture')
             var dataElementName = dataElement.name+"_brn_scoreValue";
             var scoreDataElement = getDataElementByName(dataElementName);
             angular.forEach(dataElement.scoreValues,function(scoreValue){
-              if(dataElementValue == scoreValue.value){
+              if(dataElementValue == JSON.parse(scoreValue.value)){
                 correctScoreValue=scoreValue.figure;
                 console.log('correctScoreValue obtained : '+correctScoreValue);
               }
