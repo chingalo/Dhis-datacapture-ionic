@@ -345,7 +345,7 @@ angular.module('dataCapture')
           var correctScoreValue = null;
           console.log('input values value' + dataElementValue);
           angular.forEach(dataElement.scoreValues,function(scoreValue){
-
+            console.log('score values' + scoreValue.value);
             console.log('checker' + value == scoreValue.value);
             if(value == scoreValue.value){
               correctScoreValue=scoreValue.figure;
