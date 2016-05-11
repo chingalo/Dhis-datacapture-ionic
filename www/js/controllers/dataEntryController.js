@@ -347,23 +347,13 @@ angular.module('dataCapture')
           //@todo handle comparison  boolean values
           //for brn data boolean score values
           var correctScoreValue = null;
-          if(dataElement.valueType == "BOOLEAN"){
-            console.log('input values value ' + dataElementValue);
-            var dataElementName = dataElement.name+"_brn_scoreValue";
-            var scoreDataElement = getDataElementByName(dataElementName);
-            angular.forEach(dataElement.scoreValues,function(scoreValue){
-              if(dataElementValue == JSON.parse(scoreValue.value)){
-                correctScoreValue=scoreValue.figure;
-                console.log('correctScoreValue obtained : '+correctScoreValue);
-              }
-            });
-            //@todo find mechanism of identify co-value for data element so far i just pick first category Option Combos as co-value
-            if(correctScoreValue != null && scoreDataElement != null){
-              var de = scoreDataElement.id;
-              var co = scoreDataElement.categoryCombo.categoryOptionCombos[0].id;
-              saveValue(de,co,correctScoreValue);
+          console.log('input values value ' + dataElementValue);
+          angular.forEach(dataElement.scoreValues,function(scoreValue){
+            if(dataElementValue.toString() == scoreValue.value){
+              correctScoreValue=scoreValue.figure;
+              console.log('correctScoreValue obtained : '+correctScoreValue);
             }
-          }
+          });
         }
       });
     }
