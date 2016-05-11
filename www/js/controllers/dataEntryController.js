@@ -343,13 +343,14 @@ angular.module('dataCapture')
             dataElement[dataElement.events.onChange](dataElementValue)
           }
           var correctScoreValue = null;
+          console.log('input values value' + dataElementValue);
           angular.forEach(dataElement.scoreValues,function(scoreValue){
-            console.log('value' + value);
-            console.log(value == scoreValue.value);
+
+            console.log('checker' + value == scoreValue.value);
             if(value == scoreValue.value){
               correctScoreValue=scoreValue.figure;
             }
-            console.log('correctScoreValue'+correctScoreValue);
+            console.log('correctScoreValue obtained : '+correctScoreValue);
           });
         }
       });
