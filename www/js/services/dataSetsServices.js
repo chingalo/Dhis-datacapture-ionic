@@ -115,13 +115,11 @@ angular.module('dataCapture')
           ionicToast.show('Uploading data values to the server', 'top', false, 3000);
         }
         var base = $localStorage.baseUrl;
-        var i = -1;
-        formattedDataValues.forEach(function (data) {
-          i++;
+        formattedDataValues.forEach(function (data,index) {
           $http.post(base + '/api/dataValues?' + data, null)
             .then(function () {
-              dataValues[i].sync = true;
-              dataSetsServices.saveDataSetDataValue(dataValues[i]);
+              dataValues[index].sync = true;
+              dataSetsServices.saveDataSetDataValue(dataValues[index]);
             }, function () {
               //error on uploading data set values
             });
