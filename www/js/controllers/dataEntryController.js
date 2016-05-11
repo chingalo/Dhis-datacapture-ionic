@@ -333,6 +333,7 @@ angular.module('dataCapture')
     };
 
     //function to extend data elements functionality
+    //@TODO input is boolean data element
     function extendDataElementFunctions(dataElement,value){
       dataElement.attributeValues.forEach(function(attributeValue){
         if(attributeValue.attribute.name == 'extendFunction'){
@@ -342,15 +343,27 @@ angular.module('dataCapture')
           if(dataElement.events.onChange){
             dataElement[dataElement.events.onChange](dataElementValue)
           }
-          console.log('input values value ' + dataElementValue);
-          var correctScoreValue = null;
-          angular.forEach(dataElement.scoreValues,function(scoreValue){
-            if(dataElementValue == scoreValue.value){
-              correctScoreValue=scoreValue.figure;
-              console.log('correctScoreValue obtained : '+correctScoreValue);
-            }
 
-          });
+          //@todo handle comparison  boolean values
+          //for brn data boolean score values
+          var correctScoreValue = null;
+          if(dataElement.valueType == "BOOLEAN"){
+            console.log('input values value ' + dataElementValue);
+            var dataElementName = dataElement.name+"_brn_scoreValue";
+            var scoreDataElement = getDataElementByName(dataElementName);
+            angular.forEach(dataElement.scoreValues,function(scoreValue){
+              if(dataElementValue == scoreValue.value){
+                correctScoreValue=scoreValue.figure;
+                console.log('correctScoreValue obtained : '+correctScoreValue);
+              }
+            });
+            //@todo find mechanism of identify co-value for data element so far i just pick first category Option Combos as co-value
+            if(correctScoreValue != null && scoreDataElement != null){
+              var de = scoreDataElement.id;
+              var co = scoreDataElement.categoryCombo.categoryOptionCombos[0].id;
+              saveValue(de,co,correctScoreValue);
+            }
+          }
         }
       });
     }
