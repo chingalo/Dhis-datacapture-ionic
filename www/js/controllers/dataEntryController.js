@@ -307,6 +307,7 @@ angular.module('dataCapture')
       scoreValues:[
         {value:"Yes",figure:0},
         {value:"Partial",figure:0},
+        {value:true,figure:0},
         {value:"No",figure:0},
         {value:"[No value]",figure:" "},
         {value:"No value",figure:" "},
@@ -341,6 +342,15 @@ angular.module('dataCapture')
           if(dataElement.events.onChange){
             dataElement[dataElement.events.onChange](dataElementValue)
           }
+          var correctScoreValue = null;
+          angular.forEach(dataElement.scoreValues,function(scoreValue){
+            console.log('value' + value);
+            console.log(value == scoreValue.value);
+            if(value == scoreValue.value){
+              correctScoreValue=scoreValue.figure;
+            }
+            console.log('correctScoreValue'+correctScoreValue);
+          });
         }
       });
     }
