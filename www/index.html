@@ -308,7 +308,7 @@
             data.metaData.names[indicator.id] = indicator.name;
             promises.push(dhis2.de.evaluateDataIndicator(indicator, dataSet).then(function (value) {
               if (value) {
-                data.rows.push([indicator.id, dhis2.report.period, value]);
+                data.rows.push([indicator.id, dhis2.report.period, value + ""]);
               }
             }));
           });
