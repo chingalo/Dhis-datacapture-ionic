@@ -224,7 +224,7 @@
           });
         return defer.promise();
       },
-      generateExpression: function (expression, dataSet) {
+      generateExpression: function (expression, dataSet,indicator) {
         var defer = $.Deferred();
         var deferreds = [];
         var initialExpression = expression;
@@ -269,7 +269,9 @@
           }));
         }
         $.when.apply($, deferreds).then(function () {
-          console.log("DataDimension Constant Zeror:" + initialExpression + ":" + expression);
+          if(indicator.id == "SH3r0p1FdL3"){
+            console.log("DataDimension Constant Zeror:" + initialExpression + ":" + expression);
+          }
           if (expression) {
             if (expression == "0") {
               expression = 0;
@@ -332,7 +334,8 @@
             } else {
               //console.log("DATAALL:" + JSON.stringify(data.rows));
               var common = 130;
-              for(var i = 0; i < data.rows.length; i++){
+              console.log("DATAALL:" + data.rows.length);
+              for(var i = 0; i < data.rows.length / common; i++){
                 console.log("DATAALL:" + JSON.stringify(data.rows.slice(i * common,(i * common) + common)));
               }
               defer.resolve(data);
@@ -346,7 +349,7 @@
         var promises = [];
         var numerator = 0;
         var denominator = 1;
-        promises.push(dhis2.de.generateExpression(indicator.numerator, dataSet).then(function (numeratorResult) {
+        promises.push(dhis2.de.generateExpression(indicator.numerator, dataSet,indicator).then(function (numeratorResult) {
           if(numeratorResult){
             numerator = numeratorResult;
           }else{
@@ -354,7 +357,7 @@
           }
 
         }));
-        promises.push(dhis2.de.generateExpression(indicator.denominator, dataSet).then(function (denominatorResult) {
+        promises.push(dhis2.de.generateExpression(indicator.denominator, dataSet,indicator).then(function (denominatorResult) {
           if(denominatorResult){
             denominator = denominatorResult;
           }else{
