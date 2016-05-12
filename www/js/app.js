@@ -153,7 +153,7 @@ angular.module('dataCapture', [
       //TODO some logic flow during log out process as reset all data on setting
       userServices.initiateLogOutProcess().then(function(){
         $state.go('login');
-        $window.location.reload();
+        //$window.location.reload();
         $scope.data.loading = false;
       },function(){
         progressMessage("The app fail to empty some data during logout");

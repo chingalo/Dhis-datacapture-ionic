@@ -307,6 +307,7 @@ angular.module('dataCapture')
       scoreValues:[
         {value:"Yes",figure:0},
         {value:"Partial",figure:0},
+        {value:true,figure:0},
         {value:"No",figure:0},
         {value:"[No value]",figure:" "},
         {value:"No value",figure:" "},
@@ -332,6 +333,7 @@ angular.module('dataCapture')
     };
 
     //function to extend data elements functionality
+    //@TODO input is boolean data element
     function extendDataElementFunctions(dataElement,value){
       dataElement.attributeValues.forEach(function(attributeValue){
         if(attributeValue.attribute.name == 'extendFunction'){
@@ -341,6 +343,17 @@ angular.module('dataCapture')
           if(dataElement.events.onChange){
             dataElement[dataElement.events.onChange](dataElementValue)
           }
+
+          //@todo handle comparison  boolean values
+          //for brn data boolean score values
+          var correctScoreValue = null;
+          console.log('input values value ' + dataElementValue);
+          angular.forEach(dataElement.scoreValues,function(scoreValue){
+            if(dataElementValue.toString() == scoreValue.value.toString()){
+              correctScoreValue=scoreValue.figure;
+              console.log('correctScoreValue obtained : '+correctScoreValue);
+            }
+          });
         }
       });
     }
