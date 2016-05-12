@@ -330,7 +330,11 @@
                 console.log("Alalytics Data:" + JSON.stringify(data));
               });
             } else {
-              console.log("DATAALL:" + JSON.stringify(data.rows));
+              //console.log("DATAALL:" + JSON.stringify(data.rows));
+              var common = 130;
+              for(var i = 0; i < data.rows.length; i++){
+                console.log("DATAALL:" + JSON.stringify(data.rows.slice(i * common,(i * common) + common)));
+              }
               defer.resolve(data);
             }
           });
