@@ -273,14 +273,13 @@
           if(testArray.indexOf(indicator.id) > -1){
             console.log("DataDimension Constant Zeror:" +indicator.id +":" + initialExpression + ":" + expression);
           }
+
           if (expression) {
-            if (expression == "0") {
-              expression = 0;
-            }
             defer.resolve(eval('(' + expression + ')'));
           } else {
             console.log("DataDimension Error:" + initialExpression);
-            defer.resolve(undefined);
+            //defer.resolve(undefined);
+            defer.resolve(0);
           }
 
         });
