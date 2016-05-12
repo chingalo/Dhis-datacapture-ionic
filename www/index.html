@@ -327,6 +327,7 @@
                   data.rows.push([dataElement.de, dhis2.report.period, dataElement.value + ""]);
                 });
                 defer.resolve(data);
+                console.log("Alalytics Data:" + JSON.stringify(data));
               });
             } else {
               console.log("DATAALL:" + JSON.stringify(data.rows));
