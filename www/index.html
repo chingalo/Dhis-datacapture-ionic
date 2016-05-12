@@ -360,7 +360,7 @@
         $.when.apply($, promises).then(function () {
           if(numerator != undefined && denominator != undefined){
             var returnValue = (parseFloat(numerator) / parseFloat(denominator)) * parseFloat(indicator.indicatorType.factor);
-            defer.resolve(returnValue);
+            defer.resolve(returnValue.toFixed(1));
           }else{
             defer.resolve(undefined);
           }
