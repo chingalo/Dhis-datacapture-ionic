@@ -218,10 +218,10 @@
                 defer.resolve(new Number(constant.value), match);
               } else {
                 console.log("Constant Bad:"+JSON.stringify(constant));
-                defer.resolve(new Number(1), match, "Zeror");
+                defer.resolve(new Number(constant.value), match, "Zeror");
               }
             } else {
-              console.log("Constant Undefined:"+constantId);
+              console.log("Constant Undefined Id:"+constantId);
               defer.resolve(new Number(1), match, "Zeror");
             }
           });
