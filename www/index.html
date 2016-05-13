@@ -267,10 +267,10 @@
           var match = cMatcher[k];
           // Remove brackets from expression to simplify extraction of identifiers
           //var operand = match.replace(/C{(.*)}/g, '');
-          var operand = /C{(.*)}/.exec(match[0]);
+          var operand = /C{(.*)}/.exec(match);
           console.log("Operand Constant:" + JSON.stringify(operand));
           //var operand = match.replace(/[C\{\}]/g, '');
-          deferreds.push(dhis2.de.getConstantValue(operand, match,indicator).done(function (sum, matchRef, num) {
+          deferreds.push(dhis2.de.getConstantValue(operand[1], match,indicator).done(function (sum, matchRef, num) {
             if (sum) {
               expression = expression.replace(matchRef, sum);
             }else{
