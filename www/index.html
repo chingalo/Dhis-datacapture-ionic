@@ -311,7 +311,7 @@
             promises.push(dhis2.de.evaluateDataIndicator(indicator, dataSet).then(function (value) {
               if (value) {
                 data.rows.push([indicator.id, dhis2.report.period, value + ""]);
-              }els{
+              }else{
                 data.rows.push([indicator.id, dhis2.report.period, "0.0"]);
               }
             }));
