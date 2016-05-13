@@ -333,7 +333,6 @@ angular.module('dataCapture')
     };
 
     //function to extend data elements functionality
-    //@TODO input is boolean data element
     function extendDataElementFunctions(dataElement,value){
       dataElement.attributeValues.forEach(function(attributeValue){
         if(attributeValue.attribute.name == 'extendFunction'){
@@ -344,16 +343,15 @@ angular.module('dataCapture')
             dataElement[dataElement.events.onChange](dataElementValue)
           }
 
-          //@todo handle comparison  boolean values
           //for brn data boolean score values
-          var correctScoreValue = null;
+         /* var correctScoreValue = null;
           console.log('input values value ' + dataElementValue);
           angular.forEach(dataElement.scoreValues,function(scoreValue){
             if(dataElementValue.toString() == scoreValue.value.toString()){
               correctScoreValue=scoreValue.figure;
               console.log('correctScoreValue obtained : '+correctScoreValue);
             }
-          });
+          });*/
         }
       });
     }
@@ -371,7 +369,7 @@ angular.module('dataCapture')
 
     //function to save values from extended function
     function saveValue(dataElementId,categoryComboId,value){
-      console.log('saveValue score values : ' + value);
+     // console.log('saveValue score values : ' + value);
       prepareDataValuesToIndexDb(dataElementId + "-" + categoryComboId,value,false);
     }
     //@todo modify based on  api on docs
