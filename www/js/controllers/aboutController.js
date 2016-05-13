@@ -8,9 +8,9 @@ angular.module('dataCapture')
     $scope.data.systemInfo = $localStorage.systemInfo;
     $scope.data.appInfo = {
       Name : 'Dhis 2 Touch',
-      Version : '0.19',
-      'App revision' : 'a9c1547',
-      'Release status' : 'Release'
+      Version : '0.20',
+      'App revision' : '7e52b04',
+      'Release status' : 'Snapshot'
     };
     $scope.data.appStorageStatus = {
       synced : {value : 0,data : false},
