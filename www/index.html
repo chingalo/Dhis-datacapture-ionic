@@ -214,11 +214,14 @@
             if (constant) {
               var val = constant.value;
               if (val && dhis2.validation.isNumber(val)) {
+                console.log("Constant Good:"+JSON.stringify(constant));
                 defer.resolve(new Number(constant.value), match);
               } else {
+                console.log("Constant Bad:"+JSON.stringify(constant));
                 defer.resolve(new Number(1), match, "Zeror");
               }
             } else {
+              console.log("Constant Undefined:"+JSON.stringify(constant));
               defer.resolve(new Number(1), match, "Zeror");
             }
           });
@@ -247,10 +250,10 @@
             var de = operand.substring(0, operand.indexOf(dhis2.de.cst.separator));
             var coc = operand.substring(operand.indexOf(dhis2.de.cst.separator) + 1, operand.length);
             deferreds.push(dhis2.de.getDataElementValue(de, coc, dataSet, match).done(function (sum, matchRef) {
-              if (sum && expression) {
+              if (sum) {
                 expression = expression.replace(matchRef, sum);
               } else {
-                expression = undefined;
+                expression = expression.replace(matchRef, 0);
               }
             }));
           }
@@ -261,10 +264,10 @@
           // Remove brackets from expression to simplify extraction of identifiers
           var operand = match.replace(/[C\{\}]/g, '');
           deferreds.push(dhis2.de.getConstantValue(operand, match).done(function (sum, matchRef, num) {
-            if (sum && expression) {
+            if (sum) {
               expression = expression.replace(matchRef, sum);
             }else{
-              expression = undefined;
+              expression = expression.replace(matchRef, 0);
             }
           }));
         }
