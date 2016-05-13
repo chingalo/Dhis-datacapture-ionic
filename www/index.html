@@ -214,17 +214,20 @@
             if (constant) {
               var val = constant.value;
               if (val && dhis2.validation.isNumber(val)) {
+                console.log("Constant Good:"+JSON.stringify(constant));
                 defer.resolve(new Number(constant.value), match);
               } else {
-                defer.resolve(new Number(1), match, "Zeror");
+                console.log("Constant Bad:"+JSON.stringify(constant));
+                defer.resolve(new Number(constant.value), match, "Zeror");
               }
             } else {
+              console.log("Constant Undefined Id:"+constantId);
               defer.resolve(new Number(1), match, "Zeror");
             }
           });
         return defer.promise();
       },
-      generateExpression: function (expression, dataSet) {
+      generateExpression: function (expression, dataSet,indicator) {
         var defer = $.Deferred();
         var deferreds = [];
         var initialExpression = expression;
@@ -247,10 +250,10 @@
             var de = operand.substring(0, operand.indexOf(dhis2.de.cst.separator));
             var coc = operand.substring(operand.indexOf(dhis2.de.cst.separator) + 1, operand.length);
             deferreds.push(dhis2.de.getDataElementValue(de, coc, dataSet, match).done(function (sum, matchRef) {
-              if (sum && expression) {
+              if (sum) {
                 expression = expression.replace(matchRef, sum);
               } else {
-                expression = undefined;
+                expression = expression.replace(matchRef, 0);
               }
             }));
           }
@@ -261,23 +264,28 @@
           // Remove brackets from expression to simplify extraction of identifiers
           var operand = match.replace(/[C\{\}]/g, '');
           deferreds.push(dhis2.de.getConstantValue(operand, match).done(function (sum, matchRef, num) {
-            if (sum && expression) {
+            if (sum) {
               expression = expression.replace(matchRef, sum);
             }else{
-              expression = undefined;
+              expression = expression.replace(matchRef, 0);
             }
           }));
         }
         $.when.apply($, deferreds).then(function () {
-          console.log("DataDimension Constant Zeror:" + initialExpression + ":" + expression);
-          if (expression) {
-            if (expression == "0") {
-              expression = 0;
+          var testArray = [["LEIgenq451E","2.0","0.0"],["NTZWnL2WSOX","2.0","0.0"],["NedqBerIglF","0.0","2.0"],["OwMstCFC5UU","0.0","0.0"],["QfpgDDUtAAf","2.0","0.0"],["TSYNgV4yhPt","2.0","0.0"],["TszaHN8b9FK","2.0","2.0"],["UqoNXHCKuRq","2.0","0.0"],["WA0YfvcnAXs","0.0","0.5"],["X0djRyMPzQ1","4.0","0.0"],["ZNcmyxS3rrE","4.0","0.0"],["Zo00VZH2s6y","2.0","2.0"],["Zs059xPid05","4.0","4.0"],["doUKwcIgTNN","2.0","1.0"],["f3TGjuR3NEB","1.2","4.0"],["gUt86JrXQnT","2.0","1.0"],["iCzq1D6uE2X","2.0","2.0"],["j3n75sV3wCP","3.0","2.0"],["oSxRhuRvKbG","2.0","0.0"],["rTmgAAw7qnB","3.0","1.0"],["w1t4ezjJcMC","2.0","2.0"],["wkP1VVeV0cr","0.0","0.0"],["xFtXuk43WrO","2.0","2.0"],["xdowCkHsSn6","2.0","2.0"],["xyoz5YQyFUd","2.0","2.0"],["z24BS2zLq5t","2.0","2.0"]];
+          testArray.forEach(function(row){
+            if(row[0] == indicator.id){
+              console.log("DataDimension Constant Zeror:" +indicator.id +":" + initialExpression + ":" + expression + ":Expected:" + row[1] + ":Previous:" + row[1]);
             }
+          });
+
+
+          if (expression) {
             defer.resolve(eval('(' + expression + ')'));
           } else {
             console.log("DataDimension Error:" + initialExpression);
-            defer.resolve(undefined);
+            //defer.resolve(undefined);
+            defer.resolve(0);
           }
 
         });
@@ -308,7 +316,9 @@
             data.metaData.names[indicator.id] = indicator.name;
             promises.push(dhis2.de.evaluateDataIndicator(indicator, dataSet).then(function (value) {
               if (value) {
-                data.rows.push([indicator.id, dhis2.report.period, value]);
+                data.rows.push([indicator.id, dhis2.report.period, value + ""]);
+              }else{
+                data.rows.push([indicator.id, dhis2.report.period, "0.0"]);
               }
             }));
           });
@@ -327,9 +337,15 @@
                   data.rows.push([dataElement.de, dhis2.report.period, dataElement.value + ""]);
                 });
                 defer.resolve(data);
+                console.log("Alalytics Data:" + JSON.stringify(data));
               });
             } else {
-              console.log("DATAALL:" + JSON.stringify(data.rows));
+              //console.log("DATAALL:" + JSON.stringify(data.rows));
+              var common = 130;
+              console.log("DATAALL:" + data.rows.length);
+              for(var i = 0; i < data.rows.length / common; i++){
+                console.log("DATAALL:" + JSON.stringify(data.rows.slice(i * common,(i * common) + common)));
+              }
               defer.resolve(data);
             }
           });
@@ -341,7 +357,7 @@
         var promises = [];
         var numerator = 0;
         var denominator = 1;
-        promises.push(dhis2.de.generateExpression(indicator.numerator, dataSet).then(function (numeratorResult) {
+        promises.push(dhis2.de.generateExpression(indicator.numerator, dataSet,indicator).then(function (numeratorResult) {
           if(numeratorResult){
             numerator = numeratorResult;
           }else{
@@ -349,7 +365,7 @@
           }
 
         }));
-        promises.push(dhis2.de.generateExpression(indicator.denominator, dataSet).then(function (denominatorResult) {
+        promises.push(dhis2.de.generateExpression(indicator.denominator, dataSet,indicator).then(function (denominatorResult) {
           if(denominatorResult){
             denominator = denominatorResult;
           }else{
@@ -359,7 +375,7 @@
         $.when.apply($, promises).then(function () {
           if(numerator != undefined && denominator != undefined){
             var returnValue = (parseFloat(numerator) / parseFloat(denominator)) * parseFloat(indicator.indicatorType.factor);
-            defer.resolve(returnValue);
+            defer.resolve(returnValue.toFixed(1));
           }else{
             defer.resolve(undefined);
           }
