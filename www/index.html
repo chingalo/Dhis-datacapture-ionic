@@ -207,10 +207,14 @@
           });
         return defer.promise();
       },
-      getConstantValue: function (constantId, match) {
+      getConstantValue: function (constantId, match,indicator) {
         var defer = $.Deferred();
         dhis2.sqlLiteServices.getDataFromTableById('constants', constantId)
           .done(function (constant) {
+            var testConstants = ["yIO2TSCXdO0","E4VL9sMDC4S"];
+            if(testConstants.indexOf(constantId) > -1){
+              console.log("Previously Undefined constants:"+JSON.stringify(constant));
+            }
             if (constant) {
               var val = constant.value;
               if (val && dhis2.validation.isNumber(val)) {
@@ -221,7 +225,7 @@
                 defer.resolve(new Number(constant.value), match, "Zeror");
               }
             } else {
-              console.log("Constant Undefined Id:"+constantId);
+              console.log("Constant Undefined Id:"+ JSON.stringfy(indicator) +""+constantId);
               defer.resolve(new Number(1), match, "Zeror");
             }
           });
@@ -263,7 +267,7 @@
           var match = cMatcher[k];
           // Remove brackets from expression to simplify extraction of identifiers
           var operand = match.replace(/[C\{\}]/g, '');
-          deferreds.push(dhis2.de.getConstantValue(operand, match).done(function (sum, matchRef, num) {
+          deferreds.push(dhis2.de.getConstantValue(operand, match,indicator).done(function (sum, matchRef, num) {
             if (sum) {
               expression = expression.replace(matchRef, sum);
             }else{
