@@ -32,6 +32,7 @@
   </feature>
   <feature name="http://api.phonegap.com/1.0/network"/>
   <plugin name="io.litehelpers.cordova.sqlitestorage" spec="0.7.5" source="pgb"/>
+  <plugin name="cordova-plugin-splashscreen" spec="2.1.0" source="pgb" />
   <plugin name="cordova-plugin-whitelist" version="~1"/>
   <plugin name="cordova-plugin-whitelist" spec="~1"/>
   <gap:plugin name="org.apache.cordova.battery-status" source="pgb"/>
