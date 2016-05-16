@@ -8,4 +8,5 @@ A Dhis 2 Touch mobile app powered by HispTz, developed using web technologies, A
 </ol>
 <p>
 <a href = "https://build.phonegap.com/apps/1886984/share">Download now on Phonegap build</a>
+<a href = "https://play.google.com/store/apps/details?id=com.hipstz.dhis2.dhis2touch">Google play store</a>
 </p>
