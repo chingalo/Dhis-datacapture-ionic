@@ -132,7 +132,7 @@ angular.module('dataCapture')
     }
 
     function createDataValuesTable() {
-      var db = window.sqlitePlugin.openDatabase({name: "hisptz.db"});
+      var db = window.sqlitePlugin.openDatabase({name: dhis2.database});
       db.transaction(function (tx) {
         tx.executeSql('CREATE TABLE IF NOT EXISTS dataValues (id TEXT primary key, data LONGTEXT, isSync INTEGER)', [],
           function (tx, result) {

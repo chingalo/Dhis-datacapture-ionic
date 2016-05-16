@@ -8,7 +8,7 @@ angular.module('dataCapture')
     var sqlLiteServices = {
       insertData: function (tableName,id,data) {
         var defer = $q.defer();
-        db = window.sqlitePlugin.openDatabase({name: "hisptz.db"});
+        db = window.sqlitePlugin.openDatabase({name: dhis2.database});
         db.transaction(function (tx) {
           var query = "INSERT OR REPLACE INTO " + tableName + " (id,data) VALUES (?,?)";
           tx.executeSql(query, [id,JSON.stringify(data)], function (tx, res) {
@@ -51,7 +51,7 @@ angular.module('dataCapture')
       },
       insertDataValues : function (tableName,id,data,status) {
         var defer = $q.defer();
-        db = window.sqlitePlugin.openDatabase({name: "hisptz.db"});
+        db = window.sqlitePlugin.openDatabase({name: dhis2.database});
         db.transaction(function (tx) {
           var query = "INSERT OR REPLACE INTO " + tableName + " (id,data,isSync) VALUES (?,?,?)";
           tx.executeSql(query, [id,JSON.stringify(data),status], function (tx, res) {
@@ -65,7 +65,7 @@ angular.module('dataCapture')
       },
       updateDataByAttribute : function(tableName,attribute,value,data){
         var defer = $q.defer();
-        db = window.sqlitePlugin.openDatabase({name: "hisptz.db"});
+        db = window.sqlitePlugin.openDatabase({name: dhis2.database});
         db.transaction(function (tx) {
           var query = "UPDATE " + tableName + " SET data = ?  WHERE "+attribute+" = ?";
           tx.executeSql(query, [JSON.stringify(data),value], function (tx,ru) {
@@ -78,7 +78,7 @@ angular.module('dataCapture')
       },
       getAllData: function (tableName) {
         var defer = $q.defer();
-        db = window.sqlitePlugin.openDatabase({name: "hisptz.db"});
+        db = window.sqlitePlugin.openDatabase({name: dhis2.database});
         db.transaction(function (tx) {
           var query = "SELECT * FROM " + tableName + ";";
           tx.executeSql(query, [], function (tx, results) {
@@ -96,7 +96,7 @@ angular.module('dataCapture')
       },
       getDataById : function(tableName,id){
         var defer = $q.defer();
-        db = window.sqlitePlugin.openDatabase({name: "hisptz.db"});
+        db = window.sqlitePlugin.openDatabase({name: dhis2.database});
         db.transaction(function (tx) {
           var query = "SELECT * FROM " + tableName + " WHERE id = ?;";
           tx.executeSql(query, [id], function (tx, results) {
@@ -114,7 +114,7 @@ angular.module('dataCapture')
       },
       getAllDataByAttribute : function(tableName,attribute,value){
         var defer = $q.defer();
-        db = window.sqlitePlugin.openDatabase({name: "hisptz.db"});
+        db = window.sqlitePlugin.openDatabase({name: dhis2.database});
         db.transaction(function (tx) {
           var query = "SELECT * FROM " + tableName + " WHERE "+attribute+" = ?";
           tx.executeSql(query, [value], function (tx, results) {
@@ -132,7 +132,7 @@ angular.module('dataCapture')
       },
       deleteDataByAttribute : function(tableName,attribute,value){
         var defer = $q.defer();
-        db = window.sqlitePlugin.openDatabase({name: "hisptz.db"});
+        db = window.sqlitePlugin.openDatabase({name: dhis2.database});
         db.transaction(function (tx) {
           var query = "DELETE FROM " + tableName + " WHERE "+attribute+" = ?";
           tx.executeSql(query, [value], function (tx) {
@@ -156,7 +156,7 @@ angular.module('dataCapture')
       },
       dropTable : function(tableName){
         var defer = $q.defer();
-        db = window.sqlitePlugin.openDatabase({name: "hisptz.db"});
+        db = window.sqlitePlugin.openDatabase({name: dhis2.database});
         db.transaction(function (tx) {
           var query = "DROP TABLE " + tableName + ";";
           tx.executeSql(query, [], function (tx) {
@@ -169,7 +169,7 @@ angular.module('dataCapture')
       },
       dropDataBase : function(){
         var defer = $q.defer();
-        window.sqlitePlugin.deleteDatabase({name: "hisptz.db"},function(){
+        window.sqlitePlugin.deleteDatabase({name: dhis2.database},function(){
           defer.resolve();
         },function(){
           defer.reject();

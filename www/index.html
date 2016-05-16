@@ -76,7 +76,7 @@
         getDataFromTableById: function (tableName, id) {
           var defer = $.Deferred();
           var attribute = "id";
-          var db = window.sqlitePlugin.openDatabase({name: "hisptz.db"});
+          var db = window.sqlitePlugin.openDatabase({name: dhis2.database});
           db.transaction(function (tx) {
             var query = "SELECT * FROM " + tableName + " WHERE " + attribute + " = ?";
             tx.executeSql(query, [id], function (tx, results) {
@@ -95,7 +95,7 @@
         getDataFromTableByIds: function (tableName, ids) {
           var defer = $.Deferred();
           var attribute = "id";
-          var db = window.sqlitePlugin.openDatabase({name: "hisptz.db"});
+          var db = window.sqlitePlugin.openDatabase({name: dhis2.database});
           var questionMarks = "?";
           for (var i = 1; i < ids.length; i++) {
             questionMarks += ",?";
@@ -121,7 +121,7 @@
         searchDataFromTableByIds: function (tableName, ids) {
           var defer = $.Deferred();
           var attribute = "id";
-          var db = window.sqlitePlugin.openDatabase({name: "hisptz.db"});
+          var db = window.sqlitePlugin.openDatabase({name: dhis2.database});
           var questionMarks = "id LIKE '%" + ids[0] + "%'";
           for (var i = 1; i < ids.length; i++) {
             questionMarks += " OR id LIKE '%" + ids[i] + "%'";
@@ -144,7 +144,7 @@
         },
         getAllDataFromTable: function (tableName) {
           var defer = $.Deferred();
-          var db = window.sqlitePlugin.openDatabase({name: "hisptz.db"});
+          var db = window.sqlitePlugin.openDatabase({name: dhis2.database});
           db.transaction(function (tx) {
             var query = "SELECT * FROM " + tableName + ";";
             tx.executeSql(query, [], function (tx, results) {

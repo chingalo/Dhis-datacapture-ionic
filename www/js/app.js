@@ -56,7 +56,6 @@ angular.module('dataCapture', [
 
     //creation of database for an app
     function initDatabase() {
-      console.log('database name : ' + dhis2.database);
       var db = window.sqlitePlugin.openDatabase({name: dhis2.database});
       var tables = ['dataSets', 'reports', 'sections', 'orgUnits', 'indicators', 'constants','programs'];
       tables.forEach(function (table) {
