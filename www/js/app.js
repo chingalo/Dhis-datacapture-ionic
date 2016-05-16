@@ -15,7 +15,7 @@ angular.module('dataCapture', [
     'angular-spinkit'
   ])
 
-  .run(function ($ionicPlatform) {
+  .run(function ($ionicPlatform,$rootScope,$ionicLoading) {
     $ionicPlatform.ready(function () {
       // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
       // for form inputs)
@@ -27,6 +27,14 @@ angular.module('dataCapture', [
         // org.apache.cordova.statusbar required
         StatusBar.styleDefault();
       }
+      $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
+        $ionicLoading.show({
+          template: '<i class="icon ion-loading-b"></i>'
+        });
+      });
+      $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
+        $ionicLoading.hide();
+      });
     });
   })
 
