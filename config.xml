@@ -25,23 +25,13 @@
   <preference name="UIWebViewBounce" value="false"/>
   <preference name="android-minSdkVersion" value="15"/>
   <preference name="BackupWebStorage" value="none"/>
-
-  <!-- slash screen-->
-  <preference name="ShowSplashScreen" value="true" />
   <preference name="SplashScreen" value="screen"/>
   <preference name="SplashScreenDelay" value="3000"/>
-  <preference name="AutoHideSplashScreen" value="true" />
-  <preference name="SplashShowOnlyFirstTime" value="false" />
-  <preference name="FadeSplashScreen" value="false"/>
-  <feature name="SplashScreen">
-    <param name="android-package" value="org.apache.cordova.splashscreen.SplashScreen" />
-  </feature>
-
   <feature name="StatusBar">
     <param name="ios-package" value="CDVStatusBar" onload="true"/>
   </feature>
   <feature name="http://api.phonegap.com/1.0/network"/>
-  <plugin name="cordova-plugin-splashscreen" spec="2.1.0" source="pgb" />
+  <plugin name="io.litehelpers.cordova.sqlitestorage" spec="0.7.5" source="pgb"/>
   <plugin name="cordova-plugin-whitelist" version="~1"/>
   <plugin name="cordova-plugin-whitelist" spec="~1"/>
   <gap:plugin name="org.apache.cordova.battery-status" source="pgb"/>
