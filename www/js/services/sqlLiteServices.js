@@ -10,9 +10,9 @@ angular.module('dataCapture')
         var defer = $q.defer();
         db = window.sqlitePlugin.openDatabase({name: dhis2.database});
         db.transaction(function (tx) {
-          var query = "SELECT COUNT(*) FROM " + tableName + ";";
+          var query = "SELECT * FROM " + tableName + ";";
           tx.executeSql(query, [], function (tx, results) {
-            console.log(tableName + " : " + results.rows.length);
+            console.log(tableName + ' : ' + results.rows.length);
             defer.resolve(results.rows.length);
           }, function (error) {
             defer.reject(error);
