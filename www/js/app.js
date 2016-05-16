@@ -306,6 +306,7 @@ angular.module('dataCapture', [
     function loadDataEntrySections(base) {
       userServices.preRequestDataCounter('sections',base)
         .then(function(sectionCounter){
+          //recordsCounter
           $scope.data.dataDownLoadingMessage.push('Downloading '+sectionCounter+' form sections');
           var processName = "dataEntrySection";
           if (isProcessCompleted(processName)) {
@@ -354,6 +355,7 @@ angular.module('dataCapture', [
     function loadPrograms(base){
       userServices.preRequestDataCounter('programs',base)
         .then(function(programCounter){
+          //recordsCounter
           $scope.data.loading = true;
           $scope.data.dataDownLoadingMessage.push('Downloading '+programCounter+' programs');
           var processName = "programs";
@@ -403,6 +405,7 @@ angular.module('dataCapture', [
     function loadIndicators(base) {
       userServices.preRequestDataCounter('indicators',base)
         .then(function(indicatorCounter){
+          //recordsCounter
           $scope.data.loading = true;
           $scope.data.dataDownLoadingMessage.push('Downloading '+indicatorCounter+' indicators');
           var processName = "indicators";
@@ -452,6 +455,7 @@ angular.module('dataCapture', [
     function loadReports(base) {
       userServices.preRequestDataCounter('reports',base)
         .then(function(reportCounter){
+          //recordsCounter
           var processName = 'reports';
           $scope.data.dataDownLoadingMessage.push('Downloading '+reportCounter+' reports');
           if (isProcessCompleted(processName)) {
@@ -504,6 +508,7 @@ angular.module('dataCapture', [
     function loadConstants(base) {
       userServices.preRequestDataCounter('constants',base)
         .then(function(constantCounter){
+          //recordsCounter
           var processName = "constants";
           $scope.data.dataDownLoadingMessage.push('Downloading '+constantCounter+' constants for reports');
           if (isProcessCompleted(processName)) {
@@ -556,6 +561,7 @@ angular.module('dataCapture', [
     function loadDataSets(base) {
       userServices.preRequestDataCounter('dataSets',base)
         .then(function(dataSetsCounter){
+          //recordsCounter
           $localStorage.baseUrl = base;
           $scope.data.loading = true;
           var processName = "dataSets";
@@ -604,6 +610,7 @@ angular.module('dataCapture', [
 
     //function to fetch all orgUnits assigned to the user from server
     function addAssignedOrgUnit(orgUnits, baseUrl) {
+      //recordsCounter
       var processName = "orgUnits";
       $scope.data.dataDownLoadingMessage.push('Fetching '+orgUnits.length+' assigned Organisation ');
       if (!isProcessCompleted(processName)) {

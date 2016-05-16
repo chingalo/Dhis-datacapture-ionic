@@ -6,6 +6,19 @@ angular.module('dataCapture')
   .factory('sqlLiteServices', function ($q) {
     var db = null;
     var sqlLiteServices = {
+      recordsCounter : function(tableName){
+        var defer = $q.defer();
+        db = window.sqlitePlugin.openDatabase({name: dhis2.database});
+        db.transaction(function (tx) {
+          var query = "SELECT COUNT(*) FROM " + tableName + ";";
+          tx.executeSql(query, [], function (tx, results) {
+            defer.resolve(results.rows.length);
+          }, function (error) {
+            defer.reject(error);
+          });
+        });
+        return defer.promise;
+      },
       insertData: function (tableName,id,data) {
         var defer = $q.defer();
         db = window.sqlitePlugin.openDatabase({name: dhis2.database});
