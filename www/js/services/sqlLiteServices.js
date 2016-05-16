@@ -12,6 +12,7 @@ angular.module('dataCapture')
         db.transaction(function (tx) {
           var query = "SELECT COUNT(*) FROM " + tableName + ";";
           tx.executeSql(query, [], function (tx, results) {
+            console.log(tableName + " : " + results.rows.length);
             defer.resolve(results.rows.length);
           }, function (error) {
             defer.reject(error);
