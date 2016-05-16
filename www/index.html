@@ -65,6 +65,7 @@
   <script src="library/angular-spinkit/angular-spinkit.min.js"></script>
   <script>
     var dhis2 = {
+      database: null,
       validation: {
         isNumber: function (value) {
           var regex = /^(-?0|-?[1-9]\d*)(\.\d+)?(E\d+)?$/;

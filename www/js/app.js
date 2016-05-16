@@ -55,33 +55,30 @@ angular.module('dataCapture', [
     }
 
     //creation of database for an app
-    initDatabase();
     function initDatabase() {
-      document.addEventListener("deviceready", onDeviceReady, false);
-      function onDeviceReady() {
-        var db = window.sqlitePlugin.openDatabase({name: "hisptz.db"});
-        var tables = ['dataSets', 'reports', 'sections', 'orgUnits', 'indicators', 'constants','programs'];
-        tables.forEach(function (table) {
-          db.transaction(function (tx) {
-            tx.executeSql('CREATE TABLE IF NOT EXISTS ' + table + ' (id TEXT primary key, data LONGTEXT)', [],
-              function (tx, result) {
-                //alert("Table "+table+" created successfully");
-              },
-              function (error) {
-                //alert("Error occurred while creating the table "+table+".");
-              });
-          });
-        });
+      console.log('database name : ' + dhis2.database);
+      var db = window.sqlitePlugin.openDatabase({name: dhis2.database});
+      var tables = ['dataSets', 'reports', 'sections', 'orgUnits', 'indicators', 'constants','programs'];
+      tables.forEach(function (table) {
         db.transaction(function (tx) {
-          tx.executeSql('CREATE TABLE IF NOT EXISTS dataValues (id TEXT primary key, data LONGTEXT, isSync INTEGER)', [],
+          tx.executeSql('CREATE TABLE IF NOT EXISTS ' + table + ' (id TEXT primary key, data LONGTEXT)', [],
             function (tx, result) {
-              //alert("Table dataValues created successfully");
+              //alert("Table "+table+" created successfully");
             },
             function (error) {
-              //alert("Error occurred while creating the table dataValues.");
+              //alert("Error occurred while creating the table "+table+".");
             });
         });
-      }
+      });
+      db.transaction(function (tx) {
+        tx.executeSql('CREATE TABLE IF NOT EXISTS dataValues (id TEXT primary key, data LONGTEXT, isSync INTEGER)', [],
+          function (tx, result) {
+            //alert("Table dataValues created successfully");
+          },
+          function (error) {
+            //alert("Error occurred while creating the table dataValues.");
+          });
+      });
     }
 
     function progressTopMessage(message) {
@@ -187,11 +184,30 @@ angular.module('dataCapture', [
         }
       }
       formattedBaseUrl = newArray[0] + '/';
+      var databaseName = newArray[0];
       for (var j = 0; j < newArray.length; j++) {
         if (j != 0) {
+          databaseName = databaseName + '_' + newArray[j];
           formattedBaseUrl = formattedBaseUrl + '/' + newArray[j];
         }
       }
+      //remove all : and . from base url
+      var dataBaseArray = databaseName.split(':');
+      databaseName = dataBaseArray[0];
+      dataBaseArray.forEach(function(data,index){
+        if(index > 0){
+          databaseName += '_' + data;
+        }
+      });
+      dataBaseArray = databaseName.split('.');
+      databaseName = dataBaseArray[0];
+      dataBaseArray.forEach(function(data,index){
+        if(index > 0){
+          databaseName += '_' + data;
+        }
+      });
+      dhis2.database = databaseName+'.db';
+      initDatabase();
       return formattedBaseUrl;
     }
 
