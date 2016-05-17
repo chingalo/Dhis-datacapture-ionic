@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <widget id="com.hipstz.dhis2.dhis2touch" version="0.2.0" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
   <name>Dhis 2 Touch</name>
   <description>
@@ -8,54 +8,54 @@
     Joseph Chingalo
   </author>
   <content src="index.html"/>
-  <preference name="permissions" value="none" />
-  <preference name="orientation" value="default" />
-  <preference name="target-device" value="universal" />
-  <preference name="fullscreen" value="false" />
-  <preference name="webviewbounce" value="true" />
-  <preference name="prerendered-icon" value="true" />
-  <preference name="stay-in-webview" value="false" />
-  <preference name="ios-statusbarstyle" value="black-opaque" />
-  <preference name="detect-data-types" value="true" />
-  <preference name="exit-on-suspend" value="false" />
-  <preference name="show-splash-screen-spinner" value="true" />
-  <preference name="auto-hide-splash-screen" value="true" />
-  <preference name="disable-cursor" value="false" />
-  <preference name="android-installLocation" value="auto" />
+  <preference name="permissions" value="none"/>
+  <preference name="orientation" value="default"/>
+  <preference name="target-device" value="universal"/>
+  <preference name="fullscreen" value="false"/>
+  <preference name="webviewbounce" value="true"/>
+  <preference name="prerendered-icon" value="true"/>
+  <preference name="stay-in-webview" value="false"/>
+  <preference name="ios-statusbarstyle" value="black-opaque"/>
+  <preference name="detect-data-types" value="true"/>
+  <preference name="exit-on-suspend" value="false"/>
+  <preference name="show-splash-screen-spinner" value="true"/>
+  <preference name="auto-hide-splash-screen" value="true"/>
+  <preference name="disable-cursor" value="false"/>
+  <preference name="android-installLocation" value="auto"/>
   <preference name="UIWebViewBounce" value="false"/>
   <preference name="android-minSdkVersion" value="15"/>
   <preference name="BackupWebStorage" value="none"/>
-
   <feature name="StatusBar">
     <param name="ios-package" value="CDVStatusBar" onload="true"/>
   </feature>
-
-  <plugin name="io.litehelpers.cordova.sqlitestorage" spec="0.7.5" source="pgb" />
-  <gap:plugin name="org.apache.cordova.battery-status" source = "pgb"/>
-  <gap:plugin name="org.apache.cordova.network-information" source = "pgb" />
-
-  <gap:plugin name="cordova-plugin-whitelist" source="npm" version="~1" />
-  <plugin name="cordova-plugin-whitelist" version="~1" />
-  <plugin name="cordova-plugin-whitelist" spec="~1" />
-
-  <access origin="http://*" />
-  <allow-navigation href="*" />
   <feature name="http://api.phonegap.com/1.0/network"/>
-  <allow-intent href="http://*/*" />
-  <allow-intent href="https://*/*" />
-  <allow-intent href="tel:*" />
-  <allow-intent href="sms:*" />
-  <allow-intent href="mailto:*" />
-  <allow-intent href="geo:*" />
+  <plugin name="io.litehelpers.cordova.sqlitestorage" spec="0.7.5" source="pgb"/>
+  <plugin name="cordova-plugin-whitelist" version="~1"/>
+  <plugin name="cordova-plugin-whitelist" spec="~1"/>
+  <gap:plugin name="org.apache.cordova.battery-status" source="pgb"/>
+  <gap:plugin name="org.apache.cordova.network-information" source="pgb"/>
+  <gap:plugin name="cordova-plugin-whitelist" source="npm" version="~1"/>
+  <access origin="http://*"/>
+  <allow-navigation href="*"/>
+  <allow-intent href="http://*/*"/>
+  <allow-intent href="https://*/*"/>
+  <allow-intent href="tel:*"/>
+  <allow-intent href="sms:*"/>
+  <allow-intent href="mailto:*"/>
+  <allow-intent href="geo:*"/>
   <platform name="android">
-    <allow-intent href="market:*" />
+    <allow-intent href="market:*"/>
+    <icon src="resources/android/icon/drawable-ldpi-icon.png" density="ldpi"/>
+    <icon src="resources/android/icon/drawable-mdpi-icon.png" density="mdpi"/>
+    <icon src="resources/android/icon/drawable-hdpi-icon.png" density="hdpi"/>
+    <icon src="resources/android/icon/drawable-xhdpi-icon.png" density="xhdpi"/>
+    <icon src="resources/android/icon/drawable-xxhdpi-icon.png" density="xxhdpi"/>
+    <icon src="resources/android/icon/drawable-xxxhdpi-icon.png" density="xxxhdpi"/>
   </platform>
   <platform name="ios">
-    <allow-intent href="itms:*" />
-    <allow-intent href="itms-apps:*" />
+    <allow-intent href="itms:*"/>
+    <allow-intent href="itms-apps:*"/>
   </platform>
-  <platform name="winphone" />
-
-  <icon src="ic_launcher.png" width="170" height="170"/>
-
+  <platform name="winphone"/>
+  <icon src="resources/android/icon/drawable-xhdpi-icon.png"/>
 </widget>
