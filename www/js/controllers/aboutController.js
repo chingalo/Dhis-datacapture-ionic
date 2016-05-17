@@ -9,7 +9,7 @@ angular.module('dataCapture')
     $scope.data.appInfo = {
       Name : 'Dhis 2 Touch',
       Version : '0.20',
-      'App revision' : '7e52b04',
+      'App revision' : '75c7e11',
       'Release status' : 'Snapshot'
     };
     $scope.data.appStorageStatus = {
