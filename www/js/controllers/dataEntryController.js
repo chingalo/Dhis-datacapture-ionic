@@ -284,6 +284,7 @@ angular.module('dataCapture')
       dataSetsServices.getDataSetById($scope.data.dataSetId, $scope.data.dataSets)
         .then(function (data) {
           $scope.data.selectedDataSet = data;
+          console.log($scope.data.selectedDataSet);
           $scope.data.loading = false;
           var periods = dhis2.period.generator.generateReversedPeriods(data.periodType, $scope.currentPeriodOffset);
           periods = dhis2.period.generator.filterOpenPeriods(data.periodType, periods, data.openFuturePeriods);
