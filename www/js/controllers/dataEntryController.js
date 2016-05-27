@@ -580,7 +580,6 @@ angular.module('dataCapture')
 
     //function to handle selection of date entry period selection
     $scope.periodSelect = function(){
-      $scope.modal.hide();
       if($scope.data.selectedDataSet.categoryCombo.categoryOptionCombos[0].name != 'default'){
         $scope.data.hasCategoryComboOptions = true;
       }else{
