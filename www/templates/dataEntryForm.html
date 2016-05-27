@@ -19,7 +19,7 @@
         <div ng-if="data.selectedDataEntryForm.formType == 'DEFAULT' ">
           <div class="row ">
             <div class="col col-100">
-                <div class="paginationScroll">
+                <div class="paginationScroll" style="width:98%;margin:auto;">
                   <div
                     ng-repeat="dataElement in data.selectedDataEntryForm.dataSet.dataElements | paginationFilter:currentPage*pageSizeDefault | limitTo:pageSizeDefault">
 
