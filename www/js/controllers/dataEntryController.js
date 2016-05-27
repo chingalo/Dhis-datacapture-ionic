@@ -257,6 +257,14 @@ angular.module('dataCapture')
       return $localStorage.formLabelPreference.label;
     };
 
+    $scope.getInputFieldPlaceholder = function(dataElement,categoryOptionCombos){
+      var placeHolder = dataElement.displayName;
+      if(dataElement.categoryCombo.name != 'default'){
+        placeHolder = categoryOptionCombos.name;
+      }
+      return placeHolder;
+    };
+
     //function to checking data set is assigned to user
     function isDataSetAllowed(dataSetId) {
       var result = false;
