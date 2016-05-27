@@ -485,6 +485,15 @@ angular.module('dataCapture')
       return date;
     }
 
+    //function handle date entry form selection
+    $scope.dataEntryFormSelection = function(){
+      if($localStorage.dataEntryData.formType == 'SECTION'){
+        $scope.generateSectionDataEntryForm();
+      }else{
+        $scope.generateDefaultDataEntryForm();
+      }
+    };
+
     //function to generate default data entry form
     $scope.generateDefaultDataEntryForm = function(){
       $scope.data.loading = true;
@@ -583,17 +592,17 @@ angular.module('dataCapture')
     };
 
     //function to save all details necessary for data entry to local storage
-    function saveSelectedDataSetToLocalStorage(categoryOptionCombosId){
+    function saveSelectedDataSetToLocalStorage(categoryOptionCombosId) {
       var dataElements = $scope.data.selectedDataSet.dataElements;
       $scope.data.selectedData = {
-        orgUnit : $scope.data.orgUnit[0].id,
-        orgUnitName : $scope.data.orgUnit[0].name,
-        dataSet : $scope.data.selectedDataSet,
-        period : $scope.data.period,
-        periodDisplayName : $scope.getPeriodDisplayValue($scope.data.period),
-        numberOfFields : dataElements.length,
-        formType : '',
-        categoryOptionCombosId : categoryOptionCombosId
+        orgUnit: $scope.data.orgUnit[0].id,
+        orgUnitName: $scope.data.orgUnit[0].name,
+        dataSet: $scope.data.selectedDataSet,
+        period: $scope.data.period,
+        periodDisplayName: $scope.getPeriodDisplayValue($scope.data.period),
+        numberOfFields: dataElements.length,
+        formType: $scope.data.selectedDataSet.sections.length >0 ? 'SECTION':'DEFAULT',
+        categoryOptionCombosId: categoryOptionCombosId
       };
       $scope.data.formSelectVisibility = true;
       $localStorage.dataEntryData = $scope.data.selectedData;
