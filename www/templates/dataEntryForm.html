@@ -19,7 +19,7 @@
         <div ng-if="data.selectedDataEntryForm.formType == 'DEFAULT' ">
           <div class="row ">
             <div class="col col-100">
-              <div class="paginationScroll">
+              <div class="paginationScroll" style="width:98%;margin:auto;">
                 <div
                   ng-repeat="dataElement in data.selectedDataEntryForm.dataSet.dataElements | paginationFilter:currentPage*pageSizeDefault | limitTo:pageSizeDefault">
 
@@ -33,7 +33,7 @@
                       <br>
                       <label class="item item-input">
                         <input ng-blur='changeDataEntryForm(dataElement)' type="number"
-                               placeholder="{{ dataElement.displayName }}"
+                               placeholder="{{ getInputFieldPlaceholder(dataElement,categoryOptionCombos) }}"
                                ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
                       </label>
                     </div>
@@ -47,7 +47,7 @@
                       <br>
                       <label class="item item-input">
                         <input ng-blur='changeDataEntryForm(dataElement)' type="text" ui-date
-                               placeholder="{{ dataElement.displayName }}"
+                               placeholder="{{ getInputFieldPlaceholder(dataElement,categoryOptionCombos) }}"
                                ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
                       </label>
                     </div>
@@ -61,7 +61,7 @@
                       <br>
                       <label class="item item-input">
                         <input ng-blur='changeDataEntryForm(dataElement)' type="number" min="0"
-                               placeholder="{{ dataElement.displayName }}"
+                               placeholder="{{ getInputFieldPlaceholder(dataElement,categoryOptionCombos) }}"
                                ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
                       </label>
                     </div>
@@ -75,7 +75,7 @@
                       <br>
                       <label class="item item-input">
                         <input ng-blur='changeDataEntryForm(dataElement)' type="text"
-                               placeholder="{{ dataElement.displayName }}"
+                               placeholder="{{ getInputFieldPlaceholder(dataElement,categoryOptionCombos) }}"
                                ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
                       </label>
                     </div>
@@ -200,7 +200,7 @@
                               <br>
                               <label class="item item-input">
                                 <input ng-blur='changeDataEntryForm(dataElement)' type="number"
-                                       placeholder="{{ dataElement.displayName }}"
+                                       placeholder="{{ getInputFieldPlaceholder(dataElement,categoryOptionCombos) }}"
                                        ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
                               </label>
                             </div>
@@ -214,7 +214,7 @@
                               <br>
                               <label class="item item-input">
                                 <input ng-blur='changeDataEntryForm(dataElement)' type="text" ui-date
-                                       placeholder="{{ dataElement.displayName }}"
+                                       placeholder="{{ getInputFieldPlaceholder(dataElement,categoryOptionCombos) }}"
                                        ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
                               </label>
                             </div>
@@ -228,7 +228,7 @@
                               <br>
                               <label class="item item-input">
                                 <input ng-blur='changeDataEntryForm(dataElement)' type="number" min="0"
-                                       placeholder="{{ dataElement.displayName }}"
+                                       placeholder="{{ getInputFieldPlaceholder(dataElement,categoryOptionCombos) }}"
                                        ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
                               </label>
                             </div>
@@ -242,7 +242,7 @@
                               <br>
                               <label class="item item-input">
                                 <input ng-blur='changeDataEntryForm(dataElement)' type="text"
-                                       placeholder="{{ dataElement.displayName }}"
+                                       placeholder="{{ getInputFieldPlaceholder(dataElement,categoryOptionCombos) }}"
                                        ng-model="data.dataValues[dataElement.id + '-' +categoryOptionCombos.id]">
                               </label>
                             </div>

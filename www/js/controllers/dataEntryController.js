@@ -251,6 +251,14 @@ angular.module('dataCapture')
       return $localStorage.formLabelPreference.label;
     };
 
+    //function to get input field placeholder
+    $scope.getInputFieldPlaceholder = function(dataElement,categoryOptionCombos){
+      var placeHolder = dataElement.displayName;
+      if(dataElement.categoryCombo.name != 'default'){
+        placeHolder = categoryOptionCombos.name;
+      }
+      return placeHolder;
+    };
     //function to checking data set is assigned to user
     function isDataSetAllowed(dataSetId){
       var result = false;
@@ -294,23 +302,6 @@ angular.module('dataCapture')
           $scope.data.loading = false;
         })
     });
-    ////checking changes on data entry form
-    //$scope.$watch('data.dataSetId', function() {
-    //  $localStorage.allowDataEntrySync = true;
-    //  $scope.data.loading = true;
-    //  $scope.data.formSelectVisibility = false;
-    //  $scope.data.selectedData = null;
-    //  $scope.data.period = null;
-    //  $scope.data.hasCategoryComboOptions = false;
-    //  dataSetsServices.getDataSetById($scope.data.dataSetId,$scope.data.dataSets)
-    //    .then(function(data){
-    //      $scope.data.selectedDataSet = data;
-    //      $scope.data.loading = false;
-    //      periodOption(data);
-    //    },function(){
-    //      $scope.data.loading = false;
-    //    })
-    //});
 
     $scope.$watch('data.categoryOptionCombos', function(){
       if($scope.data.categoryOptionCombos){
@@ -578,35 +569,6 @@ angular.module('dataCapture')
       }
     };
 
-    //$scope.changePeriodInterval = function(type){
-    //  var yearInput = String($scope.data.periodOption[0].periodValue);
-    //  var year = yearInput.substring(0, 4);
-    //  if(type =='next'){
-    //    year = parseInt(year) + 1;
-    //  }else{
-    //    year = parseInt(year) - 1;
-    //  }
-    //  var periodOptions = periodSelectionServices.getPeriodSelections(year,$scope.data.selectedDataSet);
-    //  if(periodOptions.length > 0){
-    //    $scope.data.periodOption = periodOptions;
-    //  }else{
-    //    var message = "There no period option further than this at moment";
-    //    ionicToast.show(message, 'top', false, 1500);
-    //  }
-    //};
-
-    //function to handle pop up modal
-    $ionicModal.fromTemplateUrl('templates/modal.html', {
-      scope: $scope
-    }).then(function(modal) {
-      $scope.modal = modal;
-    });
-
-    //function to close pop up model
-    $scope.close = function() {
-      $scope.modal.hide();
-    };
-
     //function to handle selection of date entry period selection
     $scope.periodSelect = function(){
       $scope.modal.hide();
@@ -649,17 +611,6 @@ angular.module('dataCapture')
       return periodDisplayValue;
     };
 
-    //function to open the pop p modal
-    $scope.openModal = function(modalType){
-      $scope.data.modalType = modalType;
-      if($scope.data.orgUnit.length > 0 && $scope.data.dataSetId != null){
-        $scope.modal.show();
-      }else{
-        var message = "Please choose both Organisation Unit or Data Entry Form first";
-        progressMessage(message);
-      }
-
-    };
 
     //function to get all user assigned orgUnit for tree
     getAllAssignedOrgUnits();
