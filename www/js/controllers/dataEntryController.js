@@ -27,7 +27,7 @@ angular.module('dataCapture')
     };
     $scope.periodChoices = [];
     $scope.currentPeriodOffset = 0;
-    
+
     if(angular.isUndefined($scope.data.isDataSetCompleted)){
       $scope.data.isDataSetCompleted = false;
     }
@@ -549,22 +549,51 @@ angular.module('dataCapture')
     };
 
     //function to handle period option changes
-    $scope.changePeriodInterval = function(type){
-      var yearInput = String($scope.data.periodOption[0].periodValue);
-      var year = yearInput.substring(0, 4);
-      if(type =='next'){
-        year = parseInt(year) + 1;
-      }else{
-        year = parseInt(year) - 1;
+    $scope.changePeriodInterval = function (type) {
+      if (type == 'next') {
+        $scope.currentPeriodOffset = $scope.currentPeriodOffset + 1;
+      } else {
+        $scope.currentPeriodOffset = $scope.currentPeriodOffset - 1;
       }
-      var periodOptions = periodSelectionServices.getPeriodSelections(year,$scope.data.selectedDataSet);
-      if(periodOptions.length > 0){
-        $scope.data.periodOption = periodOptions;
-      }else{
+      var periods = dhis2.period.generator.generateReversedPeriods($scope.data.selectedDataSet .periodType, $scope.currentPeriodOffset);
+      periods = dhis2.period.generator.filterOpenPeriods($scope.data.selectedDataSet .periodType, periods, $scope.data.selectedDataSet .openFuturePeriods);
+
+      if (periods.length > 0) {
+        $scope.periodChoices = periods;
+        $scope.data.periodOption = [];
+        periods.forEach(function(period){
+          $scope.data.periodOption.push({
+            displayValue : period.name,
+            periodValue : period.iso
+          })
+        });
+      } else {
+        if(type == 'next'){
+          $scope.currentPeriodOffset = $scope.currentPeriodOffset - 1;
+        }else{
+          $scope.currentPeriodOffset = $scope.currentPeriodOffset + 1;
+        }
         var message = "There no period option further than this at moment";
         ionicToast.show(message, 'top', false, 1500);
       }
     };
+
+    //$scope.changePeriodInterval = function(type){
+    //  var yearInput = String($scope.data.periodOption[0].periodValue);
+    //  var year = yearInput.substring(0, 4);
+    //  if(type =='next'){
+    //    year = parseInt(year) + 1;
+    //  }else{
+    //    year = parseInt(year) - 1;
+    //  }
+    //  var periodOptions = periodSelectionServices.getPeriodSelections(year,$scope.data.selectedDataSet);
+    //  if(periodOptions.length > 0){
+    //    $scope.data.periodOption = periodOptions;
+    //  }else{
+    //    var message = "There no period option further than this at moment";
+    //    ionicToast.show(message, 'top', false, 1500);
+    //  }
+    //};
 
     //function to handle pop up modal
     $ionicModal.fromTemplateUrl('templates/modal.html', {
