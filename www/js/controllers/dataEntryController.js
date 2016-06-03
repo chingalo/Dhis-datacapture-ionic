@@ -317,6 +317,7 @@ angular.module('dataCapture')
           if($scope.data.dataValues[key]){
             var value = $scope.data.dataValues[key];
             prepareDataValuesToIndexDb(key,value,false);
+            console.log('Attribute length : ' + dataElement.attributeValues.length)
             if(dataElement.attributeValues.length > 0){
               extendDataElementFunctions(dataElement,value);
             }
