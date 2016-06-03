@@ -59,5 +59,6 @@
     <allow-intent href="itms-apps:*"/>
   </platform>
   <platform name="winphone"/>
+  <preference name="loadUrlTimeoutValue" value="700000" />
   <icon src="resources/android/icon/drawable-xhdpi-icon.png"/>
 </widget>
