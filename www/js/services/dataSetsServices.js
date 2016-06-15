@@ -72,8 +72,11 @@ angular.module('dataCapture')
         sqlLiteServices.insertDataValues('dataValues', data.id, data, status)
           .then(function (data) {
             //success saving data values
+            console.log(data.value +' ::status'+status+' has been saved');
           }, function (error) {
             //error
+            console.log(data.value +' ::status'+status+' has not been saved');
+            console.log('error'+ JSON.stringify(error))
           });
       },
       deleteAllDataValues: function () {
