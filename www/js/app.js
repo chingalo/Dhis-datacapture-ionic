@@ -527,7 +527,7 @@ angular.module('dataCapture', [
         return false;
       }
     };
-    $scope.hasDataSets = function (dataElement) {
+    $scope.hasOptionSets = function (dataElement) {
 
       if (dataElement.optionSet != undefined) {
         return true;
@@ -568,17 +568,13 @@ angular.module('dataCapture', [
 
         var dataSets = db.createObjectStore('dataValues', {keyPath: 'id'});
         dataSets.createIndex('id_index', 'id', {unique: true});
-
-      })
-      .upgradeDatabase(2, function (event, db, tx) {
         var dataSets = db.createObjectStore('indicators', {keyPath: 'id'});
         dataSets.createIndex('id_index', 'id', {unique: true});
-      })
-      .upgradeDatabase(3, function (event, db, tx) {
         var constants = db.createObjectStore('constants', {keyPath: 'id'});
         constants.createIndex('id_index', 'id', {unique: true});
         var programs = db.createObjectStore('programs', {keyPath: 'id'});
         programs.createIndex('id_index', 'id', {unique: true});
+
       });
 
     $stateProvider

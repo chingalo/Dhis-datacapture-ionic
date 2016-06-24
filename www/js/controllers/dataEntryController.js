@@ -139,7 +139,8 @@ angular.module('dataCapture')
                   $scope.data.dataValue.local = counter;
                 }
                 $scope.data.dataValues[dataElement.id + '-' + returnedDataValue.co] = isDataElementHasDropDown(dataElement.id) ? {
-                  name: returnedDataValue.value,
+                  code: returnedDataValue.value,
+                  name: '',
                   id: ''
                 } : returnedDataValue.value;
               }
@@ -176,7 +177,7 @@ angular.module('dataCapture')
           if (dataValueSets.dataValues) {
             dataValueSets.dataValues.forEach(function (dataElementValues, index) {
               var value = isDataElementValueTypeNumber(dataElementValues.dataElement) ? parseInt(dataElementValues.value) : dataElementValues.value;
-              var storedValue = isDataElementHasDropDown(dataElementValues.dataElement) ? {name: value, id: ''} : value;
+              var storedValue = isDataElementHasDropDown(dataElementValues.dataElement) ? {code: value, id: '',name :''} : value;
               $scope.data.dataValues[dataElementValues.dataElement + '-' + dataElementValues.categoryOptionCombo] = storedValue;
               prepareDataValuesToIndexDb(dataElementValues.dataElement + "-" + dataElementValues.categoryOptionCombo, storedValue, true);
             });
@@ -386,8 +387,8 @@ angular.module('dataCapture')
     //function to save data values from the form to indexed db
     function prepareDataValuesToIndexDb(key, value, syncStatus) {
       var valueToBeStored = null;
-      if (value.name) {
-        valueToBeStored = value.name;
+      if (value.name || value.code) {
+        valueToBeStored = value.code;
       } else {
         valueToBeStored = value;
       }
@@ -447,7 +448,7 @@ angular.module('dataCapture')
       var dataElements = $scope.data.selectedDataEntryForm.dataSet.dataElements;
       dataElements.forEach(function (dataElement) {
         if (dataElement.id == dataElementId) {
-          if ($scope.hasDataSets(dataElement) && !($scope.isInteger(dataElement.valueType)) && !($scope.isIntegerZeroOrPositive(dataElement.valueType))) {
+          if ($scope.hasOptionSets(dataElement)) {
             result = true;
           }
         }

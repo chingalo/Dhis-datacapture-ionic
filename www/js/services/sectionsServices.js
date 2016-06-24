@@ -8,7 +8,7 @@ angular.module('dataCapture')
     var sectionsServices = {
       getAllSectionsFromServer : function(baseUrl){
         var defer = $q.defer();
-        var field = "fields=dataSet,id,name,indicators[id,name,indicatorType[factor],denominatorDescription,numeratorDescription,numerator,denominator],dataElements[id,name,formName,attributeValues[value,attribute[name]],categoryCombo[id,name,categoryOptionCombos[id,name]],displayName,description,valueType,optionSet[name,options[name,id]]";
+        var field = "fields=dataSet,id,name,indicators[id,name,indicatorType[factor],denominatorDescription,numeratorDescription,numerator,denominator],dataElements[id,name,formName,attributeValues[value,attribute[name]],categoryCombo[id,name,categoryOptionCombos[id,name]],displayName,description,valueType,optionSet[name,options[name,id,code]]";
         $http.get(baseUrl + '/api/sections.json?paging=false&' + field)
           .success(function(results){
             defer.resolve(results.sections);
