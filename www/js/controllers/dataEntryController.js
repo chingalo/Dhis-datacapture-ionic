@@ -400,8 +400,8 @@ angular.module('dataCapture')
     //function to save data values from the form to indexed db
     function prepareDataValuesToIndexDb(key,value,syncStatus){
       var valueToBeStored = null;
-      if(value.name){
-        valueToBeStored = value.name;
+      if(value.name || value.code ){
+        valueToBeStored = value.code;
       }else{
         valueToBeStored = value;
       }
