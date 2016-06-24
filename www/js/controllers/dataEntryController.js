@@ -138,7 +138,7 @@ angular.module('dataCapture')
                   counter ++;
                   $scope.data.dataValue.local = counter;
                 }
-                $scope.data.dataValues[dataElement.id+'-'+returnedDataValue[0].co] = isDataElementHasDropDown(dataElement.id)?{name :returnedDataValue[0].value,id:''}:returnedDataValue[0].value;
+                $scope.data.dataValues[dataElement.id+'-'+returnedDataValue[0].co] = isDataElementHasDropDown(dataElement.id)?{code :returnedDataValue[0].value,name:'',id:''}:returnedDataValue[0].value;
               }
             },function(){
               //error
@@ -173,7 +173,7 @@ angular.module('dataCapture')
           if(dataValueSets.dataValues){
             dataValueSets.dataValues.forEach(function(dataElementValues,index){
               var value = isDataElementValueTypeNumber(dataElementValues.dataElement)?parseInt(dataElementValues.value):dataElementValues.value;
-              var storedValue = isDataElementHasDropDown(dataElementValues.dataElement)?{name :value,id : ''} : value;
+              var storedValue = isDataElementHasDropDown(dataElementValues.dataElement)?{code :value,name:'',id : ''} : value;
               $scope.data.dataValues[dataElementValues.dataElement+'-'+dataElementValues.categoryOptionCombo] = storedValue;
               prepareDataValuesToIndexDb(dataElementValues.dataElement + "-" + dataElementValues.categoryOptionCombo,storedValue,true);
             });
@@ -460,7 +460,7 @@ angular.module('dataCapture')
       var dataElements = $scope.data.selectedDataEntryForm.dataSet.dataElements;
       dataElements.forEach(function(dataElement){
         if(dataElement.id == dataElementId){
-          if($scope.hasDataSets(dataElement) && !($scope.isInteger(dataElement.valueType)) && !($scope.isIntegerZeroOrPositive(dataElement.valueType))){
+          if($scope.hasOptionSets(dataElement)){
             result = true;
           }
         }

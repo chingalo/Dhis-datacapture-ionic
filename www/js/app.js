@@ -764,7 +764,7 @@ angular.module('dataCapture', [
         return false;
       }
     };
-    $scope.hasDataSets = function (dataElement) {
+    $scope.hasOptionSets = function (dataElement) {
 
       if (dataElement.optionSet != undefined) {
         return true;
