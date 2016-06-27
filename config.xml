@@ -36,6 +36,12 @@
   <plugin name="cordova-plugin-whitelist" spec="~1"/>
   <gap:plugin name="org.apache.cordova.battery-status" source="pgb"/>
   <gap:plugin name="org.apache.cordova.network-information" source="pgb"/>
+  <gap:plugin name="org.apache.cordova.device" source = "pgb"/>
+  <gap:plugin name="org.apache.cordova.device-motion" source = "pgb"/>
+  <gap:plugin name="org.apache.cordova.device-orientation" source = "pgb"/>
+  <gap:plugin name="org.apache.cordova.geolocation" source = "pgb"/>
+  <gap:plugin name="org.apache.cordova.inappbrowser" source = "pgb"/>
+  <gap:plugin name="org.apache.cordova.media" source = "pgb"/>
   <gap:plugin name="cordova-plugin-whitelist" source="npm" version="~1"/>
   <access origin="http://*"/>
   <allow-navigation href="*"/>
