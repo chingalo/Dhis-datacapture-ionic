@@ -50,9 +50,15 @@ angular.module('dataCapture', [
     var url = 'http://41.217.202.50:8080/dhis';
 
     //function for toaster messages
-    function progressMessage(message) {
-      ionicToast.show(message, 'bottom', false, 2500);
+    function progressMessage(message){
+      ionicToast.show(message, 'top', false, 2000);
     }
+    dhis2.progressMessageStick = function(message){
+      ionicToast.show(message, 'top', true,3000);
+    };
+    dhis2.progressMessage = function(message){
+      progressMessage(message);
+    };
 
     //creation of database for an app
     function initDatabase() {
@@ -318,7 +324,6 @@ angular.module('dataCapture', [
                 $scope.data.dataDownLoadingMessage.push('Saving '+sectionCounter+' form sections');
                 loadPrograms(base);
               } else {
-                $scope.data.loading = true;
                 sectionsServices.getAllSectionsFromServer(base)
                   .then(function (sections) {
                     var promises = [];
@@ -349,6 +354,7 @@ angular.module('dataCapture', [
                     progressTopMessage(message);
                     $scope.data.loading = false;
                   });
+                $scope.data.loading = true;
               }
             }
           },function(){
