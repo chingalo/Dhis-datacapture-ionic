@@ -393,15 +393,6 @@
     dhis2.period.generator = new dhis2.period.PeriodGenerator(dhis2.period.calendar, dhis2.period.format);
   </script>
 
-  <script>
-    setTimeout(function(){
-        dhis2.progressMessage('hello it is progress message');
-      setTimeout(function(){
-        dhis2.progressMessageStick('Hello it is stick message');
-      }, 4000);
-    }, 30000);
-  </script>
-
 </head>
 
 <body ng-app="dataCapture" ng-controller="mainController">
