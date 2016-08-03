@@ -260,7 +260,7 @@ dhis2.de = {
                 data.rows.push([dataElement.de, dhis2.report.period, dataElement.value + ""]);
               });
             }
-            if(data.rows.length > 0){
+            if(data.rows.length == 0){
               var message = "This report has no data. To view the report with data, open data entry form related to this report to download existing data or to enter new data";
               dhis2.progressMessageStick(message);
             }
