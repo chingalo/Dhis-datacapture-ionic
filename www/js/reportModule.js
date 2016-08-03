@@ -243,7 +243,7 @@ dhis2.de = {
           if (value) {
             data.rows.push([indicator.id, dhis2.report.period, value + ""]);
           }else{
-            data.rows.push([indicator.id, dhis2.report.period, "0.0"]);
+            //data.rows.push([indicator.id, dhis2.report.period, "0.0"]);
           }
         }));
       });
@@ -259,7 +259,8 @@ dhis2.de = {
               $.each(items, function (dataElementIndex, dataElement) {
                 data.rows.push([dataElement.de, dhis2.report.period, dataElement.value + ""]);
               });
-            }else{
+            }
+            if(data.rows.length > 0){
               var message = "This report has no data. To view the report with data, open data entry form related to this report to download existing data or to enter new data";
               dhis2.progressMessageStick(message);
             }
