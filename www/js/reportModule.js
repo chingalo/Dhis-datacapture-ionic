@@ -254,6 +254,7 @@ dhis2.de = {
             ids.push(dataSet + "-" + dataElement + "-%-" + dhis2.report.period + "-" + dhis2.report.organisationUnit.id);
           });
           dhis2.de.sqlLiteServices.searchDataFromTableByIds("dataValues", dataElements).done(function (items) {
+            console.log('items.length :: ' + items.length);
             if(items.length > 0){
               $.each(items, function (dataElementIndex, dataElement) {
                 data.rows.push([dataElement.de, dhis2.report.period, dataElement.value + ""]);
