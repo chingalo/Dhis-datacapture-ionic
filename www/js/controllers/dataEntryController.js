@@ -181,7 +181,6 @@ angular.module('dataCapture')
           }else{
             progressMessage('There is no data values that has been found from server');
           }
-
         },function(){
           //error
           progressMessage('Fail to retrieve data values form server, it might be due to network connectivity');
@@ -317,7 +316,7 @@ angular.module('dataCapture')
           if($scope.data.dataValues[key]){
             var value = $scope.data.dataValues[key];
             prepareDataValuesToIndexDb(key,value,false);
-            console.log('Attribute length : ' + dataElement.attributeValues.length)
+            console.log('Attribute length : ' + dataElement.attributeValues.length);
             if(dataElement.attributeValues.length > 0){
               extendDataElementFunctions(dataElement,value);
             }
